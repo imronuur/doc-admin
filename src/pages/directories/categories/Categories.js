@@ -1,13 +1,13 @@
 import { filter } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { parse as csvparse } from 'papaparse';
+import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
 
-// material
-import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -27,6 +27,7 @@ import LoadingScreen from '../../../components/LoadingScreen';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { getCategories } from '../../../redux/slices/categories';
+import { loadBulkCategories, removeBulkCategories } from '../../../redux/slices/bulkCategories';
 import { deleteCategory } from '../../../redux/thunk/categoryThunk';
 
 // routes
@@ -41,6 +42,7 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
 
 import { CategoryListHead, CategoryListToolbar, CategoryMoreMenu } from './components';
+import { BulkCategoryAdd } from '../../bulk/BulkCategoryAdd';
 // ----------------------------------------------------------------------
 
 let content = null;
@@ -89,7 +91,8 @@ function applySortFilter(array, comparator, query) {
 export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { category } = useSelector((state) => state);
+  const { category, bulkCategory } = useSelector((state) => state);
+  const { bulkCategories } = bulkCategory;
   const { categories } = category;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -97,6 +100,7 @@ export default function CategoryList() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [orderBy, setOrderBy] = useState('createdAt');
+  const [loading, setLoading] = useState(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -130,6 +134,33 @@ export default function CategoryList() {
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
+
+  // BULK Category creation
+  const handleBulkAdd = async (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    if (file.type === 'text/csv') {
+      const text = await file.text();
+      const result = csvparse(text, {
+        header: true,
+        keepEmptyRows: false,
+        skipEmptyLines: true
+      });
+      const bulkData = result.data.map((res) => ({
+        ...res,
+        id: uuidv4()
+      }));
+      dispatch(loadBulkCategories(bulkData));
+    }
+  };
+
+  const handleBulkRemove = (v) => {
+    dispatch(removeBulkCategories(v));
+  };
+
+  const handleBulkCategoryUpload = async (values) => {
+    console.log(values);
+  };
 
   if (categories.length) {
     const handleRequestSort = (event, property) => {
@@ -305,7 +336,13 @@ export default function CategoryList() {
           </Grid>
           <Grid item xs={12}>
             <Card sx={{ padding: '2%' }}>
-              <Typography> Bulk Creation </Typography>
+              <BulkCategoryAdd
+                categories={bulkCategories}
+                handleBulkAdd={handleBulkAdd}
+                setBulkCategory={handleBulkRemove}
+                loading={loading}
+                handleBulkCategoryUpload={handleBulkCategoryUpload}
+              />
             </Card>
           </Grid>
         </Grid>

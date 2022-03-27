@@ -4,32 +4,38 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import { Icon } from '@iconify/react';
 import { Table, TableHead, TableRow, TableCell, TableBody, Container, Typography, Button, Grid } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import useSettings from '../../../../hooks/useSettings';
+import useSettings from '../../../hooks/useSettings';
 
-import { UserBulkMore } from '../components';
-import { loadBulkUsers } from '../../../../redux/slices/bulkStaffSlice';
+import { CategoryBulkMore } from '../components';
+import { loadBulkCategories } from '../../../redux/slices/bulkCategories';
 
 let content = null;
 
-BulkUserAdd.propTypes = {
-  users: PropTypes.array,
+BulkCategoryAdd.propTypes = {
+  categories: PropTypes.array,
   handleBulkAdd: PropTypes.func,
-  setBulkUsers: PropTypes.func,
+  setBulkCategories: PropTypes.func,
   handleBulkUserUpload: PropTypes.func,
   loading: PropTypes.bool
 };
 
-export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handleBulkUserUpload, loading }) {
-  const { auth, bulkStaff } = useSelector((state) => ({ ...state }));
+export default function BulkCategoryAdd({
+  categories,
+  handleBulkAdd,
+  setBulkCategories,
+  handleBulkCategoryUpload,
+  loading
+}) {
+  const { auth, bulkCategory } = useSelector((state) => ({ ...state }));
 
-  const { bulkUsers } = bulkStaff;
+  const { bulkCategories } = bulkCategory;
   const dispatch = useDispatch();
   const handleRemove = (id) => {
-    dispatch(loadBulkUsers(bulkUsers.filter((v) => v.id !== id)));
+    dispatch(loadBulkCategories(bulkCategories.filter((v) => v.id !== id)));
   };
   const { themeStretch } = useSettings();
 
-  if (users && users.length > 0) {
+  if (categories && categories.length > 0) {
     content = (
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -41,41 +47,23 @@ export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handle
             }}
             variant="h6"
           >
-            {`Added ${users.length} Users`}
+            {`Added ${categories.length} Categories`}
           </Typography>
         </Grid>
 
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Full Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>City</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>ZIP</TableCell>
-              <TableCell>dateOfBirth</TableCell>
-              <TableCell>phone</TableCell>
-              <TableCell>ssn</TableCell>
-              <TableCell>Is Driver</TableCell>
+              <TableCell>Category Name</TableCell>
             </TableRow>
           </TableHead>
-          {users.map((user, index) => (
+          {categories.map((category, index) => (
             <TableBody key={index}>
               <TableRow>
-                <TableCell align="left">{user.name}</TableCell>
-                <TableCell align="left">{user.email}</TableCell>
-                <TableCell align="left">{user.address}</TableCell>
-                <TableCell align="left">{user.city}</TableCell>
-                <TableCell align="left">{user.state}</TableCell>
-                <TableCell align="left">{user.zip}</TableCell>
-                <TableCell align="left">{user.dateOfBirth}</TableCell>
-                <TableCell align="left">{user.phone}</TableCell>
-                <TableCell align="left">{user.ssn}</TableCell>
+                <TableCell align="left">{category.name}</TableCell>
 
-                <TableCell align="left">{user.isDriver}</TableCell>
                 <TableCell align="right">
-                  <UserBulkMore id={user.id} onDelete={() => handleRemove(user.id)} />
+                  <CategoryBulkMore id={category.id} onDelete={() => handleRemove(category.id)} />
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -88,10 +76,10 @@ export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handle
             marginLeft: '1%'
           }}
           startIcon={<Icon icon={plusFill} />}
-          onClick={() => handleBulkUserUpload(auth.token, users)}
+          onClick={() => handleBulkCategoryUpload(categories)}
           disabled={loading}
         >
-          Upload Users
+          Upload Categories
         </Button>
         <Button
           variant="outlined"
@@ -100,7 +88,7 @@ export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handle
             marginBottom: '1%',
             marginLeft: '1%'
           }}
-          onClick={() => setBulkUsers([])}
+          onClick={() => setBulkCategories([])}
           disabled={loading}
           startIcon={<Icon icon={plusFill} />}
         >
@@ -119,7 +107,7 @@ export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handle
           }}
           variant="h6"
         >
-          No Bulk Added Users
+          No Bulk Added Categories
         </Typography>
         <Button
           variant="outlined"
@@ -131,7 +119,7 @@ export default function BulkUserAdd({ users, handleBulkAdd, setBulkUsers, handle
           startIcon={<Icon icon={plusFill} />}
         >
           <input type="file" accept="text/csv" hidden onChange={(e) => handleBulkAdd(e)} />
-          Add User
+          Add Categories
         </Button>
       </>
     );
