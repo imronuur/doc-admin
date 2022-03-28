@@ -86,7 +86,11 @@ export default function Router() {
 
         // Forms
         { path: `${PATH_ADMIN.forms.newCategory}`, element: <NewCategory /> },
-        { path: `${PATH_ADMIN.forms.editCategory}/:_id`, element: <NewCategory /> }
+        { path: `${PATH_ADMIN.forms.editCategory}/:_id`, element: <NewCategory /> },
+        { path: `${PATH_ADMIN.forms.editBulkCategory}/:id`, element: <CategoryBulkEdit /> },
+
+        { path: `${PATH_ADMIN.forms.newSubCategory}`, element: <NewSubCategory /> },
+        { path: `${PATH_ADMIN.forms.editSubCategory}/:_id`, element: <NewSubCategory /> }
       ]
     },
 
@@ -255,12 +259,14 @@ const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetP
 const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCode')));
 
 // Directories
-const ProductList = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductList')));
+const ProductList = Loadable(lazy(() => import('../pages/directories/products/Products')));
 const CategoryList = Loadable(lazy(() => import('../pages/directories/categories/Categories')));
 
 // Form
 
 const NewCategory = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
+const CategoryBulkEdit = Loadable(lazy(() => import('../pages/forms/bulk/bulkCategoryForm/BulkCategoryForm')));
+const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryForm/SubCategoryForm')));
 
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));

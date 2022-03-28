@@ -2,10 +2,9 @@ import { filter } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
-import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
+import plusFill from '@iconify/icons-eva/plus-fill';
+
 import closeFill from '@iconify/icons-eva/close-fill';
 
 import {
@@ -22,34 +21,28 @@ import {
   TableContainer,
   Grid
 } from '@mui/material';
-import LoadingScreen from '../../../components/LoadingScreen';
+import LoadingScreen from '../../../../components/LoadingScreen';
 // redux
-import { useDispatch, useSelector } from '../../../redux/store';
-import { getCategories } from '../../../redux/slices/categories';
-import { loadBulkCategories, removeBulkCategories } from '../../../redux/slices/bulkCategories';
-import { deleteCategory, createBulkCategory, deleteManyCategories } from '../../../redux/thunk/categoryThunk';
+import { useDispatch, useSelector } from '../../../../redux/store';
+import { getSubCategories } from '../../../../redux/slices/subCategories';
+import { deleteSubCategory, deleteManySubCategories } from '../../../../redux/thunk/subCategoryThunk';
 
-// routes
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
 // hooks
-import useSettings from '../../../hooks/useSettings';
+import useSettings from '../../../../hooks/useSettings';
 // components
-import Page from '../../../components/Page';
-import Scrollbar from '../../../components/Scrollbar';
-import SearchNotFound from '../../../components/SearchNotFound';
-import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import { MIconButton } from '../../../components/@material-extend';
-
-import { CategoryListHead, CategoryListToolbar, CategoryMoreMenu } from './components';
-import { BulkCategoryAdd } from '../../bulk/BulkCategoryAdd';
-import SubCategory from './subCategory/SubCategory';
-
+import Scrollbar from '../../../../components/Scrollbar';
+import SearchNotFound from '../../../../components/SearchNotFound';
+import { MIconButton } from '../../../../components/@material-extend';
+import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
+import { PATH_ADMIN } from '../../../../routes/paths';
+import { SubCategoryListHead, SubCategoryListToolbar, SubCategoryMoreMenu } from './components';
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Category Name', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'parentCategory', label: 'Parent Category', align: 'left' },
   { id: 'dateCreated', label: 'Date Created', align: 'left' },
   { id: '' }
 ];
@@ -92,9 +85,8 @@ function applySortFilter(array, comparator, query) {
 export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { category, bulkCategory } = useSelector((state) => state);
-  const { bulkCategories } = bulkCategory;
-  const { categories } = category;
+  const { subCategory } = useSelector((state) => state);
+  const { subCategories } = subCategory;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -104,21 +96,21 @@ export default function CategoryList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(categories.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(subCategories.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(categories.numberOfPages - 1, page + 1));
+    setPage(Math.min(subCategories.numberOfPages - 1, page + 1));
   };
 
-  const handleDeleteCategory = async (slug) => {
+  const handleDeleteSubCategory = async (slug) => {
     const reqObject = {
       slug
     };
-    const reduxRes = await dispatch(deleteCategory(reqObject));
-    if (reduxRes.type === 'category/delete/rejected') {
+    const reduxRes = await dispatch(deleteSubCategory(reqObject));
+    if (reduxRes.type === 'subCategory/delete/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -127,8 +119,8 @@ export default function CategoryList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'category/delete/fulfilled') {
-      enqueueSnackbar(`Category Deleted!`, {
+    } else if (reduxRes.type === 'subCategory/delete/fulfilled') {
+      enqueueSnackbar(`Sub Category Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -136,7 +128,7 @@ export default function CategoryList() {
           </MIconButton>
         )
       });
-      dispatch(getCategories({ page }));
+      dispatch(getSubCategories({ page }));
     }
   };
 
@@ -144,70 +136,16 @@ export default function CategoryList() {
     const reqObject = {
       page
     };
-    dispatch(getCategories(reqObject));
+    dispatch(getSubCategories(reqObject));
   }, [dispatch, page]);
-
-  // BULK Category creation
-  const handleBulkAdd = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    if (file.type === 'text/csv') {
-      const text = await file.text();
-      const result = csvparse(text, {
-        header: true,
-        keepEmptyRows: false,
-        skipEmptyLines: true
-      });
-      const bulkData = result.data.map((res) => ({
-        ...res,
-        id: uuidv4()
-      }));
-      dispatch(loadBulkCategories(bulkData));
-    }
-  };
-
-  const handleBulkRemove = (v) => {
-    dispatch(removeBulkCategories(v));
-  };
-
-  const handleBulkCategoryUpload = async (names) => {
-    setLoading(true);
-    const reqObject = {
-      names
-    };
-    const reduxRes = await dispatch(createBulkCategory(reqObject));
-    if (reduxRes.type === 'category/create-bulk/rejected') {
-      enqueueSnackbar(`${reduxRes.error.message}`, {
-        variant: 'error',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-      setLoading(false);
-    } else if (reduxRes.type === 'category/create-bulk/fulfilled') {
-      enqueueSnackbar(`Categories Created!`, {
-        variant: 'success',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-      setLoading(false);
-      dispatch(removeBulkCategories([]));
-      dispatch(getCategories({ page }));
-    }
-  };
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
       ids
     };
-    const reduxRes = await dispatch(deleteManyCategories(reqObject));
-    if (reduxRes.type === 'category/delete-many/rejected') {
+    const reduxRes = await dispatch(deleteManySubCategories(reqObject));
+    if (reduxRes.type === 'subCategory/delete-many/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -217,7 +155,7 @@ export default function CategoryList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'category/delete-many/fulfilled') {
+    } else if (reduxRes.type === 'subCategory/delete-many/fulfilled') {
       enqueueSnackbar(`Categories Deleted!`, {
         variant: 'success',
         action: (key) => (
@@ -230,7 +168,7 @@ export default function CategoryList() {
     }
   };
 
-  if (categories?.data.length) {
+  if (subCategories?.data.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -239,7 +177,7 @@ export default function CategoryList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = categories.data.map((n) => n._id);
+        const newSelecteds = subCategories.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -265,13 +203,13 @@ export default function CategoryList() {
       setFilterName(event.target.value);
     };
 
-    const filtredCategories = applySortFilter(categories.data, getComparator(order, orderBy), filterName);
+    const filtredSubCategories = applySortFilter(subCategories.data, getComparator(order, orderBy), filterName);
 
-    const isCategoryNotFound = filtredCategories.length === 0;
+    const isCategoryNotFound = filtredSubCategories.length === 0;
 
     content = (
       <Card>
-        <CategoryListToolbar
+        <SubCategoryListToolbar
           handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
@@ -282,18 +220,18 @@ export default function CategoryList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <CategoryListHead
+              <SubCategoryListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={categories.data.length}
+                rowCount={subCategories.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filtredCategories.map((row) => {
-                  const { _id, name, slug, createdAt } = row;
+                {filtredSubCategories.map((row) => {
+                  const { _id, name, slug, createdAt, parent } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -322,10 +260,11 @@ export default function CategoryList() {
                           </Typography>
                         </Box>
                       </TableCell>
+                      <TableCell>{parent?.name}</TableCell>
                       <TableCell>{createdAt.split('T')[0]}</TableCell>
 
                       <TableCell align="right">
-                        <CategoryMoreMenu onDelete={() => handleDeleteCategory(slug)} _id={_id} />
+                        <SubCategoryMoreMenu onDelete={() => handleDeleteSubCategory(slug)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
@@ -345,7 +284,7 @@ export default function CategoryList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {categories.data.length > 0 && (
+        {subCategories.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -370,7 +309,7 @@ export default function CategoryList() {
         )}
       </Card>
     );
-  } else if (category.isLoading) {
+  } else if (subCategories.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -385,42 +324,23 @@ export default function CategoryList() {
   }
 
   return (
-    <Page title="Ecommerce: Category List | Minimal-UI">
-      <Container maxWidth={themeStretch ? false : 'lg'}>
-        <HeaderBreadcrumbs
-          heading="Category List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Category List' }]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_ADMIN.forms.newCategory}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              New Category
-            </Button>
-          }
-        />
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            {content}
-          </Grid>
-          <Grid item xs={12}>
-            <Card sx={{ padding: '2%' }}>
-              <BulkCategoryAdd
-                categories={bulkCategories}
-                handleBulkAdd={handleBulkAdd}
-                setBulkCategories={handleBulkRemove}
-                loading={loading}
-                handleBulkCategoryUpload={handleBulkCategoryUpload}
-              />
-            </Card>
-          </Grid>
-          <Grid item xs={12} sx={{ marginTop: '2%' }}>
-            <SubCategory />
-          </Grid>
-        </Grid>
-      </Container>
-    </Page>
+    <Container maxWidth={themeStretch ? false : 'lg'}>
+      <HeaderBreadcrumbs
+        heading="Sub Category List"
+        links={[{ name: 'Dashboard', href: PATH_ADMIN.root }, { name: 'Category List' }]}
+        action={
+          <Button
+            variant="contained"
+            component={RouterLink}
+            to={PATH_ADMIN.forms.newSubCategory}
+            startIcon={<Icon icon={plusFill} />}
+          >
+            New Sub Category
+          </Button>
+        }
+      />
+
+      {content}
+    </Container>
   );
 }

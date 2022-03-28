@@ -45,7 +45,12 @@ export const PATH_ADMIN = {
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
-    editCategory: path(ROOTS_ADMIN, '/edit-category/:_id')
+    editCategory: path(ROOTS_ADMIN, '/edit-category/:_id'),
+    editBulkCategory: path(ROOTS_ADMIN, '/edit-bulk-category/:id'),
+    newSubCategory: path(ROOTS_ADMIN, '/new-sub-category'),
+    editSubCategory: path(ROOTS_ADMIN, '/edit-sub-category/:_id'),
+    newProduct: path(ROOTS_ADMIN, '/new-product'),
+    editProduct: path(ROOTS_ADMIN, '/edit-product/:_id')
   }
 };
 

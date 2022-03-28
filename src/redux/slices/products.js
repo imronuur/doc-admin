@@ -7,7 +7,7 @@ import axios from 'axios';
 const initialState = {
   isLoading: false,
   error: false,
-  categories: {
+  products: {
     data: [],
     currentPage: null,
     numberOfPages: null
@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'category',
+  name: 'products',
   initialState,
   reducers: {
     // START LOADING
@@ -30,9 +30,9 @@ const slice = createSlice({
     },
 
     // GET PRODUCTS
-    getCategoriesSuccess(state, action) {
+    getProductsSuccess(state, action) {
       state.isLoading = false;
-      state.categories = action.payload;
+      state.products = action.payload;
     }
   }
 });
@@ -42,12 +42,12 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getCategories({ page }) {
+export function getProducts({ page }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/categories?page=${page}`);
-      dispatch(slice.actions.getCategoriesSuccess(response.data));
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/products?page=${page}`);
+      dispatch(slice.actions.getProductsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

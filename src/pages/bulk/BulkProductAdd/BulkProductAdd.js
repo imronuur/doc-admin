@@ -11,7 +11,7 @@ import { loadBulkCategories } from '../../../redux/slices/bulkCategories';
 
 let content = null;
 
-BulkCategoryAdd.propTypes = {
+BulkProductAdd.propTypes = {
   categories: PropTypes.array,
   handleBulkAdd: PropTypes.func,
   setBulkCategories: PropTypes.func,
@@ -19,7 +19,7 @@ BulkCategoryAdd.propTypes = {
   loading: PropTypes.bool
 };
 
-export default function BulkCategoryAdd({
+export default function BulkProductAdd({
   categories,
   handleBulkAdd,
   setBulkCategories,
@@ -86,7 +86,7 @@ export default function BulkCategoryAdd({
           onClick={() => handleBulkCategoryUpload(categories)}
           disabled={loading}
         >
-          Upload Categories
+          Upload Products
         </Button>
         <Button
           variant="outlined"
@@ -115,7 +115,7 @@ export default function BulkCategoryAdd({
             }}
             variant="h6"
           >
-            No Bulk Added Categories
+            No Bulk Added Products
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -129,7 +129,7 @@ export default function BulkCategoryAdd({
             startIcon={<Icon icon={plusFill} />}
           >
             <input type="file" accept="text/csv" hidden onChange={(e) => handleBulkAdd(e)} />
-            Add Categories
+            Add Products
           </Button>
         </Grid>
       </Grid>

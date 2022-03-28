@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
+import { sentenceCase } from 'change-case';
+import { useTheme, styled } from '@mui/material/styles';
 
 import {
   Box,
@@ -25,9 +27,10 @@ import {
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getCategories } from '../../../redux/slices/categories';
-import { loadBulkCategories, removeBulkCategories } from '../../../redux/slices/bulkCategories';
-import { deleteCategory, createBulkCategory, deleteManyCategories } from '../../../redux/thunk/categoryThunk';
+import { getProducts } from '../../../redux/slices/products';
+import { loadBulkProducts, removeBulkProducts } from '../../../redux/slices/bulkProducts';
+import { deleteProduct, createBulkProduct, deleteManyProducts } from '../../../redux/thunk/productThunk';
+import { fCurrency } from '../../../utils/formatNumber';
 
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
@@ -39,20 +42,33 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
+import Label from '../../../components/Label';
 
-import { CategoryListHead, CategoryListToolbar, CategoryMoreMenu } from './components';
-import { BulkCategoryAdd } from '../../bulk/BulkCategoryAdd';
-import SubCategory from './subCategory/SubCategory';
+import { ProductListHead, ProductListToolbar, ProductMoreMenu } from './components';
+import { BulkProductAdd } from '../../bulk/BulkProductAdd';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Category Name', align: 'left' },
-  { id: 'dateCreated', label: 'Date Created', align: 'left' },
+  { id: 'name', label: 'Product', align: 'left' },
+  { id: 'category', label: 'Category', align: 'left' },
+  { id: 'salePrice', label: 'Sale Price', align: 'left' },
+  { id: 'quantity', label: 'Quantity', align: 'left' },
+  { id: 'inStock', label: 'In Stock', align: 'left' },
+  { id: 'brand', label: 'Brand', align: 'left' },
+  { id: 'created', label: 'Date created', align: 'left' },
   { id: '' }
 ];
+
+const ThumbImgStyle = styled('img')(({ theme }) => ({
+  width: 64,
+  height: 64,
+  objectFit: 'cover',
+  margin: theme.spacing(0, 2),
+  borderRadius: theme.shape.borderRadiusSm
+}));
 
 // ----------------------------------------------------------------------
 
@@ -92,9 +108,10 @@ function applySortFilter(array, comparator, query) {
 export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { category, bulkCategory } = useSelector((state) => state);
-  const { bulkCategories } = bulkCategory;
-  const { categories } = category;
+  const theme = useTheme();
+  const { product, bulkProduct } = useSelector((state) => state);
+  const { bulkProducts } = bulkProduct;
+  const { products } = product;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -104,21 +121,21 @@ export default function CategoryList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(categories.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(products.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(categories.numberOfPages - 1, page + 1));
+    setPage(Math.min(products.numberOfPages - 1, page + 1));
   };
 
-  const handleDeleteCategory = async (slug) => {
+  const handleDeleteProduct = async (slug) => {
     const reqObject = {
       slug
     };
-    const reduxRes = await dispatch(deleteCategory(reqObject));
-    if (reduxRes.type === 'category/delete/rejected') {
+    const reduxRes = await dispatch(deleteProduct(reqObject));
+    if (reduxRes.type === 'product/delete/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -127,8 +144,8 @@ export default function CategoryList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'category/delete/fulfilled') {
-      enqueueSnackbar(`Category Deleted!`, {
+    } else if (reduxRes.type === 'produc/delete/fulfilled') {
+      enqueueSnackbar(`Product Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -136,7 +153,7 @@ export default function CategoryList() {
           </MIconButton>
         )
       });
-      dispatch(getCategories({ page }));
+      dispatch(getProducts({ page }));
     }
   };
 
@@ -144,7 +161,7 @@ export default function CategoryList() {
     const reqObject = {
       page
     };
-    dispatch(getCategories(reqObject));
+    dispatch(getProducts(reqObject));
   }, [dispatch, page]);
 
   // BULK Category creation
@@ -162,21 +179,21 @@ export default function CategoryList() {
         ...res,
         id: uuidv4()
       }));
-      dispatch(loadBulkCategories(bulkData));
+      dispatch(loadBulkProducts(bulkData));
     }
   };
 
   const handleBulkRemove = (v) => {
-    dispatch(removeBulkCategories(v));
+    dispatch(removeBulkProducts(v));
   };
 
-  const handleBulkCategoryUpload = async (names) => {
+  const handleBulkProductUpload = async (names) => {
     setLoading(true);
     const reqObject = {
       names
     };
-    const reduxRes = await dispatch(createBulkCategory(reqObject));
-    if (reduxRes.type === 'category/create-bulk/rejected') {
+    const reduxRes = await dispatch(createBulkProduct(reqObject));
+    if (reduxRes.type === 'product/create-bulk/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -186,8 +203,8 @@ export default function CategoryList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'category/create-bulk/fulfilled') {
-      enqueueSnackbar(`Categories Created!`, {
+    } else if (reduxRes.type === 'product/create-bulk/fulfilled') {
+      enqueueSnackbar(`Products Created!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -196,8 +213,8 @@ export default function CategoryList() {
         )
       });
       setLoading(false);
-      dispatch(removeBulkCategories([]));
-      dispatch(getCategories({ page }));
+      dispatch(removeBulkProducts([]));
+      dispatch(getProducts({ page }));
     }
   };
 
@@ -206,8 +223,8 @@ export default function CategoryList() {
     const reqObject = {
       ids
     };
-    const reduxRes = await dispatch(deleteManyCategories(reqObject));
-    if (reduxRes.type === 'category/delete-many/rejected') {
+    const reduxRes = await dispatch(deleteManyProducts(reqObject));
+    if (reduxRes.type === 'product/delete-many/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -217,8 +234,8 @@ export default function CategoryList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'category/delete-many/fulfilled') {
-      enqueueSnackbar(`Categories Deleted!`, {
+    } else if (reduxRes.type === 'product/delete-many/fulfilled') {
+      enqueueSnackbar(`Products Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -230,7 +247,7 @@ export default function CategoryList() {
     }
   };
 
-  if (categories?.data.length) {
+  if (products?.data.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -239,7 +256,7 @@ export default function CategoryList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = categories.data.map((n) => n._id);
+        const newSelecteds = products.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -265,13 +282,13 @@ export default function CategoryList() {
       setFilterName(event.target.value);
     };
 
-    const filtredCategories = applySortFilter(categories.data, getComparator(order, orderBy), filterName);
+    const filtredProducts = applySortFilter(products.data, getComparator(order, orderBy), filterName);
 
-    const isCategoryNotFound = filtredCategories.length === 0;
+    const isProductNotFound = filtredProducts.length === 0;
 
     content = (
       <Card>
-        <CategoryListToolbar
+        <ProductListToolbar
           handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
@@ -282,18 +299,18 @@ export default function CategoryList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <CategoryListHead
+              <ProductListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={categories.data.length}
+                rowCount={products.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filtredCategories.map((row) => {
-                  const { _id, name, slug, createdAt } = row;
+                {filtredProducts.map((row) => {
+                  const { _id, name, slug, category, salePrice, quantity, brand, images, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -317,21 +334,38 @@ export default function CategoryList() {
                             alignItems: 'center'
                           }}
                         >
+                          <ThumbImgStyle alt={name} src={images[0]} />
                           <Typography variant="subtitle2" noWrap>
                             {name}
                           </Typography>
                         </Box>
                       </TableCell>
+                      <TableCell>{category?.name}</TableCell>
+                      <TableCell>{fCurrency(salePrice)}</TableCell>
+                      <TableCell>{quantity}</TableCell>
+
+                      <TableCell style={{ minWidth: 160 }}>
+                        <Label
+                          variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+                          color={(quantity <= 0 && 'error') || (quantity <= 10 && 'warning') || 'success'}
+                        >
+                          {(quantity >= 10 && sentenceCase('In Stock')) ||
+                            (quantity <= 10 && sentenceCase('Low In Stock')) ||
+                            (quantity <= 0 && sentenceCase('Out of Stock')) ||
+                            ''}
+                        </Label>
+                      </TableCell>
+                      <TableCell>{brand}</TableCell>
                       <TableCell>{createdAt.split('T')[0]}</TableCell>
 
                       <TableCell align="right">
-                        <CategoryMoreMenu onDelete={() => handleDeleteCategory(slug)} _id={_id} />
+                        <ProductMoreMenu onDelete={() => handleDeleteProduct(slug)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isCategoryNotFound && (
+              {isProductNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -345,7 +379,7 @@ export default function CategoryList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {categories.data.length > 0 && (
+        {products.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -370,7 +404,7 @@ export default function CategoryList() {
         )}
       </Card>
     );
-  } else if (category.isLoading) {
+  } else if (product.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -394,10 +428,10 @@ export default function CategoryList() {
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_ADMIN.forms.newCategory}
+              to={PATH_ADMIN.forms.newProduct}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Category
+              New Product
             </Button>
           }
         />
@@ -407,17 +441,14 @@ export default function CategoryList() {
           </Grid>
           <Grid item xs={12}>
             <Card sx={{ padding: '2%' }}>
-              <BulkCategoryAdd
-                categories={bulkCategories}
+              <BulkProductAdd
+                products={bulkProducts}
                 handleBulkAdd={handleBulkAdd}
-                setBulkCategories={handleBulkRemove}
+                setBulkProducts={handleBulkRemove}
                 loading={loading}
-                handleBulkCategoryUpload={handleBulkCategoryUpload}
+                handleBulkProductUpload={handleBulkProductUpload}
               />
             </Card>
-          </Grid>
-          <Grid item xs={12} sx={{ marginTop: '2%' }}>
-            <SubCategory />
           </Grid>
         </Grid>
       </Container>

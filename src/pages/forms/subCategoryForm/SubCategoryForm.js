@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -10,7 +10,9 @@ import { MIconButton } from '../../../components/@material-extend';
 
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { createCategory } from '../../../redux/thunk/categoryThunk';
+import { createSubCategory } from '../../../redux/thunk/subCategoryThunk';
+import { getAllCategories } from '../../../redux/slices/subCategories';
+
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
 // hooks
@@ -18,8 +20,7 @@ import useSettings from '../../../hooks/useSettings';
 // components
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
-import CategoryNewForm from './components/Form';
-
+import SubCategoryNewForm from './components/Form';
 // ----------------------------------------------------------------------
 
 export default function EcommerceProductCreate() {
@@ -27,22 +28,32 @@ export default function EcommerceProductCreate() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { _id } = useParams();
-  const { categories } = useSelector((state) => state.category);
+  const { subCategory } = useSelector((state) => state);
+  const { subCategories } = subCategory;
   const isEdit = pathname.includes('edit');
-  const currentCategory = categories.data.find((category) => paramCase(category._id) === _id);
+  const currentSubCategory = subCategories.data.find((sub) => paramCase(sub._id) === _id);
 
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const res = await getAllCategories();
+      setCategories(res.data);
+    };
+    loadCategories();
+  }, []);
 
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const handleCategoryCreate = async (name) => {
+  const handleSubCategoryCreate = async (sub) => {
     setLoading(true);
     const reqObject = {
-      name
+      sub
     };
-    const reduxRes = await dispatch(createCategory(reqObject));
-    if (reduxRes.type === 'category/create/rejected') {
+    const reduxRes = await dispatch(createSubCategory(reqObject));
+    if (reduxRes.type === 'subCategory/create/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -52,8 +63,8 @@ export default function EcommerceProductCreate() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'category/create/fulfilled') {
-      enqueueSnackbar(`Category Created`, {
+    } else if (reduxRes.type === 'subCategory/create/fulfilled') {
+      enqueueSnackbar(`Sub Category Created!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -61,30 +72,32 @@ export default function EcommerceProductCreate() {
           </MIconButton>
         )
       });
+      setLoading(false);
       navigate(`${PATH_ADMIN.directories.categories}`);
     }
   };
 
   return (
-    <Page title="Ecommerce: Create a new category | Minimal-UI">
+    <Page title="Create a new sub category | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Create a new category' : 'Edit category'}
+          heading={!isEdit ? 'Create a new sub category' : 'Edit sub category'}
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
               name: 'Categories List',
               href: PATH_ADMIN.directories.categories
             },
-            { name: !isEdit ? 'New category' : currentCategory?.name }
+            { name: !isEdit ? 'New Sub Category' : currentSubCategory?.name }
           ]}
         />
 
-        <CategoryNewForm
+        <SubCategoryNewForm
           isEdit={isEdit}
-          currentCategory={currentCategory}
-          handleCategoryCreate={handleCategoryCreate}
+          currentSubCategory={currentSubCategory}
+          handleSubCategoryCreate={handleSubCategoryCreate}
           loading={loading}
+          categories={categories}
         />
       </Container>
     </Page>

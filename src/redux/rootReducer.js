@@ -6,32 +6,30 @@ import mailReducer from './slices/mail';
 import chatReducer from './slices/chat';
 import blogReducer from './slices/blog';
 import userReducer from './slices/user';
-import productReducer from './slices/product';
 import calendarReducer from './slices/calendar';
 import kanbanReducer from './slices/kanban';
+
 import categoryReducer from './slices/categories';
 import bulkCategoriesReducer from './slices/bulkCategories';
+
+import subCategoryReducer from './slices/subCategories';
+import productReducer from './slices/products';
+import bulkProductsReducer from './slices/bulkProducts';
+
 // ----------------------------------------------------------------------
 
 const rootPersistConfig = {
   key: 'root',
   storage,
   keyPrefix: 'redux-',
-  whitelist: ['']
-};
-
-const productPersistConfig = {
-  key: 'product',
-  storage,
-  keyPrefix: 'redux-',
-  whitelist: ['sortBy', 'checkout']
+  whitelist: ['bulkCategory', 'subCategory', 'product']
 };
 
 const categoryPersistConfig = {
   key: 'category',
   storage,
   keyPrefix: 'redux-',
-  whitelist: ['category', 'bulkCategory']
+  whitelist: ['category']
 };
 
 const rootReducer = combineReducers({
@@ -41,9 +39,11 @@ const rootReducer = combineReducers({
   user: userReducer,
   calendar: calendarReducer,
   kanban: kanbanReducer,
-  product: persistReducer(productPersistConfig, productReducer),
   category: persistReducer(categoryPersistConfig, categoryReducer),
-  bulkCategory: bulkCategoriesReducer
+  bulkCategory: bulkCategoriesReducer,
+  bulkProduct: bulkProductsReducer,
+  subCategory: subCategoryReducer,
+  product: productReducer
 });
 
 export { rootPersistConfig, rootReducer };
