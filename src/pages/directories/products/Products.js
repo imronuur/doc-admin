@@ -1,4 +1,5 @@
 import { filter } from 'lodash';
+import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
@@ -30,10 +31,12 @@ import { useDispatch, useSelector } from '../../../redux/store';
 import { getProducts } from '../../../redux/slices/products';
 import { loadBulkProducts, removeBulkProducts } from '../../../redux/slices/bulkProducts';
 import { deleteProduct, createBulkProduct, deleteManyProducts } from '../../../redux/thunk/productThunk';
+import { createCategory } from '../../../redux/thunk/categoryThunk';
+
 import { fCurrency } from '../../../utils/formatNumber';
 
 // routes
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
+import { PATH_ADMIN } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 // components
@@ -97,7 +100,12 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(
+      array,
+      (_product) =>
+        _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        _product?.category?.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -144,7 +152,7 @@ export default function CategoryList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'produc/delete/fulfilled') {
+    } else if (reduxRes.type === 'product/delete/fulfilled') {
       enqueueSnackbar(`Product Deleted!`, {
         variant: 'success',
         action: (key) => (
@@ -187,10 +195,10 @@ export default function CategoryList() {
     dispatch(removeBulkProducts(v));
   };
 
-  const handleBulkProductUpload = async (names) => {
+  const handleBulkProductUpload = async (products) => {
     setLoading(true);
     const reqObject = {
-      names
+      products
     };
     const reduxRes = await dispatch(createBulkProduct(reqObject));
     if (reduxRes.type === 'product/create-bulk/rejected') {
@@ -419,11 +427,11 @@ export default function CategoryList() {
   }
 
   return (
-    <Page title="Ecommerce: Category List | Minimal-UI">
+    <Page title="Product List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Category List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Category List' }]}
+          heading="Product List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.products }, { name: 'Product List' }]}
           action={
             <Button
               variant="contained"

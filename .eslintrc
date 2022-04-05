@@ -28,6 +28,7 @@
     "import": 0,
     "max-len": 0,
     "no-alert": 0,
+    "no-restricted-syntax": 1,
     "no-shadow": 0,
     "no-console": 0,
     "comma-dangle": 0,

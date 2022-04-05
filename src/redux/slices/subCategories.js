@@ -63,6 +63,24 @@ export const getAllCategories = async () => {
   }
 };
 
+export const getAllSubCategories = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/sub-categories/list-all`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const loadSubCategory = async (_id) => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/category/get-sub/${_id}`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // ----------------------------------------------------------------------
 
 export function getProduct(name) {

@@ -41,16 +41,20 @@ export const PATH_ADMIN = {
     categories: path(ROOTS_ADMIN, '/categories-directory'),
     users: path(ROOTS_ADMIN, '/users-directory'),
     invoices: path(ROOTS_ADMIN, '/invoice-directory'),
-    orders: path(ROOTS_ADMIN, '/order-directory')
+    orders: path(ROOTS_ADMIN, '/order-directory'),
+    couponCode: path(ROOTS_ADMIN, '/coupon-code-directory')
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
-    editCategory: path(ROOTS_ADMIN, '/edit-category/:_id'),
-    editBulkCategory: path(ROOTS_ADMIN, '/edit-bulk-category/:id'),
+    editCategory: path(ROOTS_ADMIN, '/edit-category'),
+    editBulkCategory: path(ROOTS_ADMIN, '/edit-bulk-category/'),
     newSubCategory: path(ROOTS_ADMIN, '/new-sub-category'),
-    editSubCategory: path(ROOTS_ADMIN, '/edit-sub-category/:_id'),
+    editSubCategory: path(ROOTS_ADMIN, '/edit-sub-category/'),
     newProduct: path(ROOTS_ADMIN, '/new-product'),
-    editProduct: path(ROOTS_ADMIN, '/edit-product/:_id')
+    editProduct: path(ROOTS_ADMIN, '/edit-product'),
+    editBulkProduct: path(ROOTS_ADMIN, '/edit-bulk-product/'),
+    newCoupon: path(ROOTS_ADMIN, '/new-coupon'),
+    editCoupon: path(ROOTS_ADMIN, '/edit-coupon')
   }
 };
 

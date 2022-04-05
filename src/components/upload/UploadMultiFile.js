@@ -48,13 +48,23 @@ const DropZoneStyle = styled('div')(({ theme }) => ({
 UploadMultiFile.propTypes = {
   error: PropTypes.bool,
   showPreview: PropTypes.bool,
+  fileLoading: PropTypes.bool,
   files: PropTypes.array,
   onRemove: PropTypes.func,
   onRemoveAll: PropTypes.func,
   sx: PropTypes.object
 };
 
-export default function UploadMultiFile({ error, showPreview = false, files, onRemove, onRemoveAll, sx, ...other }) {
+export default function UploadMultiFile({
+  error,
+  fileLoading,
+  showPreview = false,
+  files,
+  onRemove,
+  onRemoveAll,
+  sx,
+  ...other
+}) {
   const hasFile = files.length > 0;
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
@@ -103,7 +113,7 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
           })
         }}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} disabled={fileLoading} />
 
         <UploadIllustration sx={{ width: 220 }} />
 
@@ -197,7 +207,7 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
                   secondaryTypographyProps={{ variant: 'caption' }}
                 />
                 <ListItemSecondaryAction>
-                  <MIconButton edge="end" size="small" onClick={() => onRemove(file)}>
+                  <MIconButton disabled={fileLoading} edge="end" size="small" onClick={() => onRemove(file)}>
                     <Icon icon={closeFill} />
                   </MIconButton>
                 </ListItemSecondaryAction>
@@ -209,7 +219,7 @@ export default function UploadMultiFile({ error, showPreview = false, files, onR
 
       {hasFile && (
         <Stack direction="row" justifyContent="flex-end">
-          <Button onClick={onRemoveAll} sx={{ mr: 1.5 }}>
+          <Button disabled={fileLoading} onClick={onRemoveAll} sx={{ mr: 1.5 }}>
             Remove all
           </Button>
           <Button variant="contained">Upload files</Button>

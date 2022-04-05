@@ -6,36 +6,30 @@ import { Table, TableHead, TableRow, TableCell, TableBody, Container, Typography
 import { useSelector, useDispatch } from 'react-redux';
 import useSettings from '../../../hooks/useSettings';
 
-import { CategoryBulkMore } from '../components';
-import { loadBulkCategories } from '../../../redux/slices/bulkCategories';
+import { ProductBulkMore } from '../components';
+import { loadBulkProducts } from '../../../redux/slices/bulkProducts';
 
 let content = null;
 
 BulkProductAdd.propTypes = {
-  categories: PropTypes.array,
+  products: PropTypes.array,
   handleBulkAdd: PropTypes.func,
-  setBulkCategories: PropTypes.func,
-  handleBulkUserUpload: PropTypes.func,
+  setBulkProducts: PropTypes.func,
+  handleBulkProductUpload: PropTypes.func,
   loading: PropTypes.bool
 };
 
-export default function BulkProductAdd({
-  categories,
-  handleBulkAdd,
-  setBulkCategories,
-  handleBulkCategoryUpload,
-  loading
-}) {
-  const { bulkCategory } = useSelector((state) => ({ ...state }));
+export default function BulkProductAdd({ products, handleBulkAdd, setBulkProducts, handleBulkProductUpload, loading }) {
+  const { bulkProduct } = useSelector((state) => ({ ...state }));
 
-  const { bulkCategories } = bulkCategory;
+  const { bulkProducts } = bulkProduct;
   const dispatch = useDispatch();
   const handleRemove = (id) => {
-    dispatch(loadBulkCategories(bulkCategories.filter((v) => v.id !== id)));
+    dispatch(loadBulkProducts(bulkProducts.filter((v) => v.id !== id)));
   };
   const { themeStretch } = useSettings();
 
-  if (categories && categories.length > 0) {
+  if (products && products.length > 0) {
     content = (
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -47,30 +41,42 @@ export default function BulkProductAdd({
             }}
             variant="h6"
           >
-            {`Added ${categories.length} Categories`}
+            {`Added ${products.length} products`}
           </Typography>
         </Grid>
 
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Category Name</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Regular price</TableCell>
+              <TableCell>Sale Price</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Size</TableCell>
+              <TableCell>Brand</TableCell>
             </TableRow>
           </TableHead>
-          {categories
+          {products
             .filter((res, index) => index < 10)
-            .map((category, index) => (
+            .map((product, index) => (
               <TableBody key={index}>
                 <TableRow>
-                  <TableCell align="left">{category.name}</TableCell>
+                  <TableCell align="left">{product.name}</TableCell>
+                  <TableCell align="left">{product.description}</TableCell>
+                  <TableCell align="left">{product.regularPrice}</TableCell>
+                  <TableCell align="left">{product.salePrice}</TableCell>
+                  <TableCell align="left">{product.quantity}</TableCell>
+                  <TableCell align="left">{product.size}</TableCell>
+                  <TableCell align="left">{product.brand}</TableCell>
 
                   <TableCell align="right">
-                    <CategoryBulkMore id={category.id} onDelete={() => handleRemove(category.id)} />
+                    <ProductBulkMore id={product.id} onDelete={() => handleRemove(product.id)} />
                   </TableCell>
                 </TableRow>
               </TableBody>
             ))}
-          {categories.length > 10 && (
+          {products.length > 10 && (
             <TableRow>
               <TableCell>And more...</TableCell>
             </TableRow>
@@ -83,7 +89,7 @@ export default function BulkProductAdd({
             marginLeft: '1%'
           }}
           startIcon={<Icon icon={plusFill} />}
-          onClick={() => handleBulkCategoryUpload(categories)}
+          onClick={() => handleBulkProductUpload(products)}
           disabled={loading}
         >
           Upload Products
@@ -95,7 +101,7 @@ export default function BulkProductAdd({
             marginBottom: '1%',
             marginLeft: '1%'
           }}
-          onClick={() => setBulkCategories([])}
+          onClick={() => setBulkProducts([])}
           disabled={loading}
           startIcon={<Icon icon={plusFill} />}
         >

@@ -83,14 +83,21 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.users}`, element: <>users</> },
         { path: `${PATH_ADMIN.directories.invoices}`, element: <>invocies</> },
         { path: `${PATH_ADMIN.directories.orders}`, element: <>orders</> },
+        { path: `${PATH_ADMIN.directories.couponCode}`, element: <CouponCodeList /> },
 
         // Forms
-        { path: `${PATH_ADMIN.forms.newCategory}`, element: <NewCategory /> },
-        { path: `${PATH_ADMIN.forms.editCategory}/:_id`, element: <NewCategory /> },
+        { path: `${PATH_ADMIN.forms.newCategory}`, element: <CategoryForm /> },
+        { path: `${PATH_ADMIN.forms.editCategory}/:_id`, element: <CategoryForm /> },
         { path: `${PATH_ADMIN.forms.editBulkCategory}/:id`, element: <CategoryBulkEdit /> },
 
         { path: `${PATH_ADMIN.forms.newSubCategory}`, element: <NewSubCategory /> },
-        { path: `${PATH_ADMIN.forms.editSubCategory}/:_id`, element: <NewSubCategory /> }
+        { path: `${PATH_ADMIN.forms.editSubCategory}/:_id`, element: <NewSubCategory /> },
+
+        { path: `${PATH_ADMIN.forms.newProduct}`, element: <ProductForm /> },
+        { path: `${PATH_ADMIN.forms.editProduct}/:_id`, element: <ProductForm /> },
+
+        { path: `${PATH_ADMIN.forms.newCoupon}`, element: <div> Coupon From</div> },
+        { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <div> Coupon From</div> }
       ]
     },
 
@@ -117,8 +124,6 @@ export default function Router() {
             { path: 'shop', element: <EcommerceShop /> },
             { path: 'product/:name', element: <EcommerceProductDetails /> },
             { path: 'list', element: <ProductList /> },
-            { path: 'product/new', element: <EcommerceProductCreate /> },
-            { path: 'product/:name/edit', element: <EcommerceProductCreate /> },
             { path: 'checkout', element: <EcommerceCheckout /> },
             { path: 'invoice', element: <EcommerceInvoice /> }
           ]
@@ -261,12 +266,15 @@ const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCod
 // Directories
 const ProductList = Loadable(lazy(() => import('../pages/directories/products/Products')));
 const CategoryList = Loadable(lazy(() => import('../pages/directories/categories/Categories')));
+const CouponCodeList = Loadable(lazy(() => import('../pages/directories/coupon/CouponCode')));
 
 // Form
 
-const NewCategory = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
+const CategoryForm = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
 const CategoryBulkEdit = Loadable(lazy(() => import('../pages/forms/bulk/bulkCategoryForm/BulkCategoryForm')));
 const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryForm/SubCategoryForm')));
+
+const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
 
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
@@ -276,7 +284,6 @@ const GeneralBanking = Loadable(lazy(() => import('../pages/dashboard/GeneralBan
 const GeneralBooking = Loadable(lazy(() => import('../pages/dashboard/GeneralBooking')));
 const EcommerceShop = Loadable(lazy(() => import('../pages/dashboard/EcommerceShop')));
 const EcommerceProductDetails = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetails')));
-const EcommerceProductCreate = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductCreate')));
 const EcommerceCheckout = Loadable(lazy(() => import('../pages/dashboard/EcommerceCheckout')));
 const EcommerceInvoice = Loadable(lazy(() => import('../pages/dashboard/EcommerceInvoice')));
 const BlogPosts = Loadable(lazy(() => import('../pages/dashboard/BlogPosts')));

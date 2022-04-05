@@ -8,13 +8,13 @@ import blogReducer from './slices/blog';
 import userReducer from './slices/user';
 import calendarReducer from './slices/calendar';
 import kanbanReducer from './slices/kanban';
-
 import categoryReducer from './slices/categories';
 import bulkCategoriesReducer from './slices/bulkCategories';
-
+import authReducer from './slices/authSlice';
 import subCategoryReducer from './slices/subCategories';
 import productReducer from './slices/products';
 import bulkProductsReducer from './slices/bulkProducts';
+import couponReducer from './slices/couponSlice';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ const rootPersistConfig = {
   key: 'root',
   storage,
   keyPrefix: 'redux-',
-  whitelist: ['bulkCategory', 'subCategory', 'product']
+  whitelist: ['auth', 'bulkCategory', 'subCategory', 'product', 'bulkProduct', 'coupon']
 };
 
 const categoryPersistConfig = {
@@ -43,7 +43,9 @@ const rootReducer = combineReducers({
   bulkCategory: bulkCategoriesReducer,
   bulkProduct: bulkProductsReducer,
   subCategory: subCategoryReducer,
-  product: productReducer
+  product: productReducer,
+  auth: authReducer,
+  coupon: couponReducer
 });
 
 export { rootPersistConfig, rootReducer };
