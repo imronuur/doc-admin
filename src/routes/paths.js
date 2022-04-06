@@ -54,7 +54,8 @@ export const PATH_ADMIN = {
     editProduct: path(ROOTS_ADMIN, '/edit-product'),
     editBulkProduct: path(ROOTS_ADMIN, '/edit-bulk-product/'),
     newCoupon: path(ROOTS_ADMIN, '/new-coupon'),
-    editCoupon: path(ROOTS_ADMIN, '/edit-coupon')
+    editCoupon: path(ROOTS_ADMIN, '/edit-coupon'),
+    newUser: path(ROOTS_ADMIN, '/new-user')
   }
 };
 

@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'coupon',
+  name: 'usersSlice',
   initialState,
   reducers: {
     startLoading(state) {
@@ -27,7 +27,7 @@ const slice = createSlice({
       state.error = action.payload;
     },
 
-    getCouponSuccess(state, action) {
+    getUsersSliceSuccess(state, action) {
       state.isLoading = false;
       state.codes = action.payload;
     }
@@ -39,12 +39,12 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getCoupon({ page }) {
+export function getUsersSlice({ page }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('http://localhost:8000/api/coupon-code?page=', page);
-      dispatch(slice.actions.getCouponSuccess(response.data));
+      const response = await axios.get('http://localhost:8000/api/users?page=', page);
+      dispatch(slice.actions.getUsersSliceSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

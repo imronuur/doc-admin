@@ -1,4 +1,5 @@
 import { filter } from 'lodash';
+import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
@@ -7,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
+import { sentenceCase } from 'change-case';
+import { useTheme, styled } from '@mui/material/styles';
 
 import {
   Box,
@@ -25,11 +28,15 @@ import {
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getCategories } from '../../../redux/slices/categories';
-import { getCoupon } from '../../../redux/slices/couponSlice';
+import { getProducts } from '../../../redux/slices/products';
+import { loadBulkProducts, removeBulkProducts } from '../../../redux/slices/bulkProducts';
+import { deleteProduct, createBulkProduct, deleteManyProducts } from '../../../redux/thunk/productThunk';
+import { createCategory } from '../../../redux/thunk/categoryThunk';
+
+import { fCurrency } from '../../../utils/formatNumber';
 
 // routes
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
+import { PATH_ADMIN } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 // components
@@ -38,19 +45,33 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
-import { deleteCoupon, deleteManyCoupons } from '../../../redux/thunk/couponThunk';
-import { CategoryListHead, CategoryListToolbar, CategoryMoreMenu } from './components';
+import Label from '../../../components/Label';
+
+import { ProductListHead, ProductListToolbar, ProductMoreMenu } from './components';
+import { getUsersSlice } from '../../../redux/slices/usersSlice';
+import { deleteManyClients, deleteUser } from '../../../redux/thunk/usersThunk';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Category Name', align: 'left' },
-  { id: 'expirayDate', label: 'Expiray Date', align: 'left' },
-  { id: 'discount', label: 'Discount Amount', align: 'left' },
+  { id: 'fullname', label: 'Full Name', align: 'left' },
+  { id: 'email', label: 'Email Address', align: 'left' },
+  { id: 'username', label: 'User Name', align: 'left' },
+  { id: 'dob', label: 'DOB', align: 'left' },
+
+  { id: 'image', label: 'Image', align: 'left' },
   { id: '' }
 ];
+
+const ThumbImgStyle = styled('img')(({ theme }) => ({
+  width: 64,
+  height: 64,
+  objectFit: 'cover',
+  margin: theme.spacing(0, 2),
+  borderRadius: theme.shape.borderRadiusSm
+}));
 
 // ----------------------------------------------------------------------
 
@@ -79,7 +100,12 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(
+      array,
+      (_product) =>
+        _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
+        _product?.category?.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -87,11 +113,13 @@ function applySortFilter(array, comparator, query) {
 
 // ----------------------------------------------------------------------
 
-export default function CategoryList() {
+export default function UsersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { coupon } = useSelector((state) => state);
-  const { codes } = coupon;
+  const theme = useTheme();
+  const { user } = useSelector((state) => state);
+  // console.log(user);
+  const { users } = user;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -101,23 +129,79 @@ export default function CategoryList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(codes.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(users.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(codes.numberOfPages - 1, page + 1));
+    setPage(Math.min(users.numberOfPages - 1, page + 1));
+  };
+
+  const handleDeleteProduct = async (_id) => {
+    const reqObject = {
+      _id
+    };
+    const reduxRes = await dispatch(deleteUser(reqObject));
+    if (reduxRes.type === 'user/delete/rejected') {
+      enqueueSnackbar(`${reduxRes.error.message}`, {
+        variant: 'error',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+    } else if (reduxRes.type === 'user/delete/fulfilled') {
+      enqueueSnackbar(`User Deleted!`, {
+        variant: 'success',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      dispatch(getUsersSlice({ page }));
+    }
   };
 
   useEffect(() => {
     const reqObject = {
       page
     };
-    dispatch(getCoupon(reqObject));
+    dispatch(getUsersSlice(reqObject));
   }, [dispatch, page]);
 
-  if (codes?.data.length) {
+  const handleDeleteMany = async (ids) => {
+    setLoading(true);
+    const reqObject = {
+      ids
+    };
+    const reduxRes = await dispatch(deleteManyClients(reqObject));
+    if (reduxRes.type === 'user/delete-many/rejected') {
+      enqueueSnackbar(`${reduxRes.error.message}`, {
+        variant: 'error',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      setLoading(false);
+    } else if (reduxRes.type === 'users/delete-many/fulfilled') {
+      enqueueSnackbar(`Users Deleted!`, {
+        variant: 'success',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      window.location.reload();
+    }
+  };
+
+  if (user?.data) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -126,71 +210,14 @@ export default function CategoryList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = codes.data.map((n) => n._id);
+        const newSelecteds = user.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
       setSelected([]);
     };
 
-    const handleDeleteOne = async (_id) => {
-      const reqObject = {
-        _id
-      };
-      const reduxRes = await dispatch(deleteCoupon(reqObject));
-      if (reduxRes.type === 'coupon/delete/rejected') {
-        enqueueSnackbar(`${reduxRes.error.message}`, {
-          variant: 'error',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
-      } else if (reduxRes.type === 'coupon/delete/fulfilled') {
-        enqueueSnackbar(`Coupon Deleted!`, {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
-        dispatch(getCoupon({ page }));
-      }
-    };
-
-    const handleDeleteMany = async (ids) => {
-      setLoading(true);
-      const reqObject = {
-        ids
-      };
-      const reduxRes = await dispatch(deleteManyCoupons(reqObject));
-      if (reduxRes.type === 'coupon/delete-many/rejected') {
-        enqueueSnackbar(`${reduxRes.error.message}`, {
-          variant: 'error',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
-        setLoading(false);
-      } else if (reduxRes.type === 'coupons/delete-many/fulfilled') {
-        enqueueSnackbar(`Coupons Deleted!`, {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
-        window.location.reload();
-      }
-    };
-
     const handleClick = (event, name) => {
-      console.log(event, name);
       const selectedIndex = selected.indexOf(name);
       let newSelected = [];
       if (selectedIndex === -1) {
@@ -209,14 +236,14 @@ export default function CategoryList() {
       setFilterName(event.target.value);
     };
 
-    const filtredCategories = applySortFilter(codes.data, getComparator(order, orderBy), filterName);
+    const filtredProducts = applySortFilter(user.data, getComparator(order, orderBy), filterName);
 
-    const isCategoryNotFound = filtredCategories.length === 0;
+    const isProductNotFound = filtredProducts.length === 0;
 
     content = (
       <Card>
-        <CategoryListToolbar
-          handleDeleteMany={handleDeleteMany}
+        <ProductListToolbar
+          handleDeleteMany="handleDeleteMany"
           loading={loading}
           selected={selected}
           filterName={filterName}
@@ -226,18 +253,18 @@ export default function CategoryList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <CategoryListHead
+              <ProductListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={codes.data.length}
+                rowCount={user.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filtredCategories.map((row) => {
-                  const { _id, name, expirayDate, discount } = row;
+                {filtredProducts.map((row) => {
+                  const { _id, fullname, username, email, dob, images, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -261,22 +288,28 @@ export default function CategoryList() {
                             alignItems: 'center'
                           }}
                         >
+                          <ThumbImgStyle alt="user-image" src={images[0]} />
                           <Typography variant="subtitle2" noWrap>
-                            {name}
+                            {fullname}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>{expirayDate}</TableCell>
-                      <TableCell>{discount}</TableCell>
+
+                      <TableCell>{username}</TableCell>
+                      <TableCell>{email}</TableCell>
+
+                      <TableCell>{dob}</TableCell>
+
+                      <TableCell>{createdAt.split('T')[0]}</TableCell>
 
                       <TableCell align="right">
-                        <CategoryMoreMenu onDelete={() => handleDeleteOne(_id)} _id={_id} />
+                        <ProductMoreMenu onDelete={() => handleDeleteProduct(_id)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isCategoryNotFound && (
+              {isProductNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -290,7 +323,7 @@ export default function CategoryList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {codes.data.length > 0 && (
+        {users.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -315,7 +348,7 @@ export default function CategoryList() {
         )}
       </Card>
     );
-  } else if (codes.isLoading) {
+  } else if (user.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -330,19 +363,19 @@ export default function CategoryList() {
   }
 
   return (
-    <Page title="Ecommerce: Coupon Code List | Minimal-UI">
+    <Page title="Product List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Coupon Code List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Coupon Code List' }]}
+          heading="Users List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.users }, { name: 'Users List' }]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_ADMIN.forms.newCoupon}
+              to={PATH_ADMIN.forms.newUser}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Coupon
+              New User
             </Button>
           }
         />
