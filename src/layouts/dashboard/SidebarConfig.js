@@ -42,7 +42,7 @@ const sidebarConfig = [
       },
       { title: 'Products', path: PATH_ADMIN.directories.products, icon: ICONS.products },
       { title: 'Categories', path: PATH_ADMIN.directories.categories, icon: ICONS.categories },
-      { title: 'Users', path: PATH_ADMIN.directories.users, icon: ICONS.users },
+      { title: 'Clients', path: PATH_ADMIN.directories.clients, icon: ICONS.users },
       { title: 'Invoices', path: PATH_ADMIN.directories.invoices, icon: ICONS.invoices },
       { title: 'Orders', path: PATH_ADMIN.directories.orders, icon: ICONS.orders },
       { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon }

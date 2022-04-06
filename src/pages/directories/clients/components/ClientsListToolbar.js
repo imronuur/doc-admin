@@ -31,7 +31,7 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-CategoryListToolbar.propTypes = {
+ClientListToolbar.propTypes = {
   selected: PropTypes.array,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
@@ -39,7 +39,7 @@ CategoryListToolbar.propTypes = {
   loading: PropTypes.bool
 };
 
-export default function CategoryListToolbar({ selected, loading, filterName, onFilterName, handleDeleteMany }) {
+export default function ClientListToolbar({ selected, loading, filterName, onFilterName, handleDeleteMany }) {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
 

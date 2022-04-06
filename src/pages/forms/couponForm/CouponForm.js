@@ -66,6 +66,7 @@ export default function EcommerceCouponCreate() {
           </MIconButton>
         )
       });
+      window.location.reload();
       setLoading(false);
       navigate(`${PATH_ADMIN.directories.couponCode}`);
     }

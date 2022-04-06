@@ -80,7 +80,7 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.overview}`, element: <GeneralApp /> },
         { path: `${PATH_ADMIN.directories.products}`, element: <ProductList /> },
         { path: `${PATH_ADMIN.directories.categories}`, element: <CategoryList /> },
-        { path: `${PATH_ADMIN.directories.users}`, element: <Users /> },
+        { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
         { path: `${PATH_ADMIN.directories.invoices}`, element: <>invocies</> },
 
         { path: `${PATH_ADMIN.directories.orders}`, element: <>orders</> },
@@ -98,8 +98,8 @@ export default function Router() {
 
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
-        { path: `${PATH_ADMIN.forms.newUser}`, element: <NewUserForm /> },
-        { path: `${PATH_ADMIN.forms.editUser}/:_id`, element: <NewUserForm /> }
+        { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
+        { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> }
       ]
     },
 
@@ -269,7 +269,7 @@ const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCod
 const ProductList = Loadable(lazy(() => import('../pages/directories/products/Products')));
 const CategoryList = Loadable(lazy(() => import('../pages/directories/categories/Categories')));
 const CouponCodeList = Loadable(lazy(() => import('../pages/directories/coupon/CouponCode')));
-const Users = Loadable(lazy(() => import('../pages/directories/users/Users')));
+const Clients = Loadable(lazy(() => import('../pages/directories/clients/Clients')));
 
 // Form
 
@@ -278,7 +278,7 @@ const CategoryBulkEdit = Loadable(lazy(() => import('../pages/forms/bulk/bulkCat
 const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryForm/SubCategoryForm')));
 const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/CouponForm')));
 const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
-const NewUserForm = Loadable(lazy(() => import('../pages/forms/usersForm/UsersForm')));
+const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/clientsForm')));
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));

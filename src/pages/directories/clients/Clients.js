@@ -28,12 +28,6 @@ import {
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getProducts } from '../../../redux/slices/products';
-import { loadBulkProducts, removeBulkProducts } from '../../../redux/slices/bulkProducts';
-import { deleteProduct, createBulkProduct, deleteManyProducts } from '../../../redux/thunk/productThunk';
-import { createCategory } from '../../../redux/thunk/categoryThunk';
-
-import { fCurrency } from '../../../utils/formatNumber';
 
 // routes
 import { PATH_ADMIN } from '../../../routes/paths';
@@ -47,31 +41,25 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
 import Label from '../../../components/Label';
 
-import { ProductListHead, ProductListToolbar, ProductMoreMenu } from './components';
-import { getUsersSlice } from '../../../redux/slices/usersSlice';
-import { deleteManyClients, deleteUser } from '../../../redux/thunk/usersThunk';
+import ClientListHead from './components/ClientsListHead';
+import ClientListToolbar from './components/ClientsListToolbar';
+import ClientMoreMenu from './components/ClientsMoreMenu';
+
+import { getClients } from '../../../redux/slices/clients';
+import { deleteManyClients, deleteClient } from '../../../redux/thunk/clientsThunk';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'fullname', label: 'Full Name', align: 'left' },
+  { id: 'name', label: 'Full Name', align: 'left' },
   { id: 'email', label: 'Email Address', align: 'left' },
-  { id: 'username', label: 'User Name', align: 'left' },
-  { id: 'dob', label: 'DOB', align: 'left' },
-
-  { id: 'image', label: 'Image', align: 'left' },
+  { id: 'phone', label: 'Phone Number', align: 'left' },
+  { id: 'state', label: 'State', align: 'left' },
+  { id: 'company', label: 'Company', align: 'left' },
   { id: '' }
 ];
-
-const ThumbImgStyle = styled('img')(({ theme }) => ({
-  width: 64,
-  height: 64,
-  objectFit: 'cover',
-  margin: theme.spacing(0, 2),
-  borderRadius: theme.shape.borderRadiusSm
-}));
 
 // ----------------------------------------------------------------------
 
@@ -99,15 +87,6 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
 
-  if (query) {
-    return filter(
-      array,
-      (_product) =>
-        _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-        _product?.category?.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
-  }
-
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -116,10 +95,9 @@ function applySortFilter(array, comparator, query) {
 export default function UsersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
-  const { user } = useSelector((state) => state);
-  // console.log(user);
-  const { users } = user;
+  const { client } = useSelector((state) => state);
+  const { clients } = client;
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -129,21 +107,21 @@ export default function UsersList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(users.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(clients.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(users.numberOfPages - 1, page + 1));
+    setPage(Math.min(clients.numberOfPages - 1, page + 1));
   };
 
   const handleDeleteProduct = async (_id) => {
     const reqObject = {
       _id
     };
-    const reduxRes = await dispatch(deleteUser(reqObject));
-    if (reduxRes.type === 'user/delete/rejected') {
+    const reduxRes = await dispatch(deleteClient(reqObject));
+    if (reduxRes.type === 'clients/delete/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -152,8 +130,8 @@ export default function UsersList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'user/delete/fulfilled') {
-      enqueueSnackbar(`User Deleted!`, {
+    } else if (reduxRes.type === 'clients/delete/fulfilled') {
+      enqueueSnackbar(`Clients Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -161,7 +139,7 @@ export default function UsersList() {
           </MIconButton>
         )
       });
-      dispatch(getUsersSlice({ page }));
+      dispatch(getClients({ page }));
     }
   };
 
@@ -169,7 +147,8 @@ export default function UsersList() {
     const reqObject = {
       page
     };
-    dispatch(getUsersSlice(reqObject));
+
+    dispatch(getClients(reqObject));
   }, [dispatch, page]);
 
   const handleDeleteMany = async (ids) => {
@@ -178,7 +157,7 @@ export default function UsersList() {
       ids
     };
     const reduxRes = await dispatch(deleteManyClients(reqObject));
-    if (reduxRes.type === 'user/delete-many/rejected') {
+    if (reduxRes.type === 'clients/delete-many/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -188,8 +167,8 @@ export default function UsersList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'users/delete-many/fulfilled') {
-      enqueueSnackbar(`Users Deleted!`, {
+    } else if (reduxRes.type === 'clients/delete-many/fulfilled') {
+      enqueueSnackbar(`Clients Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -201,7 +180,7 @@ export default function UsersList() {
     }
   };
 
-  if (user?.data) {
+  if (clients.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -210,7 +189,7 @@ export default function UsersList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = user.data.map((n) => n._id);
+        const newSelecteds = clients.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -236,14 +215,14 @@ export default function UsersList() {
       setFilterName(event.target.value);
     };
 
-    const filtredProducts = applySortFilter(user.data, getComparator(order, orderBy), filterName);
+    const filteredClients = applySortFilter(clients, getComparator(order, orderBy), filterName);
 
-    const isProductNotFound = filtredProducts.length === 0;
+    const isClientNotFound = filteredClients.length === 0;
 
     content = (
       <Card>
-        <ProductListToolbar
-          handleDeleteMany="handleDeleteMany"
+        <ClientListToolbar
+          handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
           filterName={filterName}
@@ -253,18 +232,18 @@ export default function UsersList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <ProductListHead
+              <ClientListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={user.data.length}
+                rowCount={clients.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filtredProducts.map((row) => {
-                  const { _id, fullname, username, email, dob, images, createdAt } = row;
+                {filteredClients.map((row) => {
+                  const { _id, name, state, email, phone, company } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -288,28 +267,26 @@ export default function UsersList() {
                             alignItems: 'center'
                           }}
                         >
-                          <ThumbImgStyle alt="user-image" src={images[0]} />
                           <Typography variant="subtitle2" noWrap>
-                            {fullname}
+                            {name}
                           </Typography>
                         </Box>
                       </TableCell>
 
-                      <TableCell>{username}</TableCell>
                       <TableCell>{email}</TableCell>
+                      <TableCell>{phone}</TableCell>
 
-                      <TableCell>{dob}</TableCell>
-
-                      <TableCell>{createdAt.split('T')[0]}</TableCell>
+                      <TableCell>{state}</TableCell>
+                      <TableCell>{company}</TableCell>
 
                       <TableCell align="right">
-                        <ProductMoreMenu onDelete={() => handleDeleteProduct(_id)} _id={_id} />
+                        <ClientMoreMenu onDelete={() => handleDeleteProduct(_id)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isProductNotFound && (
+              {isClientNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -323,7 +300,7 @@ export default function UsersList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {users.data.length > 0 && (
+        {clients.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -348,7 +325,7 @@ export default function UsersList() {
         )}
       </Card>
     );
-  } else if (user.isLoading) {
+  } else if (clients.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -357,25 +334,27 @@ export default function UsersList() {
   } else {
     content = (
       <Card>
-        <Typography>Error</Typography>
+        <Typography px={10} py={5} fontSize={20}>
+          No Clients Found
+        </Typography>
       </Card>
     );
   }
 
   return (
-    <Page title="Product List | iDan">
+    <Page title="Clients List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Users List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.users }, { name: 'Users List' }]}
+          heading="Clients List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.clients }, { name: 'Clients List' }]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_ADMIN.forms.newUser}
+              to={PATH_ADMIN.forms.newClients}
               startIcon={<Icon icon={plusFill} />}
             >
-              New User
+              New Clients
             </Button>
           }
         />

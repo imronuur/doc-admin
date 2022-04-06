@@ -7,7 +7,7 @@ import axios from 'axios';
 const initialState = {
   isLoading: false,
   error: false,
-  codes: {
+  clients: {
     data: [],
     currentPage: null,
     numberOfPages: null
@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'usersSlice',
+  name: 'client',
   initialState,
   reducers: {
     startLoading(state) {
@@ -27,9 +27,9 @@ const slice = createSlice({
       state.error = action.payload;
     },
 
-    getUsersSliceSuccess(state, action) {
+    getClientsSuccess(state, action) {
       state.isLoading = false;
-      state.codes = action.payload;
+      state.clients = action.payload;
     }
   }
 });
@@ -39,12 +39,12 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getUsersSlice({ page }) {
+export function getClients({ page }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('http://localhost:8000/api/users?page=', page);
-      dispatch(slice.actions.getUsersSliceSuccess(response.data));
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/clients?page=', ${page}`);
+      dispatch(slice.actions.getClientsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

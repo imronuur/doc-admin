@@ -17,8 +17,7 @@ CouponNewForm.propTypes = {
   isEdit: PropTypes.bool,
   currentCategory: PropTypes.object,
   handleSubCategoryCreate: PropTypes.func,
-  loading: PropTypes.bool,
-  categories: PropTypes.array
+  loading: PropTypes.bool
 };
 
 export default function CouponNewForm({ isEdit, currentCoupons, handleCouponCreate, loading }) {

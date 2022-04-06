@@ -43,7 +43,7 @@ export function getCoupon({ page }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('http://localhost:8000/api/coupon-code?page=', page);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/coupon-code?page=', ${page}`);
       dispatch(slice.actions.getCouponSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

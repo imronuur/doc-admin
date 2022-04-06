@@ -39,7 +39,7 @@ export const PATH_ADMIN = {
     overview: path(ROOTS_ADMIN, '/overview'),
     products: path(ROOTS_ADMIN, '/product-directory'),
     categories: path(ROOTS_ADMIN, '/categories-directory'),
-    users: path(ROOTS_ADMIN, '/users-directory'),
+    clients: path(ROOTS_ADMIN, '/clients-directory'),
     invoices: path(ROOTS_ADMIN, '/invoice-directory'),
     orders: path(ROOTS_ADMIN, '/order-directory'),
     couponCode: path(ROOTS_ADMIN, '/coupon-code-directory')
@@ -55,7 +55,8 @@ export const PATH_ADMIN = {
     editBulkProduct: path(ROOTS_ADMIN, '/edit-bulk-product/'),
     newCoupon: path(ROOTS_ADMIN, '/new-coupon'),
     editCoupon: path(ROOTS_ADMIN, '/edit-coupon'),
-    newUser: path(ROOTS_ADMIN, '/new-user')
+    newClients: path(ROOTS_ADMIN, '/new-clients'),
+    editClients: path(ROOTS_ADMIN, '/edit-clients')
   }
 };
 

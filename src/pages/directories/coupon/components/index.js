@@ -1,3 +1,3 @@
-export { default as CategoryListHead } from './CategoryListHead';
-export { default as CategoryListToolbar } from './CategoryListToolbar';
-export { default as CategoryMoreMenu } from './CategoryMoreMenu';
+export { default as CouponsListHead } from './CouponsListHead';
+export { default as CouponsListToolbar } from './CouponsListToolbar';
+export { default as CouponsMoreMenu } from './CouponsMoreMenu';

@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createUser = createAsyncThunk('clients/create', async ({ user }) => {
+export const createClient = createAsyncThunk('clients/create', async ({ client }) => {
   const headers = {
     'Content-Type': 'application/json'
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_BACKEND_API}/clients`,
-    { user },
+    `${process.env.REACT_APP_BACKEND_API}/client`,
+    { client },
     {
       headers
     }
@@ -15,7 +15,7 @@ export const createUser = createAsyncThunk('clients/create', async ({ user }) =>
   return res;
 });
 
-export const deleteUser = createAsyncThunk('clients/delete', async ({ _id }) => {
+export const deleteClient = createAsyncThunk('clients/delete', async ({ _id }) => {
   const headers = {
     'Content-Type': 'application/json'
   };
