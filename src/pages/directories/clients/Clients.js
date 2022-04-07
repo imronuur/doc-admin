@@ -190,7 +190,7 @@ export default function ClientList() {
     }
   };
 
-  if (clients?.clients.length) {
+  if (clients?.clients) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -335,7 +335,7 @@ export default function ClientList() {
         )}
       </Card>
     );
-  } else if (clients.clients.isLoading) {
+  } else if (clients.clients?.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
