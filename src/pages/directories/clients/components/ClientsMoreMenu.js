@@ -40,13 +40,6 @@ export default function ClientMoreMenu({ onDelete, _id }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem component={RouterLink} to="/" sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={eyeFill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="View More" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-
         <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
@@ -54,7 +47,7 @@ export default function ClientMoreMenu({ onDelete, _id }) {
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to={`${PATH_ADMIN.forms.editProduct}/${_id}`} sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink} to={`${PATH_ADMIN.forms.editClients}/${_id}`} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>

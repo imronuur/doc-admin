@@ -60,7 +60,7 @@ export default function ClientListToolbar({ selected, loading, filterName, onFil
         <SearchStyle
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search product..."
+          placeholder="Search client..."
           startAdornment={
             <InputAdornment position="start">
               <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />

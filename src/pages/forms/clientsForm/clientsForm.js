@@ -29,10 +29,10 @@ export default function ClientsForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
 
-  const { clients } = useSelector((state) => state);
-
+  const { client } = useSelector((state) => state);
+  const { clients } = client;
   const isEdit = pathname.includes('edit');
-  const currentClient = clients?.data.find((cli) => paramCase(cli._id) === _id);
+  const currentClient = clients?.clients.find((cli) => paramCase(cli._id) === _id);
 
   const [loading, setLoading] = useState(false);
 

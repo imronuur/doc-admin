@@ -91,6 +91,7 @@ export default function CategoryList() {
   const dispatch = useDispatch();
   const { coupon } = useSelector((state) => state);
   const { codes } = coupon;
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);

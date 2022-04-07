@@ -1,3 +1,3 @@
-export { default as ProductListHead } from './ClientsListHead';
-export { default as ProductListToolbar } from './ClientsListToolbar';
-export { default as ProductMoreMenu } from './ClientsMoreMenu';
+export { default as ClientListHead } from './ClientsListHead';
+export { default as ClientListToolbar } from './ClientsListToolbar';
+export { default as ClientMoreMenu } from './ClientsMoreMenu';

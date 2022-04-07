@@ -19,7 +19,7 @@ export const deleteClient = createAsyncThunk('clients/delete', async ({ _id }) =
   const headers = {
     'Content-Type': 'application/json'
   };
-  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/clients/${_id}`, {
+  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/client/${_id}`, {
     headers
   });
   return res;
@@ -30,7 +30,7 @@ export const deleteManyClients = createAsyncThunk('clients/delete-many', async (
     'Content-Type': 'application/json'
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_BACKEND_API}/clients-delete-many`,
+    `${process.env.REACT_APP_BACKEND_API}/client-delete-many`,
     { ids },
     {
       headers
