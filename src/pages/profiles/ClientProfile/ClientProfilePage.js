@@ -25,16 +25,14 @@ export default function RouteProfilePage() {
     currentClient = clients.data.find((client) => client._id === _id);
   }
 
-  console.log(currentClient);
-
   return (
-    <Page title="Client | Fleet Management">
+    <Page title="Client |  iDAN">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading={`Client Profile ${_id}`}
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
-            { name: 'Routes Directory', href: PATH_ADMIN.directories.clients },
+            { name: 'Profiles Directory', href: PATH_ADMIN.directories.clients },
             { name: currentClient?.name || '' }
           ]}
         />

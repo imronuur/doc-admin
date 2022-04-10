@@ -107,7 +107,6 @@ export default function ClientList() {
   const { client } = useSelector((state) => state);
 
   const { clients } = client;
-
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -190,7 +189,7 @@ export default function ClientList() {
     }
   };
 
-  if (clients?.clients) {
+  if (clients?.data.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -199,7 +198,7 @@ export default function ClientList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = clients.clients.map((n) => n._id);
+        const newSelecteds = clients.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -225,7 +224,7 @@ export default function ClientList() {
       setFilterName(event.target.value);
     };
 
-    const filteredCleints = applySortFilter(clients.clients, getComparator(order, orderBy), filterName);
+    const filteredCleints = applySortFilter(clients.data, getComparator(order, orderBy), filterName);
 
     const isClientNotFound = filteredCleints.length === 0;
 
@@ -246,7 +245,7 @@ export default function ClientList() {
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={clients.clients.length}
+                rowCount={clients.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
@@ -310,7 +309,7 @@ export default function ClientList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {clients.clients.length > 0 && (
+        {clients.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -335,7 +334,7 @@ export default function ClientList() {
         )}
       </Card>
     );
-  } else if (clients.clients?.isLoading) {
+  } else if (client.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />

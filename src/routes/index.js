@@ -99,7 +99,8 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
-        { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> }
+        { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> },
+        { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> }
       ]
     },
 
@@ -279,6 +280,10 @@ const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryFor
 const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/CouponForm')));
 const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
 const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/clientsForm')));
+
+// profiles
+const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
+
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));

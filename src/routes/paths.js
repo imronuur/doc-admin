@@ -57,6 +57,9 @@ export const PATH_ADMIN = {
     editCoupon: path(ROOTS_ADMIN, '/edit-coupon'),
     newClients: path(ROOTS_ADMIN, '/new-clients'),
     editClients: path(ROOTS_ADMIN, '/edit-clients')
+  },
+  profiles: {
+    clientProfile: path(ROOTS_ADMIN, '/client-profile')
   }
 };
 
