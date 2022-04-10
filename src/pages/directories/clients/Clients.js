@@ -52,7 +52,7 @@ import ClientMoreMenu from './components/ClientsMoreMenu';
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Full Name', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
   { id: 'email', label: 'Email Address', align: 'left' },
   { id: 'phone', label: 'Phone Number', align: 'left' },
   { id: 'state', label: 'State', align: 'left' },
