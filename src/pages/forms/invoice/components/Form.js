@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik } from 'formik';
+import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
@@ -20,7 +20,9 @@ import {
   FormHelperText,
   FormControlLabel,
   MenuItem,
-  FormLabel
+  FormLabel,
+  CardHeader,
+  Button
 } from '@mui/material';
 
 import { useSelector } from '../../../../redux/store';
@@ -32,23 +34,28 @@ import { Validations } from './Validations';
 
 ClientsForm.propTypes = {
   isEdit: PropTypes.bool,
-  currentProduct: PropTypes.object,
+  currentInvoice: PropTypes.object,
   handleCreate: PropTypes.func,
   loading: PropTypes.bool
 };
 
 const statuses = [{ value: 'All' }, { value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
-export default function ClientsForm({ isEdit, currentClient, handleCreate, loading }) {
+export default function ClientsForm({ isEdit, currentInvoice, handleCreate, loading }) {
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: {
-      name: currentClient?.name || '',
-      state: currentClient?.state || '',
-      email: currentClient?.email || '',
-      phone: currentClient?.phone || '',
-      company: currentClient?.company || '',
-      _id: currentClient?._id
-    },
+    // eslint-disable-next-line no-unneeded-ternary
+    initialValues: currentInvoice
+      ? currentInvoice
+      : {
+          items: [
+            {
+              itemName: 'Mogadishu',
+              unitPrice: '',
+              quantity: 'Mogadishu',
+              discount: 'Banaadir'
+            }
+          ]
+        },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
@@ -106,6 +113,99 @@ export default function ClientsForm({ isEdit, currentClient, handleCreate, loadi
                       error={Boolean(touched.dueDate && errors.dueDate)}
                       helperText={touched.dueDate && errors.dueDate}
                       type="date"
+                    />
+                  </Grid>
+                </Stack>
+                <Stack sx={{ display: 'flex', flexDirection: 'row' }} gap={3}>
+                  <Grid item xs={12}>
+                    <FieldArray
+                      name="items"
+                      render={(arrayHelpers) => (
+                        <>
+                          {arrayHelpers.form.values.items && arrayHelpers.form.values.items.length >= 0 ? (
+                            <>
+                              {arrayHelpers.form.values.items.map((res, index) => (
+                                <>
+                                  <CardHeader title="Details" sx={{ p: 1 }} />
+                                  <Stack spacing={3}>
+                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 2 }}>
+                                      <Grid item xs={6}>
+                                        <TextField
+                                          fullWidth
+                                          label="Item name"
+                                          {...getFieldProps(`items.${index}.itemName`)}
+                                          error={Boolean(getIn(errors, `items.${index}.itemName`))}
+                                          helperText={getIn(errors, `items.${index}.itemName`)}
+                                        />
+                                      </Grid>
+                                      <Grid item xs={2}>
+                                        <TextField
+                                          fullWidth
+                                          label="Unit Price"
+                                          {...getFieldProps(`items.${index}.unitPrice`)}
+                                          error={Boolean(getIn(errors, `items.${index}.unitPrice`))}
+                                          helperText={getIn(errors, `items.${index}.unitPrice`)}
+                                        />
+                                      </Grid>
+                                      <Grid item xs={2}>
+                                        <TextField
+                                          fullWidth
+                                          label="Quantity"
+                                          {...getFieldProps(`items.${index}.quantity`)}
+                                          error={Boolean(getIn(errors, `items.${index}.quantity`))}
+                                          helperText={getIn(errors, `items.${index}.quantity`)}
+                                        />
+                                      </Grid>
+                                      <Grid item xs={2}>
+                                        <TextField
+                                          fullWidth
+                                          label="Discount"
+                                          {...getFieldProps(`items.${index}.discount`)}
+                                          error={Boolean(getIn(errors, `items.${index}.discount`))}
+                                          helperText={getIn(errors, `items.${index}.discount`)}
+                                        />
+                                      </Grid>
+                                    </Stack>
+                                  </Stack>
+
+                                  <Grid item xs={12} sm={6}>
+                                    <Grid item xs={2}>
+                                      <Button
+                                        variant="contained"
+                                        disabled={arrayHelpers.form.values.items.length === 1}
+                                        color="secondary"
+                                        onClick={() => arrayHelpers.remove(index)}
+                                        sx={{ mt: 3, ml: 1 }}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </Grid>
+                                  </Grid>
+                                </>
+                              ))}
+                              <Grid item xs={12}>
+                                <Button
+                                  type="button"
+                                  variant="text"
+                                  onClick={() =>
+                                    arrayHelpers.push({
+                                      itemName: '',
+                                      unitPrice: '',
+                                      quantity: '',
+                                      discount: ''
+                                    })
+                                  }
+                                  sx={{ mt: 3, ml: 1 }}
+                                >
+                                  + Add Item
+                                </Button>
+                              </Grid>
+                            </>
+                          ) : (
+                            <Typography> Nothing</Typography>
+                          )}
+                        </>
+                      )}
                     />
                   </Grid>
                 </Stack>
