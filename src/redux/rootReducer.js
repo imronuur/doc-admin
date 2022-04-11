@@ -16,14 +16,14 @@ import productReducer from './slices/products';
 import bulkProductsReducer from './slices/bulkProducts';
 import couponReducer from './slices/couponSlice';
 import clientReducer from './slices/clients';
-
+import invoiceReducer from './slices/invoiceSlice';
 // ----------------------------------------------------------------------
 
 const rootPersistConfig = {
   key: 'root',
   storage,
   keyPrefix: 'redux-',
-  whitelist: ['auth', 'bulkCategory', 'subCategory', 'product', 'bulkProduct', 'coupon', 'client']
+  whitelist: ['auth', 'bulkCategory', 'subCategory', 'product', 'bulkProduct', 'coupon', 'client', 'invoice']
 };
 
 const categoryPersistConfig = {
@@ -47,7 +47,8 @@ const rootReducer = combineReducers({
   product: productReducer,
   auth: authReducer,
   coupon: couponReducer,
-  client: clientReducer
+  client: clientReducer,
+  invoice: invoiceReducer
 });
 
 export { rootPersistConfig, rootReducer };

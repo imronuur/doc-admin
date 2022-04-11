@@ -189,7 +189,7 @@ export default function ClientList() {
     }
   };
 
-  if (clients?.data.length) {
+  if (clients?.data?.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');

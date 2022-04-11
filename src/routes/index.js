@@ -81,7 +81,7 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.products}`, element: <ProductList /> },
         { path: `${PATH_ADMIN.directories.categories}`, element: <CategoryList /> },
         { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
-        { path: `${PATH_ADMIN.directories.invoices}`, element: <>invocies</> },
+        { path: `${PATH_ADMIN.directories.invoices}`, element: <Invoices /> },
 
         { path: `${PATH_ADMIN.directories.orders}`, element: <>orders</> },
         { path: `${PATH_ADMIN.directories.couponCode}`, element: <CouponCodeList /> },
@@ -96,11 +96,13 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.newProduct}`, element: <ProductForm /> },
         { path: `${PATH_ADMIN.forms.editProduct}/:_id`, element: <ProductForm /> },
 
+        { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> },
+
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
         { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> },
-        { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> }
+        { path: `${PATH_ADMIN.forms.newInvoice}`, element: <NewInvoiceForm /> }
       ]
     },
 
@@ -271,7 +273,7 @@ const ProductList = Loadable(lazy(() => import('../pages/directories/products/Pr
 const CategoryList = Loadable(lazy(() => import('../pages/directories/categories/Categories')));
 const CouponCodeList = Loadable(lazy(() => import('../pages/directories/coupon/CouponCode')));
 const Clients = Loadable(lazy(() => import('../pages/directories/clients/Clients')));
-
+const Invoices = Loadable(lazy(() => import('../pages/directories/invoice/Invoices')));
 // Form
 
 const CategoryForm = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
@@ -280,7 +282,7 @@ const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryFor
 const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/CouponForm')));
 const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
 const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/clientsForm')));
-
+const NewInvoiceForm = Loadable(lazy(() => import('../pages/forms/invoice/InvoiceForm')));
 // profiles
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 

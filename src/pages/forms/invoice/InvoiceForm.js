@@ -29,10 +29,10 @@ export default function ClientsForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
 
-  const { client } = useSelector((state) => state);
-  const { clients } = client;
+  const { invoice } = useSelector((state) => state);
+  const { invoices } = invoice;
   const isEdit = pathname.includes('edit');
-  const currentClient = clients?.data.find((cli) => paramCase(cli._id) === _id);
+  const currentInvoice = invoices?.data.find((cli) => paramCase(cli._id) === _id);
 
   const [loading, setLoading] = useState(false);
 
@@ -82,21 +82,21 @@ export default function ClientsForm() {
   };
 
   return (
-    <Page title="Create a new client | iDan">
+    <Page title="Create a new Invoice | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Create a new client' : 'Edit Client'}
+          heading={!isEdit ? 'Create a new Invoice' : 'Edit Invoice'}
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: 'Clients List',
-              href: PATH_ADMIN.directories.clients
+              name: 'Invoices List',
+              href: PATH_ADMIN.directories.invoices
             },
-            { name: !isEdit ? 'New Clients' : currentClient?.name }
+            { name: !isEdit ? 'New Invoice' : currentInvoice?.name }
           ]}
         />
 
-        <Form isEdit={isEdit} currentClient={currentClient} handleCreate={handleCreate} loading={loading} />
+        <Form isEdit={isEdit} currentInvoice={currentInvoice} handleCreate={handleCreate} loading={loading} />
       </Container>
     </Page>
   );
