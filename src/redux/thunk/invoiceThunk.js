@@ -30,7 +30,7 @@ export const deleteManyInvoices = createAsyncThunk('invoices/delete-many', async
     'Content-Type': 'application/json'
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_BACKEND_API}/coupon-code-delete-many`,
+    `${process.env.REACT_APP_BACKEND_API}/invoices-delete-many`,
     { ids },
     {
       headers

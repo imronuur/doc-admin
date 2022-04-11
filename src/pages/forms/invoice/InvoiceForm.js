@@ -10,7 +10,7 @@ import { MIconButton } from '../../../components/@material-extend';
 
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { createClient } from '../../../redux/thunk/clientsThunk';
+import { createInvoice } from '../../../redux/thunk/invoiceThunk';
 
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
@@ -49,15 +49,15 @@ export default function ClientsForm() {
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const handleCreate = async (client) => {
+  const handleCreateInvoice = async (invoice) => {
     setLoading(true);
-
+    console.log(invoice);
     const reqObject = {
-      client
+      invoice
     };
 
-    const reduxRes = await dispatch(createClient(reqObject));
-    if (reduxRes.type === 'clients/create/rejected') {
+    const reduxRes = await dispatch(createInvoice(reqObject));
+    if (reduxRes.type === 'invoice/create/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -67,8 +67,8 @@ export default function ClientsForm() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'clients/create/fulfilled') {
-      enqueueSnackbar(`Client Created!`, {
+    } else if (reduxRes.type === 'invoice/create/fulfilled') {
+      enqueueSnackbar(`Invoice Created!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -77,7 +77,7 @@ export default function ClientsForm() {
         )
       });
       setLoading(false);
-      navigate(`${PATH_ADMIN.directories.clients}`);
+      navigate(`${PATH_ADMIN.directories.invoices}`);
     }
   };
 
@@ -96,7 +96,12 @@ export default function ClientsForm() {
           ]}
         />
 
-        <Form isEdit={isEdit} currentInvoice={currentInvoice} handleCreate={handleCreate} loading={loading} />
+        <Form
+          isEdit={isEdit}
+          currentInvoice={currentInvoice}
+          handleCreateInvoice={handleCreateInvoice}
+          loading={loading}
+        />
       </Container>
     </Page>
   );

@@ -31,7 +31,7 @@ import { Validations } from './Validations';
 
 ClientsForm.propTypes = {
   isEdit: PropTypes.bool,
-  currentProduct: PropTypes.object,
+  currentClient: PropTypes.object,
   handleCreate: PropTypes.func,
   loading: PropTypes.bool
 };

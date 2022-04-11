@@ -102,7 +102,8 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
         { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> },
-        { path: `${PATH_ADMIN.forms.newInvoice}`, element: <NewInvoiceForm /> }
+        { path: `${PATH_ADMIN.forms.newInvoice}`, element: <NewInvoiceForm /> },
+        { path: `${PATH_ADMIN.forms.editInvoice}/:_id`, element: <NewInvoiceForm /> }
       ]
     },
 

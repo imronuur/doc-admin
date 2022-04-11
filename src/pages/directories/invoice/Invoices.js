@@ -43,7 +43,7 @@ import { MIconButton } from '../../../components/@material-extend';
 import Label from '../../../components/Label';
 import { ProductListHead, ProductMoreMenu, InvoiceTableToolbar, InvoiceAnalytic } from './components';
 import { getInvoice } from '../../../redux/slices/invoiceSlice';
-import { deleteInvoice } from '../../../redux/thunk/invoiceThunk';
+import { deleteInvoice, deleteManyInvoices } from '../../../redux/thunk/invoiceThunk';
 
 // ----------------------------------------------------------------------
 
@@ -198,9 +198,9 @@ export default function InvoiceList() {
       setSelected([]);
     };
 
-    const handleDeleteInvoice = async (slug) => {
+    const handleDeleteInvoice = async (_id) => {
       const reqObject = {
-        slug
+        _id
       };
       const reduxRes = await dispatch(deleteInvoice(reqObject));
       if (reduxRes.type === 'invoice/delete/rejected') {
@@ -225,6 +225,35 @@ export default function InvoiceList() {
       }
     };
 
+    const handleDeleteMany = async (ids) => {
+      setLoading(true);
+      const reqObject = {
+        ids
+      };
+      const reduxRes = await dispatch(deleteManyInvoices(reqObject));
+      if (reduxRes.type === 'invoices/delete-many/rejected') {
+        enqueueSnackbar(`${reduxRes.error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        setLoading(false);
+      } else if (reduxRes.type === 'clients/delete-many/fulfilled') {
+        enqueueSnackbar(`Invoices Deleted!`, {
+          variant: 'success',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        window.location.reload();
+      }
+    };
+
     const handleClick = (event, name) => {
       const selectedIndex = selected.indexOf(name);
       let newSelected = [];
@@ -240,7 +269,7 @@ export default function InvoiceList() {
       setSelected(newSelected);
     };
     const filteredInvoices = applySortFilter(invoices.data, getComparator(order, orderBy), filterName);
-
+    console.log(filteredInvoices);
     const isInvoiceNotFound = filteredInvoices.length === 0;
 
     content = (
@@ -263,25 +292,25 @@ export default function InvoiceList() {
               />
               <InvoiceAnalytic
                 title="Paid"
-                total={getLengthByStatus('paid')}
-                percent={getPercentByStatus('paid')}
-                price={getTotalPriceByStatus('paid')}
+                total={getLengthByStatus('Paid')}
+                percent={getPercentByStatus('Paid')}
+                price={getTotalPriceByStatus('Paid')}
                 icon="eva:checkmark-circle-2-fill"
                 color={theme.palette.success.main}
               />
               <InvoiceAnalytic
                 title="Unpaid"
-                total={getLengthByStatus('unpaid')}
-                percent={getPercentByStatus('unpaid')}
-                price={getTotalPriceByStatus('unpaid')}
+                total={getLengthByStatus('Unpaid')}
+                percent={getPercentByStatus('Unpaid')}
+                price={getTotalPriceByStatus('Unpaid')}
                 icon="eva:clock-fill"
                 color={theme.palette.warning.main}
               />
               <InvoiceAnalytic
                 title="Overdue"
-                total={getLengthByStatus('overdue')}
-                percent={getPercentByStatus('overdue')}
-                price={getTotalPriceByStatus('overdue')}
+                total={getLengthByStatus('Overdue')}
+                percent={getPercentByStatus('Overdue')}
+                price={getTotalPriceByStatus('Overdue')}
                 icon="eva:bell-fill"
                 color={theme.palette.error.main}
               />
@@ -314,6 +343,9 @@ export default function InvoiceList() {
               setFilterEndDate(newValue);
             }}
             optionsService={SERVICE_OPTIONS}
+            handleDeleteMany={handleDeleteMany}
+            selected={selected}
+            loading={loading}
           />
 
           <Scrollbar>
@@ -362,10 +394,12 @@ export default function InvoiceList() {
                         <TableCell>{refTo}</TableCell>
                         <TableCell>{dateCreated}</TableCell>
                         <TableCell>{dueDate}</TableCell>
-                        <TableCell>{type}</TableCell>
+                        <TableCell>
+                          <Chip label={type} color="success" variant="outlined" />
+                        </TableCell>
                         <TableCell>{fCurrency(total)}</TableCell>
                         <TableCell>
-                          <Chip label={status} />
+                          <Chip label={status} color={status === 'Unpaid' ? 'error' : 'success'} />
                         </TableCell>
                         <TableCell align="right">
                           <ProductMoreMenu onDelete={() => handleDeleteInvoice(_id)} _id={_id} />

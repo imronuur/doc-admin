@@ -1,10 +1,23 @@
 import PropTypes from 'prop-types';
-import { Stack, InputAdornment, TextField, MenuItem } from '@mui/material';
+import {
+  Stack,
+  InputAdornment,
+  TextField,
+  MenuItem,
+  Box,
+  Toolbar,
+  Tooltip,
+  IconButton,
+  Typography,
+  OutlinedInput
+} from '@mui/material';
 import DatePicker from '@mui/lab/DatePicker';
 // components
+import searchFill from '@iconify/icons-eva/search-fill';
+import trash2Fill from '@iconify/icons-eva/trash-2-fill';
+import roundFilterList from '@iconify/icons-ic/round-filter-list';
+import { Icon } from '@iconify/react';
 import Iconify from '../../../../components/Iconify';
-
-// ----------------------------------------------------------------------
 
 const INPUT_WIDTH = 160;
 
@@ -29,7 +42,10 @@ export default function InvoiceTableToolbar({
   onFilterName,
   onFilterService,
   onFilterStartDate,
-  onFilterEndDate
+  onFilterEndDate,
+  handleDeleteMany,
+  selected,
+  loading
 }) {
   return (
     <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ py: 2.5, px: 3 }}>
@@ -109,6 +125,19 @@ export default function InvoiceTableToolbar({
           )
         }}
       />
+      {selected.length > 0 ? (
+        <Tooltip title="Delete">
+          <IconButton disabled={loading} onClick={() => handleDeleteMany(selected)}>
+            <Icon icon={trash2Fill} />
+          </IconButton>
+        </Tooltip>
+      ) : (
+        <Tooltip title="Filter list">
+          <IconButton>
+            <Icon icon={roundFilterList} />
+          </IconButton>
+        </Tooltip>
+      )}
     </Stack>
   );
 }

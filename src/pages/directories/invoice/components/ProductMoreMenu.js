@@ -54,7 +54,7 @@ export default function CategoryMoreMenu({ onDelete, _id }) {
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to={`${PATH_ADMIN.forms.editProduct}/${_id}`} sx={{ color: 'text.secondary' }}>
+        <MenuItem component={RouterLink} to={`${PATH_ADMIN.forms.editInvoice}/${_id}`} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>

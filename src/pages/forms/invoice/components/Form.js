@@ -2,30 +2,20 @@ import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
-import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
 import {
   Card,
-  Chip,
   Grid,
   Stack,
-  Switch,
   Select,
   TextField,
-  InputLabel,
   Typography,
-  FormControl,
-  Autocomplete,
-  InputAdornment,
-  FormHelperText,
-  FormControlLabel,
   MenuItem,
   FormLabel,
   CardHeader,
   Button
 } from '@mui/material';
 
-import { useSelector } from '../../../../redux/store';
 import { Validations } from './Validations';
 
 // ----------------------------------------------------------------------
@@ -40,7 +30,8 @@ ClientsForm.propTypes = {
 };
 
 const statuses = [{ value: 'All' }, { value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
-export default function ClientsForm({ isEdit, currentInvoice, handleCreate, loading }) {
+const types = [{ value: 'Client' }, { value: 'User' }];
+export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading }) {
   const formik = useFormik({
     enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
@@ -49,17 +40,17 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
       : {
           items: [
             {
-              itemName: 'Mogadishu',
+              itemName: '',
               unitPrice: '',
-              quantity: 'Mogadishu',
-              discount: 'Banaadir'
+              quantity: '',
+              discount: ''
             }
           ]
         },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
-        handleCreate(values);
+        handleCreateInvoice(values);
         setSubmitting(false);
       } catch (error) {
         setSubmitting(false);
@@ -87,20 +78,30 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
                     <FormLabel>Status</FormLabel>
                     <Select fullWidth {...getFieldProps('status')}>
                       {statuses.map((option, index) => (
-                        <MenuItem key={index} value={index}>
+                        <MenuItem key={index} value={option.value}>
                           {option.value}
                         </MenuItem>
                       ))}
                     </Select>
                   </Grid>
+                  <Grid item xs={12}>
+                    <FormLabel>Select Type</FormLabel>
 
+                    <Select fullWidth {...getFieldProps('type')}>
+                      {types.map((option, index) => (
+                        <MenuItem key={index} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Date Create</FormLabel>
                     <TextField
                       fullWidth
-                      {...getFieldProps('createDate')}
-                      error={Boolean(touched.createDate && errors.createDate)}
-                      helperText={touched.createDate && errors.createDate}
+                      {...getFieldProps('dateCreated')}
+                      error={Boolean(touched.dateCreated && errors.dateCreated)}
+                      helperText={touched.dateCreated && errors.dateCreated}
                       type="date"
                     />
                   </Grid>
@@ -116,7 +117,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
                     />
                   </Grid>
                 </Stack>
-                <Stack sx={{ display: 'flex', flexDirection: 'row' }} gap={3}>
+                <Stack sx={{ display: 'flex', flexDirection: 'row' }} gap={3} mt={3}>
                   <Grid item xs={12}>
                     <FieldArray
                       name="items"
@@ -126,8 +127,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
                             <>
                               {arrayHelpers.form.values.items.map((res, index) => (
                                 <>
-                                  <CardHeader title="Details" sx={{ p: 1 }} />
-                                  <Stack spacing={3}>
+                                  <CardHeader title="Details" sx={{ p: 1, color: 'text.disabled' }} />
+                                  <Stack spacing={3} key={index}>
                                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 3, sm: 2 }}>
                                       <Grid item xs={6}>
                                         <TextField
@@ -173,7 +174,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
                                       <Button
                                         variant="contained"
                                         disabled={arrayHelpers.form.values.items.length === 1}
-                                        color="secondary"
+                                        color="error"
                                         onClick={() => arrayHelpers.remove(index)}
                                         sx={{ mt: 3, ml: 1 }}
                                       >
@@ -209,7 +210,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreate, load
                     />
                   </Grid>
                 </Stack>
-                <Grid item xs={12} mt={2} my={2}>
+                <Grid item xs={6} mt={2} my={2} sx={{ display: 'flex', justifyContent: 'flex-end' }} gap={3}>
                   <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={loading}>
                     {!isEdit ? 'Create Invoice' : 'Save Changes'}
                   </LoadingButton>
