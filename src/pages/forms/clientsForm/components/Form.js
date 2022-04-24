@@ -37,7 +37,6 @@ ClientsForm.propTypes = {
 };
 
 export default function ClientsForm({ isEdit, currentClient, handleCreate, loading }) {
-  console.log(currentClient);
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {

@@ -31,12 +31,12 @@ export default function ClientsForm() {
 
   const { invoice } = useSelector((state) => state);
   const { invoices } = invoice;
+  const { client } = useSelector((state) => state);
+  const { clients } = client;
   const isEdit = pathname.includes('edit');
   const currentInvoice = invoices?.data.find((cli) => paramCase(cli._id) === _id);
 
   const [loading, setLoading] = useState(false);
-
-  // const [client, setClient] = useState([]);
 
   // useEffect(() => {
   //   const loadClients = async () => {
@@ -51,7 +51,7 @@ export default function ClientsForm() {
 
   const handleCreateInvoice = async (invoice) => {
     setLoading(true);
-    console.log(invoice);
+
     const reqObject = {
       invoice
     };
@@ -101,6 +101,7 @@ export default function ClientsForm() {
           currentInvoice={currentInvoice}
           handleCreateInvoice={handleCreateInvoice}
           loading={loading}
+          clients={clients.data}
         />
       </Container>
     </Page>

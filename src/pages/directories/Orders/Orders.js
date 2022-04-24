@@ -23,7 +23,8 @@ import {
   Container,
   Typography,
   TableContainer,
-  Grid
+  Grid,
+  Chip
 } from '@mui/material';
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
@@ -52,14 +53,14 @@ import ClientMoreMenu from './components/ClientsMoreMenu';
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'email', label: 'Email Address', align: 'left' },
-  { id: 'phone', label: 'Phone Number', align: 'left' },
-  { id: 'state', label: 'State', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
+  { id: 'orderNum', label: 'Order #', align: 'left' },
+  { id: 'status', label: 'Status', align: 'left' },
+  { id: 'datePurchased', label: 'Date Purchased', align: 'left' },
+  { id: 'total', label: 'Total', align: 'left' },
+
   { id: '' }
 ];
-
+const statuses = ['pending', 'delivered', 'cancelled'];
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -277,11 +278,12 @@ export default function ClientList() {
                         </Box>
                       </TableCell>
 
-                      <TableCell>{email}</TableCell>
+                      <TableCell>
+                        <Chip label={statuses[0]} />
+                      </TableCell>
                       <TableCell>{phone}</TableCell>
 
                       <TableCell>{state}</TableCell>
-                      <TableCell>{company}</TableCell>
 
                       <TableCell align="right">
                         <ClientMoreMenu onDelete={() => handleDeleteClient(_id)} _id={_id} />
@@ -346,11 +348,11 @@ export default function ClientList() {
   }
 
   return (
-    <Page title="Clients List | iDan">
+    <Page title="Orders List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Clients List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.clients }, { name: 'Clients List' }]}
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.clients }, { name: 'Orders List' }]}
           action={
             <Button
               variant="contained"
@@ -358,7 +360,7 @@ export default function ClientList() {
               to={PATH_ADMIN.forms.newClients}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Client
+              New Order
             </Button>
           }
         />

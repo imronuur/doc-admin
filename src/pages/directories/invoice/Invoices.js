@@ -1,4 +1,5 @@
-import { filter, sumBy } from 'lodash';
+import _, { filter, sumBy } from 'lodash';
+
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
@@ -41,9 +42,10 @@ import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
 import Label from '../../../components/Label';
-import { ProductListHead, ProductMoreMenu, InvoiceTableToolbar, InvoiceAnalytic } from './components';
+import { InvoiceListHead, InvoiceMoreMenu, InvoiceTableToolbar, InvoiceAnalytic } from './components';
 import { getInvoice } from '../../../redux/slices/invoiceSlice';
 import { deleteInvoice, deleteManyInvoices } from '../../../redux/thunk/invoiceThunk';
+import ClientAvatar from './components/ClientAvatar';
 
 // ----------------------------------------------------------------------
 
@@ -68,14 +70,6 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' }
 ];
-
-const ThumbImgStyle = styled('img')(({ theme }) => ({
-  width: 64,
-  height: 64,
-  objectFit: 'cover',
-  margin: theme.spacing(0, 2),
-  borderRadius: theme.shape.borderRadiusSm
-}));
 
 // ----------------------------------------------------------------------
 
@@ -104,12 +98,7 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(
-      array,
-      (invoice) =>
-        invoice.name.toLowerCase().indexOf(query.toLowerCase()) !== -1 ||
-        invoice?.category?.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
-    );
+    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -123,6 +112,7 @@ export default function InvoiceList() {
   const theme = useTheme();
   const { invoice } = useSelector((state) => state);
   const { invoices } = invoice;
+  const { clients } = useSelector((state) => state.client);
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -135,14 +125,13 @@ export default function InvoiceList() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const getLengthByStatus = (status) => invoices.data.filter((item) => item.status === status).length;
+
   const getTotalPriceByStatus = (status) => {
-    sumBy(
+    _.sumBy(
       invoices.data.filter((item) => item.status === status),
-      'totalPrice'
+      'price'
     );
   };
-
-  console.log(getTotalPriceByStatus('Draft'));
 
   // const getTotal = (status) => {
   //   sumBy(
@@ -269,7 +258,6 @@ export default function InvoiceList() {
       setSelected(newSelected);
     };
     const filteredInvoices = applySortFilter(invoices.data, getComparator(order, orderBy), filterName);
-    console.log(filteredInvoices);
     const isInvoiceNotFound = filteredInvoices.length === 0;
 
     content = (
@@ -283,7 +271,7 @@ export default function InvoiceList() {
             >
               <InvoiceAnalytic
                 title="Total"
-                total={invoices.length}
+                total={invoices.data.length}
                 percent={100}
                 price={sumBy(invoices, 'totalPrice')}
                 tableData
@@ -351,7 +339,7 @@ export default function InvoiceList() {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <ProductListHead
+                <InvoiceListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -362,8 +350,13 @@ export default function InvoiceList() {
                 />
                 <TableBody>
                   {filteredInvoices.map((row) => {
-                    const { _id, refTo, dateCreated, dueDate, total, type, status } = row;
-
+                    const { _id, refTo, dateCreated, dueDate, items, type, status } = row;
+                    const total = items.map((item) => {
+                      const { quantity, unitPrice, discount } = item;
+                      const totalPrice = Number(quantity) * Number(unitPrice);
+                      const price = totalPrice - totalPrice * (discount / 100);
+                      return price;
+                    });
                     const isItemSelected = selected.indexOf(_id) !== -1;
 
                     return (
@@ -386,12 +379,16 @@ export default function InvoiceList() {
                               alignItems: 'center'
                             }}
                           >
-                            <Typography variant="subtitle2" noWrap>
-                              {}
-                            </Typography>
+                            {clients.data.map((client) => (
+                              <Typography variant="subtitle2" noWrap>
+                                {client._id === refTo && <ClientAvatar client={clients.data} />}
+                              </Typography>
+                            ))}
                           </Box>
                         </TableCell>
-                        <TableCell>{refTo}</TableCell>
+                        {clients.data.map((client) => (
+                          <TableCell>{client._id === refTo && client.name}</TableCell>
+                        ))}
                         <TableCell>{dateCreated}</TableCell>
                         <TableCell>{dueDate}</TableCell>
                         <TableCell>
@@ -399,10 +396,10 @@ export default function InvoiceList() {
                         </TableCell>
                         <TableCell>{fCurrency(total)}</TableCell>
                         <TableCell>
-                          <Chip label={status} color={status === 'Unpaid' ? 'error' : 'success'} />
+                          <Chip label={status} color={status === 'Overdue' ? 'error' : 'success'} />
                         </TableCell>
                         <TableCell align="right">
-                          <ProductMoreMenu onDelete={() => handleDeleteInvoice(_id)} _id={_id} />
+                          <InvoiceMoreMenu onDelete={() => handleDeleteInvoice(_id)} _id={_id} />
                         </TableCell>
                       </TableRow>
                     );

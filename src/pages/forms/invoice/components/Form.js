@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
+import { Link as RouterLink } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 import {
   Card,
@@ -13,9 +14,12 @@ import {
   MenuItem,
   FormLabel,
   CardHeader,
-  Button
+  Button,
+  Box,
+  Modal,
+  Input
 } from '@mui/material';
-
+import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
 import { Validations } from './Validations';
 
 // ----------------------------------------------------------------------
@@ -26,20 +30,48 @@ ClientsForm.propTypes = {
   isEdit: PropTypes.bool,
   currentInvoice: PropTypes.object,
   handleCreate: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  clients: PropTypes.array
 };
 
 const statuses = [{ value: 'All' }, { value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
 const types = [{ value: 'Client' }, { value: 'User' }];
-export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading }) {
+
+// modal style
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: '15px',
+  boxShadow: 24,
+  p: 4,
+  overflowY: 'auto'
+};
+
+const stackStyle = {
+  marginBottom: 4,
+
+  '&:hover': {
+    backgroundColor: '#dcfce7',
+    borderRadius: '5px'
+  }
+};
+
+export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading, clients }) {
   const formik = useFormik({
     enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
     initialValues: currentInvoice
       ? currentInvoice
       : {
+          refTo: '',
+          invoiceNumber: '',
           items: [
             {
+              total: 0,
               itemName: '',
               unitPrice: '',
               quantity: '',
@@ -59,20 +91,103 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
     }
   });
 
-  const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
+  const { errors, values, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [toClient, setToClient] = useState(null);
+
+  const getClient = (client) => {
+    setToClient(client);
+    setFieldValue('refTo', client._id);
+    handleClose();
+  };
+
+  const total = values.items.map((item) => {
+    const { quantity, unitPrice, discount } = item;
+    const totalPrice = Number(quantity) * Number(unitPrice);
+    const price = totalPrice - totalPrice * (discount / 100);
+    return price;
+  });
+
+  useEffect(() => {
+    setFieldValue('total', total);
+  }, [values.items]);
 
   return (
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Card>
+          <Grid item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: 3 }}>
+            <Stack>
+              <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
+                From:
+              </Typography>
+              <Typography fontWeight="600">Jayvion Simon</Typography>
+              <Typography variant="p">
+                19034 Verna Unions Apt. 164 - Honolulu, RI / 87535 <br /> Phone: 365-374-4961
+              </Typography>
+            </Stack>
+            <Grid>
+              <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
+                To:
+              </Typography>
+              {toClient && (
+                <>
+                  <Typography fontWeight="600">{toClient.name}</Typography>
+                  <Typography variant="p">
+                    {toClient.email} <br /> {toClient.phone}
+                  </Typography>
+                </>
+              )}
+
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Stack
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row'
+                    }}
+                    gap={3}
+                    mb={3}
+                  >
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                      Select Client
+                    </Typography>
+                    <Button variant="outlined" component={RouterLink} to={PATH_ADMIN.forms.newClients}>
+                      + Add New
+                    </Button>
+                  </Stack>
+                  {clients.length > 0
+                    ? clients.map((client) => (
+                        <Stack sx={stackStyle} id="modal-modal-description" onClick={() => getClient(client)}>
+                          <Typography sx={{ cursor: 'pointer', paddingLeft: '4px' }}>{client.name}</Typography>
+                          <Typography color="primary" sx={{ cursor: 'pointer', paddingLeft: '4px' }}>
+                            {client.email}
+                          </Typography>
+                          <Typography sx={{ cursor: 'pointer', paddingLeft: '4px' }}>{client.phone}</Typography>
+                        </Stack>
+                      ))
+                    : 'No Clients Found'}
+                </Box>
+              </Modal>
+            </Grid>
+            <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Button onClick={handleOpen}>+ Add to</Button>
+            </Grid>
+          </Grid>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Card sx={{ p: 3 }}>
                 <Stack sx={{ display: 'flex', flexDirection: 'row' }} gap={3}>
                   <Grid item xs={12}>
                     <FormLabel>Invoice Number</FormLabel>
-
-                    <TextField fullWidth label="INV-7891" disabled />
+                    <TextField fullWidth value="INV-789" disabled />
                   </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Status</FormLabel>
@@ -86,7 +201,6 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                   </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Select Type</FormLabel>
-
                     <Select fullWidth {...getFieldProps('type')}>
                       {types.map((option, index) => (
                         <MenuItem key={index} value={option.value}>
@@ -95,6 +209,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                       ))}
                     </Select>
                   </Grid>
+
                   <Grid item xs={12}>
                     <FormLabel>Date Create</FormLabel>
                     <TextField
@@ -105,6 +220,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                       type="date"
                     />
                   </Grid>
+
                   <Grid item xs={12}>
                     <FormLabel>Due Date</FormLabel>
 
@@ -166,21 +282,29 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                           helperText={getIn(errors, `items.${index}.discount`)}
                                         />
                                       </Grid>
+                                      <Grid item xs={2}>
+                                        <TextField
+                                          fullWidth
+                                          disabled
+                                          label="Total"
+                                          {...getFieldProps(`items.${index}.total`)}
+                                          error={Boolean(getIn(errors, `items.${index}.total`))}
+                                          helperText={getIn(errors, `items.${index}.total`)}
+                                        />
+                                      </Grid>
                                     </Stack>
                                   </Stack>
 
-                                  <Grid item xs={12} sm={6}>
-                                    <Grid item xs={2}>
-                                      <Button
-                                        variant="contained"
-                                        disabled={arrayHelpers.form.values.items.length === 1}
-                                        color="error"
-                                        onClick={() => arrayHelpers.remove(index)}
-                                        sx={{ mt: 3, ml: 1 }}
-                                      >
-                                        Remove
-                                      </Button>
-                                    </Grid>
+                                  <Grid sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                    <Button
+                                      variant="outlined"
+                                      disabled={arrayHelpers.form.values.items.length === 1}
+                                      color="error"
+                                      onClick={() => arrayHelpers.remove(index)}
+                                      sx={{ mt: 1, ml: 1 }}
+                                    >
+                                      Remove
+                                    </Button>
                                   </Grid>
                                 </>
                               ))}

@@ -15,12 +15,12 @@ import { PATH_ADMIN } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-CategoryMoreMenu.propTypes = {
+InvoiceMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   _id: PropTypes.string
 };
 
-export default function CategoryMoreMenu({ onDelete, _id }) {
+export default function InvoiceMoreMenu({ onDelete, _id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
