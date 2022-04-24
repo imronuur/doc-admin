@@ -293,7 +293,7 @@ const NewInvoiceForm = Loadable(lazy(() => import('../pages/forms/invoice/Invoic
 // profiles
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
-const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/s')));
+const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/ShopProductProfile')));
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));
