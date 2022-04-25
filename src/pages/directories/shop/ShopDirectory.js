@@ -2,10 +2,11 @@ import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import { filter, includes, orderBy } from 'lodash';
 // material
-import { Backdrop, Container, Typography, CircularProgress, Stack } from '@mui/material';
+import { Backdrop, Container, Typography, CircularProgress, Card, Stack } from '@mui/material';
+import { sentenceCase } from 'change-case';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import product, { getProducts, filterProducts } from '../../../redux/slices/product';
+import { getProducts, filterProducts } from '../../../redux/slices/product';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // utils
@@ -118,17 +119,27 @@ export default function EcommerceShop() {
           ]}
         />
 
-        {!products && (
-          <Typography gutterBottom>
+        {products.data.length === 0 && (
+          <Card sx={{ p: 3 }}>
             <Typography component="span" variant="subtitle1">
               {products.length}
             </Typography>
             &nbsp;No Products found
-          </Typography>
+          </Card>
         )}
-
-        {/* <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-          <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}></Stack>
+        {/* 
+        <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
+          <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+            {products.data.length > 0 &&
+              products.data.map((product) => (
+                <Typography variant="overline" key={product.id}>
+                  {(product.quantity >= 10 && sentenceCase('In Stock')) ||
+                    (product.quantity <= 10 && sentenceCase('Low In Stock')) ||
+                    (product.quantity <= 0 && sentenceCase('Out of Stock')) ||
+                    ''}
+                </Typography>
+              ))}
+          </Stack>
         </Stack> */}
 
         <ShopProductList

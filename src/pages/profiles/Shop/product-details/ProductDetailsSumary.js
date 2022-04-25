@@ -118,7 +118,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
-  const { _id, name, regularPrice, images, available, salePrice, rating, review } = currentProduct;
+  const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity } = currentProduct;
 
   const alreadyProduct = checkout?.cart.map((item) => item.id).includes(_id);
   const isMaxQuantity = checkout?.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
@@ -173,6 +173,15 @@ export default function ProductDetailsSumary({ currentProduct }) {
     <RootStyle>
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+          <Label
+            variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+            color={(quantity <= 0 && 'error') || (quantity <= 10 && 'warning') || 'success'}
+          >
+            {(quantity >= 10 && sentenceCase('In Stock')) ||
+              (quantity <= 10 && sentenceCase('Low In Stock')) ||
+              (quantity <= 0 && sentenceCase('Out of Stock')) ||
+              ''}
+          </Label>
           <Typography variant="h5" paragraph>
             {name}
           </Typography>
