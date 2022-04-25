@@ -1,1 +1,1 @@
-export { default as ClientAbout } from './ClientAbout';
+export { default as OrdersAbout } from './OrdersAbout';

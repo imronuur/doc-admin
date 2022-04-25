@@ -20,7 +20,7 @@ ClientMoreMenu.propTypes = {
   _id: PropTypes.string
 };
 
-export default function ClientMoreMenu({ onDelete, _id }) {
+export default function ClientMoreMenu({ _id, order, onDelete }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,6 +49,12 @@ export default function ClientMoreMenu({ onDelete, _id }) {
             <Icon icon={eyeFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="View More" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+        <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
+          <ListItemIcon>
+            <Icon icon={editFill} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="Update Status" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

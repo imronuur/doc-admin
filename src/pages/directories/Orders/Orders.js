@@ -20,11 +20,15 @@ import {
   Checkbox,
   TableBody,
   TableCell,
+  TextField,
   Container,
   Typography,
   TableContainer,
   Grid,
-  Chip
+  Modal,
+  Select,
+  MenuItem,
+  FormLabel
 } from '@mui/material';
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
@@ -42,12 +46,10 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
 import Label from '../../../components/Label';
 
-import { getClients } from '../../../redux/slices/clients';
+import { getProducts } from '../../../redux/slices/products';
 import { deleteClient, deleteManyClients } from '../../../redux/thunk/clientsThunk';
-import ClientListToolbar from './components/ClientsListToolbar';
-import ClientListHead from './components/ClientsListHead';
-import ClientMoreMenu from './components/ClientsMoreMenu';
-
+import { OrdersListHead, OrdersListToolbar, OrdersMoreMenu } from './components';
+import { fCurrency } from '../../../utils/formatNumber';
 // ----------------------------------------------------------------------
 
 let content = null;
@@ -60,6 +62,18 @@ const TABLE_HEAD = [
 
   { id: '' }
 ];
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '1px solid green',
+  borderRadius: '24px',
+  boxShadow: 24,
+  p: 4
+};
 const statuses = ['pending', 'delivered', 'cancelled'];
 // ----------------------------------------------------------------------
 
@@ -96,13 +110,13 @@ function applySortFilter(array, comparator, query) {
 
 // ----------------------------------------------------------------------
 
-export default function ClientList() {
+export default function OrdersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { client } = useSelector((state) => state);
+  const { product } = useSelector((state) => state);
 
-  const { clients } = client;
+  const { products } = product;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -112,80 +126,31 @@ export default function ClientList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(clients.numberOfPages).fill(null).map((v, i) => i);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleChangeStatus = (status) => {
+    handleOpen();
+  };
+
+  const pages = new Array(products.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(clients.numberOfPages - 1, page + 1));
-  };
-
-  const handleDeleteClient = async (_id) => {
-    const reqObject = {
-      _id
-    };
-    const reduxRes = await dispatch(deleteClient(reqObject));
-    if (reduxRes.type === 'clients/delete/rejected') {
-      enqueueSnackbar(`${reduxRes.error.message}`, {
-        variant: 'error',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-    } else if (reduxRes.type === 'clients/delete/fulfilled') {
-      enqueueSnackbar(`Client Deleted!`, {
-        variant: 'success',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-
-      dispatch(getClients({ page }));
-    }
+    setPage(Math.min(products.numberOfPages - 1, page + 1));
   };
 
   useEffect(() => {
     const reqObject = {
       page
     };
-    dispatch(getClients(reqObject));
+    dispatch(getProducts(reqObject));
   }, [dispatch, page]);
 
-  const handleDeleteMany = async (ids) => {
-    setLoading(true);
-    const reqObject = {
-      ids
-    };
-    const reduxRes = await dispatch(deleteManyClients(reqObject));
-    if (reduxRes.type === 'clients/delete-many/rejected') {
-      enqueueSnackbar(`${reduxRes.error.message}`, {
-        variant: 'error',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-      setLoading(false);
-    } else if (reduxRes.type === 'clients/delete-many/fulfilled') {
-      enqueueSnackbar(`Clients Deleted!`, {
-        variant: 'success',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-      window.location.reload();
-    }
-  };
-
-  if (clients?.data?.length) {
+  if (products?.data?.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -194,7 +159,7 @@ export default function ClientList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = clients.data.map((n) => n._id);
+        const newSelecteds = products.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -220,14 +185,13 @@ export default function ClientList() {
       setFilterName(event.target.value);
     };
 
-    const filteredCleints = applySortFilter(clients.data, getComparator(order, orderBy), filterName);
+    const filteredCleints = applySortFilter(products.data, getComparator(order, orderBy), filterName);
 
-    const isClientNotFound = filteredCleints.length === 0;
+    const isOrderNotFound = filteredCleints.length === 0;
 
     content = (
       <Card>
-        <ClientListToolbar
-          handleDeleteMany={handleDeleteMany}
+        <OrdersListToolbar
           loading={loading}
           selected={selected}
           filterName={filterName}
@@ -237,18 +201,18 @@ export default function ClientList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <ClientListHead
+              <OrdersListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={clients.data.length}
+                rowCount={products.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
                 {filteredCleints.map((row) => {
-                  const { _id, name, email, phone, state, company } = row;
+                  const { _id, name, createdAt, salePrice } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -279,20 +243,51 @@ export default function ClientList() {
                       </TableCell>
 
                       <TableCell>
-                        <Chip label={statuses[0]} />
+                        <Label>{statuses[0]}</Label>
                       </TableCell>
-                      <TableCell>{phone}</TableCell>
+                      <TableCell>{createdAt}</TableCell>
 
-                      <TableCell>{state}</TableCell>
+                      <TableCell>{fCurrency(salePrice)}</TableCell>
 
                       <TableCell align="right">
-                        <ClientMoreMenu onDelete={() => handleDeleteClient(_id)} _id={_id} />
+                        <OrdersMoreMenu onDelete={() => handleChangeStatus(row)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
+                <div>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                          <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Update Status
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormLabel sx={{ pr: 2 }}>Select Status To Change</FormLabel>
+                          <Select fullWidth>
+                            <MenuItem value={statuses[0]}>{statuses[0]}</MenuItem>
+                            <MenuItem value={statuses[1]}>{statuses[1]}</MenuItem>
+                            <MenuItem value={statuses[2]}>{statuses[2]}</MenuItem>
+                          </Select>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Button variant="contained" onClick={handleClose}>
+                            Save Changes
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Modal>
+                </div>
               </TableBody>
-              {isClientNotFound && (
+              {isOrderNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -306,7 +301,7 @@ export default function ClientList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {clients.data.length > 0 && (
+        {products.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -331,7 +326,7 @@ export default function ClientList() {
         )}
       </Card>
     );
-  } else if (client.isLoading) {
+  } else if (product.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -341,7 +336,7 @@ export default function ClientList() {
     content = (
       <Card>
         <Typography px={20} py={4}>
-          No Clients found
+          No Orders found
         </Typography>
       </Card>
     );
@@ -351,18 +346,8 @@ export default function ClientList() {
     <Page title="Orders List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Clients List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.clients }, { name: 'Orders List' }]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_ADMIN.forms.newClients}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              New Order
-            </Button>
-          }
+          heading="Orders List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.products }, { name: 'Orders List' }]}
         />
         <Grid container spacing={3}>
           <Grid item xs={12}>
