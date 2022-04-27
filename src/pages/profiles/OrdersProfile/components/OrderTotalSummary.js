@@ -47,7 +47,7 @@ export default function OrderTotalSummary({ order }) {
             <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
               <Stack>
                 <Typography variant="body1">
-                  Subtotal : <span style={{ paddingLeft: 60 }}>{fCurrency(order.salePrice)}</span>
+                  Subtotal : <span style={{ paddingLeft: 60 }}>{fCurrency(order?.orderInfo.amount)}</span>
                 </Typography>
                 <Stack sx={{ mt: 2 }}>
                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -60,7 +60,7 @@ export default function OrderTotalSummary({ order }) {
                       size="small"
                       type="number"
                       {...getFieldProps('shippingFee')}
-                      defaultValue={order.quantity}
+                      defaultValue={order?.quantity}
                     />
                   </Typography>
                 </Stack>
@@ -75,7 +75,7 @@ export default function OrderTotalSummary({ order }) {
                       size="small"
                       type="number"
                       {...getFieldProps('discount')}
-                      defaultValue={order.quantity}
+                      defaultValue={order?.quantity}
                     />
                   </Typography>
                 </Stack>

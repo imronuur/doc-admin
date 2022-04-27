@@ -6,7 +6,7 @@ import { Backdrop, Container, Typography, CircularProgress, Card, Stack } from '
 import { sentenceCase } from 'change-case';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getProducts, filterProducts } from '../../../redux/slices/product';
+import { getProducts, filterProducts } from '../../../redux/slices/products';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // utils
@@ -78,7 +78,7 @@ export default function EcommerceShop() {
   // const filteredProducts = applyFilter(products, sortBy, filters);
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(getProducts({ page: 0 }));
   }, [dispatch]);
 
   // useEffect(() => {

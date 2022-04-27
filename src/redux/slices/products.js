@@ -52,6 +52,7 @@ const slice = createSlice({
       state.isLoading = false;
       state.products = action.payload;
     },
+
     //  SORT & FILTER PRODUCTS
     sortByProducts(state, action) {
       state.sortBy = action.payload;
@@ -159,6 +160,31 @@ const slice = createSlice({
       });
 
       state.checkout.cart = updateCart;
+    },
+    createBilling(state, action) {
+      state.checkout.billing = action.payload;
+    },
+
+    applyDiscount(state, action) {
+      const discount = action.payload;
+      state.checkout.discount = discount;
+      state.checkout.total = state.checkout.subtotal - discount;
+    },
+
+    applyShipping(state, action) {
+      const shipping = action.payload;
+      state.checkout.shipping = shipping;
+      state.checkout.total = state.checkout.subtotal - state.checkout.discount + shipping;
+    },
+    getTotals(state) {
+      let total = 0;
+      let subtotal = 0;
+      state.checkout.cart.forEach((item) => {
+        subtotal += item.salePrice * item.quantity;
+        total += subtotal - state.checkout.discount;
+      });
+      state.checkout.total = total;
+      state.checkout.subtotal = subtotal;
     }
   }
 });
@@ -181,21 +207,6 @@ export function getProducts({ page }) {
 }
 
 // ----------------------------------------------------------------------
-
-export function getProduct(name) {
-  return async (dispatch) => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const response = await axios.get('/api/products/product', {
-        params: { name }
-      });
-      dispatch(slice.actions.getProductSuccess(response.data.product));
-    } catch (error) {
-      console.error(error);
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
 export const {
   getCart,
   addCart,
@@ -210,6 +221,22 @@ export const {
   applyDiscount,
   filterProducts,
   sortByProducts,
+  getTotals,
   increaseQuantity,
   decreaseQuantity
 } = slice.actions;
+
+export function getProduct(name) {
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.get('/api/products/product', {
+        params: { name }
+      });
+      dispatch(slice.actions.getProductsSuccess(response.data.product));
+    } catch (error) {
+      console.error(error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}

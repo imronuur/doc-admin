@@ -23,7 +23,7 @@ const IconStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 ColorPreview.propTypes = {
-  colors: PropTypes.array.isRequired,
+  colors: PropTypes.array,
   limit: PropTypes.number
 };
 

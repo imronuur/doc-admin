@@ -15,12 +15,13 @@ import { PATH_ADMIN } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-ClientMoreMenu.propTypes = {
+OrderMoreMenu.propTypes = {
   onDelete: PropTypes.func,
-  _id: PropTypes.string
+  _id: PropTypes.string,
+  onChangeStatus: PropTypes.func
 };
 
-export default function ClientMoreMenu({ _id, order, onDelete }) {
+export default function OrderMoreMenu({ _id, onDelete, onChangeStatus }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -50,11 +51,17 @@ export default function ClientMoreMenu({ _id, order, onDelete }) {
           </ListItemIcon>
           <ListItemText primary="View More" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-        <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
+        <MenuItem onClick={onChangeStatus} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Update Status" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+        <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
+          <ListItemIcon>
+            <Icon icon={trash2Outline} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="Delete Order" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

@@ -64,7 +64,8 @@ export const PATH_ADMIN = {
   profiles: {
     clientProfile: path(ROOTS_ADMIN, '/client-profile'),
     orderProfile: path(ROOTS_ADMIN, '/order-profile'),
-    shopProductProfile: path(ROOTS_ADMIN, '/shop-product-profile')
+    shopProductProfile: path(ROOTS_ADMIN, '/shop-product-profile'),
+    checkout: path(ROOTS_ADMIN, '/shop-product-profile/checkout')
   }
 };
 

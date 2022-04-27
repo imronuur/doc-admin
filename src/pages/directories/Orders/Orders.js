@@ -46,9 +46,9 @@ import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
 import Label from '../../../components/Label';
 
-import { getProducts } from '../../../redux/slices/products';
-import { deleteClient, deleteManyClients } from '../../../redux/thunk/clientsThunk';
-import { OrdersListHead, OrdersListToolbar, OrdersMoreMenu } from './components';
+import { getOrders } from '../../../redux/slices/orderSlice';
+import { deleteOrder, deleteManyOrders, updateOrderStatus } from '../../../redux/thunk/orderThunk';
+import { OrdersListHead, OrdersListToolbar, OrdersMoreMenu, OrdersModal } from './components';
 import { fCurrency } from '../../../utils/formatNumber';
 // ----------------------------------------------------------------------
 
@@ -62,19 +62,7 @@ const TABLE_HEAD = [
 
   { id: '' }
 ];
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '1px solid green',
-  borderRadius: '24px',
-  boxShadow: 24,
-  p: 4
-};
-const statuses = ['pending', 'delivered', 'cancelled'];
+
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -102,7 +90,7 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_product) => _product?.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -114,9 +102,8 @@ export default function OrdersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { product } = useSelector((state) => state);
+  const { orders } = useSelector((state) => state.order);
 
-  const { products } = product;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -127,30 +114,115 @@ export default function OrdersList() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
+  const [state, setState] = useState('');
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleChangeStatus = (status) => {
+  const handleChangeStatus = async (status) => {
     handleOpen();
   };
+  const handleUpdateOrder = async (status) => {
+    setLoading(true);
+    const reqObject = {
+      status
+    };
+    const reduxRes = await dispatch(updateOrderStatus(reqObject));
+    if (reduxRes.type === 'update-order-status/create/rejected') {
+      enqueueSnackbar(`${reduxRes.error.message}`, {
+        variant: 'error',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      setLoading(false);
+    } else if (reduxRes.type === 'update-order-status/create/fulfilled') {
+      enqueueSnackbar(`Order Status Updated!`, {
+        variant: 'success',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+    }
+  };
 
-  const pages = new Array(products.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(orders.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(products.numberOfPages - 1, page + 1));
+    setPage(Math.min(orders.numberOfPages - 1, page + 1));
+  };
+
+  const handleDeleteOrder = async (_id) => {
+    const reqObject = {
+      _id
+    };
+    const reduxRes = await dispatch(deleteOrder(reqObject));
+    if (reduxRes.type === 'order/delete/rejected') {
+      enqueueSnackbar(`${reduxRes.error.message}`, {
+        variant: 'error',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+    } else if (reduxRes.type === 'order/delete/fulfilled') {
+      enqueueSnackbar(`Order Deleted!`, {
+        variant: 'success',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+
+      dispatch(getOrders({ page }));
+    }
   };
 
   useEffect(() => {
     const reqObject = {
       page
     };
-    dispatch(getProducts(reqObject));
+    dispatch(getOrders(reqObject));
   }, [dispatch, page]);
 
-  if (products?.data?.length) {
+  const handleDeleteMany = async (ids) => {
+    setLoading(true);
+    const reqObject = {
+      ids
+    };
+    const reduxRes = await dispatch(deleteManyOrders(reqObject));
+    if (reduxRes.type === 'orders/delete-many/rejected') {
+      enqueueSnackbar(`${reduxRes.error.message}`, {
+        variant: 'error',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      setLoading(false);
+    } else if (reduxRes.type === 'orders/delete-many/fulfilled') {
+      enqueueSnackbar(`Orders Deleted!`, {
+        variant: 'success',
+        action: (key) => (
+          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+            <Icon icon={closeFill} />
+          </MIconButton>
+        )
+      });
+      window.location.reload();
+    }
+  };
+
+  if (orders?.data?.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -159,7 +231,7 @@ export default function OrdersList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = products.data.map((n) => n._id);
+        const newSelecteds = orders.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -185,13 +257,14 @@ export default function OrdersList() {
       setFilterName(event.target.value);
     };
 
-    const filteredCleints = applySortFilter(products.data, getComparator(order, orderBy), filterName);
+    const filteredOrder = applySortFilter(orders.data, getComparator(order, orderBy), filterName);
 
-    const isOrderNotFound = filteredCleints.length === 0;
+    const isOrderNotFound = filteredOrder.length === 0;
 
     content = (
       <Card>
         <OrdersListToolbar
+          handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
           filterName={filterName}
@@ -205,15 +278,14 @@ export default function OrdersList() {
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={products.data.length}
+                rowCount={orders.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filteredCleints.map((row) => {
-                  const { _id, name, createdAt, salePrice } = row;
-
+                {filteredOrder.map((row) => {
+                  const { _id, orderTo, createdAt, orderInfo, orderStatus } = row;
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
                   return (
@@ -237,55 +309,36 @@ export default function OrdersList() {
                           }}
                         >
                           <Typography variant="subtitle2" noWrap>
-                            {name}
+                            {orderTo}
                           </Typography>
                         </Box>
                       </TableCell>
 
                       <TableCell>
-                        <Label>{statuses[0]}</Label>
+                        <Label>{orderStatus}</Label>
                       </TableCell>
                       <TableCell>{createdAt}</TableCell>
 
-                      <TableCell>{fCurrency(salePrice)}</TableCell>
+                      <TableCell>{fCurrency(orderInfo?.amount)}</TableCell>
 
                       <TableCell align="right">
-                        <OrdersMoreMenu onDelete={() => handleChangeStatus(row)} _id={_id} />
+                        <OrdersMoreMenu
+                          onChangeStatus={() => handleChangeStatus(row)}
+                          onDelete={() => handleDeleteOrder(_id)}
+                          _id={_id}
+                        />
                       </TableCell>
+                      {/* orders modal */}
+                      <OrdersModal
+                        open={open}
+                        handleClose={handleClose}
+                        orderId={orderInfo?.orderId}
+                        handleUpdateOrder={handleUpdateOrder}
+                      />
+                      {/* orders modal */}
                     </TableRow>
                   );
                 })}
-                <div>
-                  <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
-                    <Box sx={style}>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                          <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Update Status
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <FormLabel sx={{ pr: 2 }}>Select Status To Change</FormLabel>
-                          <Select fullWidth>
-                            <MenuItem value={statuses[0]}>{statuses[0]}</MenuItem>
-                            <MenuItem value={statuses[1]}>{statuses[1]}</MenuItem>
-                            <MenuItem value={statuses[2]}>{statuses[2]}</MenuItem>
-                          </Select>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Button variant="contained" onClick={handleClose}>
-                            Save Changes
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Modal>
-                </div>
               </TableBody>
               {isOrderNotFound && (
                 <TableBody>
@@ -301,7 +354,7 @@ export default function OrdersList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {products.data.length > 0 && (
+        {orders.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -326,7 +379,7 @@ export default function OrdersList() {
         )}
       </Card>
     );
-  } else if (product.isLoading) {
+  } else if (order.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -335,7 +388,7 @@ export default function OrdersList() {
   } else {
     content = (
       <Card>
-        <Typography px={20} py={4}>
+        <Typography px={10} py={4}>
           No Orders found
         </Typography>
       </Card>
@@ -347,7 +400,7 @@ export default function OrdersList() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Orders List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.products }, { name: 'Orders List' }]}
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.orders }, { name: 'Orders List' }]}
         />
         <Grid container spacing={3}>
           <Grid item xs={12}>

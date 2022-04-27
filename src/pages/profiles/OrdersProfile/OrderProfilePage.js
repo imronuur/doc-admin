@@ -19,12 +19,12 @@ export default function RouteProfilePage() {
   const { themeStretch } = useSettings();
 
   const { _id } = params;
-  const { product } = useSelector((state) => ({ ...state }));
-  const { products } = product;
+  const { order } = useSelector((state) => ({ ...state }));
+  const { orders } = order;
 
   let currentOrder = null;
-  if (Array.isArray(products.data)) {
-    currentOrder = products.data.find((client) => client._id === _id);
+  if (Array.isArray(orders.data)) {
+    currentOrder = orders.data.find((client) => client._id === _id);
   }
 
   return (

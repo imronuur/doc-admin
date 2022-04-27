@@ -11,7 +11,6 @@ import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getProduct } from '../../../redux/slices/product';
 // routes
 import { PATH_ADMIN, PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
@@ -64,10 +63,6 @@ export default function EcommerceProductDetails() {
   const { products, error } = useSelector((state) => state.product);
 
   const currentProduct = products?.data.find((product) => product._id === _id);
-
-  useEffect(() => {
-    dispatch(getProduct(_id));
-  }, [dispatch, _id]);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);

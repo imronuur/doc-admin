@@ -23,11 +23,12 @@ import {
   Typography,
   FormHelperText
 } from '@mui/material';
+
 // redux
 import { useDispatch, useSelector } from '../../../../redux/store';
-import { addCart, onGotoStep } from '../../../../redux/slices/product';
+import { addCart, onGotoStep } from '../../../../redux/slices/products';
 // routes
-import { PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_ADMIN } from '../../../../routes/paths';
 // utils
 import { fShortenNumber, fCurrency } from '../../../../utils/formatNumber';
 //
@@ -120,8 +121,8 @@ export default function ProductDetailsSumary({ currentProduct }) {
   const { checkout } = useSelector((state) => state.product);
   const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity } = currentProduct;
 
-  const alreadyProduct = checkout?.cart.map((item) => item.id).includes(_id);
-  const isMaxQuantity = checkout?.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
+  const alreadyProduct = checkout.cart.map((item) => item.id).includes(_id);
+  const isMaxQuantity = checkout.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
 
   const onAddCart = (product) => {
     dispatch(addCart(product));
@@ -153,7 +154,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
         }
         setSubmitting(false);
         handleBuyNow();
-        navigate(PATH_DASHBOARD.eCommerce.checkout);
+        navigate(`${PATH_ADMIN.profiles.checkout}/${_id}`);
       } catch (error) {
         setSubmitting(false);
       }
