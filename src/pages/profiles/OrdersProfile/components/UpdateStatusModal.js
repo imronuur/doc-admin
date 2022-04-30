@@ -13,7 +13,7 @@ const style = {
   boxShadow: 24,
   p: 4
 };
-const statuses = ['pending', 'delivered', 'cancelled'];
+const statuses = ['Not Processed', 'Cash On Delivery', 'processing', 'Dispatched', 'Cancelled', 'Completed'];
 
 export default function UpdateStatusModal() {
   const [open, setOpen] = useState(false);

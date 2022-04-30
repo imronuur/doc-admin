@@ -1,12 +1,21 @@
+import { useState } from 'react';
 import { Icon } from '@iconify/react';
+
 import { useNavigate } from 'react-router-dom';
 import filePdfFilled from '@iconify/icons-ant-design/file-pdf-filled';
 import arrowIosBackFill from '@iconify/icons-eva/arrow-ios-back-fill';
+import { LoadingButton } from '@mui/lab';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Button, Divider, Typography, Stack } from '@mui/material';
+import { Box, Link, Button, Divider, Typography, Stack, Tooltip, IconButton, DialogActions } from '@mui/material';
 // redux
-import { useDispatch } from '../../../../../redux/store';
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import eyeFill from '@iconify/icons-eva/eye-fill';
+import closeFill from '@iconify/icons-eva/close-fill';
+import shareFill from '@iconify/icons-eva/share-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
+// redux
+import { useDispatch, useSelector } from '../../../../../redux/store';
 import { resetCart } from '../../../../../redux/slices/products';
 // routes
 import { PATH_ADMIN } from '../../../../../routes/paths';
@@ -14,6 +23,8 @@ import { PATH_ADMIN } from '../../../../../routes/paths';
 import { DialogAnimate } from '../../../../../components/animate';
 
 import { OrderCompleteIllustration } from '../../../../../assets';
+import InvoicePDF from './invoice-to-pdf/InvoicePDF';
+import useAuth from '../../../../../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -29,10 +40,20 @@ const DialogStyle = styled(DialogAnimate)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutOrderComplete({ ...other }) {
+export default function CheckoutOrderComplete({ user, ...other }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { orders } = useSelector((state) => state.order);
+  const { clients } = useSelector((state) => state.client);
+  const [openPDF, setOpenPDF] = useState(false);
 
+  const handleOpenPreview = () => {
+    setOpenPDF(true);
+  };
+
+  const handleClosePreview = () => {
+    setOpenPDF(false);
+  };
   const handleResetStep = () => {
     dispatch(resetCart());
     navigate(PATH_ADMIN.directories.shop);
@@ -66,10 +87,48 @@ export default function CheckoutOrderComplete({ ...other }) {
           <Button color="inherit" onClick={handleResetStep} startIcon={<Icon icon={arrowIosBackFill} />}>
             Continue Shopping
           </Button>
-          <Button variant="contained" startIcon={<Icon icon={filePdfFilled} />} onClick={handleResetStep}>
-            Download as PDF
-          </Button>
+
+          <PDFDownloadLink
+            document={<InvoicePDF invoice={orders.data} user={user} clients={clients.data} />}
+            fileName={`INVOICE-${orders.data[0]?.orderInfo.orderId}` || 'INVOICE-789'}
+            style={{ textDecoration: 'none' }}
+          >
+            {({ loading }) => (
+              <LoadingButton
+                size="small"
+                loading={loading}
+                variant="contained"
+                loadingPosition="end"
+                endIcon={<Icon icon={downloadFill} />}
+              >
+                Download
+              </LoadingButton>
+            )}
+          </PDFDownloadLink>
         </Stack>
+
+        <DialogAnimate fullScreen open={openPDF}>
+          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <DialogActions
+              sx={{
+                zIndex: 9,
+                padding: '12px !important',
+                boxShadow: (theme) => theme.customShadows.z8
+              }}
+            >
+              <Tooltip title="Close">
+                <IconButton color="inherit" onClick={handleClosePreview}>
+                  <Icon icon={closeFill} />
+                </IconButton>
+              </Tooltip>
+            </DialogActions>
+            <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden' }}>
+              <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
+                <InvoicePDF invoice={orders.data} />
+              </PDFViewer>
+            </Box>
+          </Box>
+        </DialogAnimate>
       </Box>
     </DialogStyle>
   );

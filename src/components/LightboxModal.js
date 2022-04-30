@@ -87,7 +87,7 @@ function LightboxModalStyles() {
 }
 
 LightboxModal.propTypes = {
-  images: PropTypes.array.isRequired,
+  images: PropTypes.string,
   photoIndex: PropTypes.number,
   setPhotoIndex: PropTypes.func,
   isOpen: PropTypes.bool,

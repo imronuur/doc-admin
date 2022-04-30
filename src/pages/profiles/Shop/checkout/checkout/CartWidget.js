@@ -1,14 +1,14 @@
 import { sum } from 'lodash';
 import { Icon } from '@iconify/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import shoppingCartFill from '@iconify/icons-eva/shopping-cart-fill';
 // material
 import { styled } from '@mui/material/styles';
 import { Badge } from '@mui/material';
 // redux
-import { useSelector } from '../../../redux/store';
+import { useSelector } from '../../../../../redux/store';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_ADMIN } from '../../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -38,9 +38,10 @@ const RootStyle = styled(RouterLink)(({ theme }) => ({
 export default function CartWidget() {
   const { checkout } = useSelector((state) => state.product);
   const totalItems = sum(checkout.cart.map((item) => item.quantity));
-
+  const params = useParams();
+  const { name } = params;
   return (
-    <RootStyle to={PATH_DASHBOARD.eCommerce.checkout}>
+    <RootStyle to={`${PATH_ADMIN.profiles.checkout}/${name}`}>
       <Badge showZero badgeContent={totalItems} color="error" max={99}>
         <Icon icon={shoppingCartFill} width={24} height={24} />
       </Badge>

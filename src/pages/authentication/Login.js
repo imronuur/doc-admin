@@ -14,6 +14,7 @@ import Page from '../../components/Page';
 import { MHidden } from '../../components/@material-extend';
 import { LoginForm } from '../../components/authentication/login';
 import AuthFirebaseSocials from '../../components/authentication/AuthFirebaseSocial';
+import { useFirebaseAuth } from '../../contexts/authContext';
 
 // ----------------------------------------------------------------------
 

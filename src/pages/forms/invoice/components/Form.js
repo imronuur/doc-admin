@@ -69,6 +69,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
       : {
           refTo: '',
           invoiceNumber: '',
+          dateCreated: '',
+          dueDate: '',
           items: [
             {
               total: 0,
@@ -111,7 +113,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   });
 
   useEffect(() => {
-    setFieldValue('total', total);
+    setFieldValue('total', Number(total));
   }, [values.items]);
 
   return (

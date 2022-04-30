@@ -17,33 +17,35 @@ export default function RouteProfilePage() {
   const { themeStretch } = useSettings();
 
   const { _id } = params;
-  const { client, order } = useSelector((state) => ({ ...state }));
-  const { clients } = client;
-  const { orders } = order;
+  const { invoice, order } = useSelector((state) => ({ ...state }));
+  const { invoices } = invoice;
+  // const { orders } = order;
 
-  let currentClient = null;
-  let currentOrder = null;
-  if (Array.isArray(clients.data)) {
-    currentClient = clients.data.find((client) => client._id === _id);
+  let currentInvoice = null;
+  // let currentOrder = null;
+  if (Array.isArray(invoices.data)) {
+    currentInvoice = invoices.data.find((client) => client._id === _id);
   }
-  if (Array.isArray(orders.data)) {
-    currentOrder = orders.data.find((order) => order.orderTo === currentClient._id);
-  }
-  console.log(orders);
+  // if (Array.isArray(orders.data)) {
+  //   currentOrder = orders.data.find((order) => order.orderTo === currentClient._id);
+  // }
 
   return (
     <Page title="Client |  iDAN">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={`Client Profile ${_id}`}
+          heading={`Invoice Profile ${_id}`}
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
-            { name: 'Profiles Directory', href: PATH_ADMIN.directories.clients },
-            { name: currentClient?.name || '' }
+            { name: 'Profiles Directory', href: PATH_ADMIN.directories.invoices },
+            { name: currentInvoice?.name || '' }
           ]}
         />
 
-        <ClientAbout client={currentClient} order={currentOrder} />
+        <ClientAbout
+          invoice={currentInvoice}
+          // order={currentOrder}
+        />
       </Container>
     </Page>
   );

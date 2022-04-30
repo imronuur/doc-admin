@@ -121,7 +121,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
   const { checkout } = useSelector((state) => state.product);
   const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity } = currentProduct;
 
-  const alreadyProduct = checkout.cart.map((item) => item.id).includes(_id);
+  const alreadyProduct = checkout.cart.map((item) => [...item._id]).includes(_id);
   const isMaxQuantity = checkout.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
 
   const onAddCart = (product) => {
@@ -154,7 +154,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
         }
         setSubmitting(false);
         handleBuyNow();
-        navigate(`${PATH_ADMIN.profiles.checkout}/${_id}`);
+        navigate(`${PATH_ADMIN.profiles.checkout}/${name}`);
       } catch (error) {
         setSubmitting(false);
       }
@@ -165,10 +165,12 @@ export default function ProductDetailsSumary({ currentProduct }) {
 
   const handleAddCart = () => {
     onAddCart({
+      ...alreadyProduct,
       ...values,
       subtotal: values.price * values.quantity
     });
   };
+  console.log(alreadyProduct);
 
   return (
     <RootStyle>

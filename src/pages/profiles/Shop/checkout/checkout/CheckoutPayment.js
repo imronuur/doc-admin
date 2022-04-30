@@ -48,12 +48,6 @@ const PAYMENT_OPTIONS = [
   }
 ];
 
-const CARDS_OPTIONS = [
-  { value: 'ViSa1', label: '**** **** **** 1212 - Jimmy Holland' },
-  { value: 'ViSa2', label: '**** **** **** 2424 - Shawn Stokes' },
-  { value: 'MasterCard', label: '**** **** **** 4545 - Cole Armstrong' }
-];
-
 // ----------------------------------------------------------------------
 
 export default function CheckoutPayment({ billing, handleCreate, loading, cart }) {
@@ -61,7 +55,7 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
   const { checkout } = useSelector((state) => state.product);
   const { total, discount, subtotal, shipping } = checkout;
   const { user } = useAuth();
-
+  console.log(user);
   const handleNextStep = () => {
     dispatch(onNextStep());
   };
@@ -79,7 +73,7 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
   };
 
   const ValidationS = Yup.object().shape({
-    paymentType: Yup.mixed().required('Payment is required')
+    paymentType: Yup.mixed().required('Payment Type is required')
   });
 
   const formik = useFormik({
@@ -103,7 +97,6 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
     validationSchema: ValidationS,
     onSubmit: (values, { setErrors, setSubmitting }) => {
       try {
-        console.log(values);
         handleCreate(values);
         handleNextStep();
       } catch (error) {
@@ -125,7 +118,7 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
               onApplyShipping={handleApplyShipping}
               deliveryOptions={DELIVERY_OPTIONS}
             />
-            <CheckoutPaymentMethods formik={formik} cardOptions={CARDS_OPTIONS} paymentOptions={PAYMENT_OPTIONS} />
+            <CheckoutPaymentMethods formik={formik} paymentOptions={PAYMENT_OPTIONS} />
             <Button
               type="button"
               size="small"

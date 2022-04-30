@@ -46,12 +46,14 @@ import { deleteClient, deleteManyClients } from '../../../redux/thunk/clientsThu
 import ClientListToolbar from './components/ClientsListToolbar';
 import ClientListHead from './components/ClientsListHead';
 import ClientMoreMenu from './components/ClientsMoreMenu';
+import { ClientAvatar } from './components';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
+  { id: 'avatar', label: 'Avatar', align: 'left' },
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'email', label: 'Email Address', align: 'left' },
   { id: 'phone', label: 'Phone Number', align: 'left' },
@@ -262,6 +264,9 @@ export default function ClientList() {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, _id)} />
+                      </TableCell>
+                      <TableCell>
+                        <ClientAvatar name={name} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Box

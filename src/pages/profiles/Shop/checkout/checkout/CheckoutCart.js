@@ -18,7 +18,7 @@ import {
 } from '../../../../../redux/slices/products';
 
 // routes
-import { PATH_DASHBOARD } from '../../../../../routes/paths';
+import { PATH_ADMIN } from '../../../../../routes/paths';
 //
 import Scrollbar from '../../../../../components/Scrollbar';
 import EmptyContent from '../../../../../components/EmptyContent';
@@ -110,7 +110,7 @@ export default function CheckoutCart() {
             <Button
               color="inherit"
               component={RouterLink}
-              to={PATH_DASHBOARD.eCommerce.root}
+              to={PATH_ADMIN.directories.shop}
               startIcon={<Icon icon={arrowIosBackFill} />}
             >
               Continue Shopping

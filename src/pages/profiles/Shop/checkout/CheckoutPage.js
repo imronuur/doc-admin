@@ -23,7 +23,7 @@ import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 import { CheckoutCart, CheckoutPayment, CheckoutOrderComplete, CheckoutBillingAddress } from './checkout/index';
 import { createOrder } from '../../../../redux/thunk/orderThunk';
 import { MIconButton } from '../../../../components/@material-extend';
-
+import useAuth from '../../../../hooks/useAuth';
 // ----------------------------------------------------------------------
 
 const STEPS = ['Cart', 'Billing & address', 'Payment'];
@@ -84,10 +84,10 @@ export default function EcommerceCheckout() {
   const { checkout } = useSelector((state) => state.product);
   const { cart, billing, activeStep } = checkout;
   const [loading, setLoading] = useState(false);
-
+  const { user } = useAuth();
   const isComplete = activeStep === STEPS.length;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // useEffect(() => {
   //   if (isMountedRef.current) {
   //     dispatch(getCart(cart));
@@ -180,7 +180,7 @@ export default function EcommerceCheckout() {
               ))}
           </>
         ) : (
-          <CheckoutOrderComplete open={isComplete} />
+          <CheckoutOrderComplete open={isComplete} user={user} />
         )}
       </Container>
     </Page>

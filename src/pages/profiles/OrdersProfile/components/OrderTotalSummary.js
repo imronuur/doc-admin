@@ -34,7 +34,8 @@ export default function OrderTotalSummary({ order }) {
     }
   });
   const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
-  const total = (discount, shipping, totalPrice) => totalPrice * shipping - discount;
+  console.log(order);
+  const total = (discount, shipping, totalPrice) => totalPrice + shipping - discount;
   // useEffect(() => {
   // setFieldValue('total', total);
   // }, [values]);
@@ -47,7 +48,7 @@ export default function OrderTotalSummary({ order }) {
             <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
               <Stack>
                 <Typography variant="body1">
-                  Subtotal : <span style={{ paddingLeft: 60 }}>{fCurrency(order?.orderInfo.amount)}</span>
+                  Subtotal : <span style={{ paddingLeft: 60 }}>{fCurrency(order.orderInfo.amount)}</span>
                 </Typography>
                 <Stack sx={{ mt: 2 }}>
                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -83,7 +84,7 @@ export default function OrderTotalSummary({ order }) {
                   <Typography variant="body1" sx={{ display: 'flex', alignItems: 'center' }}>
                     Total:{' '}
                     <span style={{ paddingLeft: 90 }}>
-                      {fCurrency(total(values.discount, values.quantity, order.salePrice))}
+                      {fCurrency(total(values.discount, values.shippingFee, order.orderInfo.amount))}
                     </span>
                   </Typography>
                 </Stack>

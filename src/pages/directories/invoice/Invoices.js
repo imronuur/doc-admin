@@ -11,6 +11,8 @@ import { useTheme, styled } from '@mui/material/styles';
 import {
   Box,
   Card,
+  Tabs,
+  Tab,
   Table,
   Button,
   TableRow,
@@ -30,7 +32,7 @@ import LoadingScreen from '../../../components/LoadingScreen';
 import { useDispatch, useSelector } from '../../../redux/store';
 
 import { fCurrency } from '../../../utils/formatNumber';
-
+import useTabs from '../../../hooks/useTabs';
 // routes
 import { PATH_ADMIN } from '../../../routes/paths';
 // hooks
@@ -63,7 +65,7 @@ const SERVICE_OPTIONS = [
 const TABLE_HEAD = [
   { id: 'invoiceNumber', label: 'Client', align: 'left' },
   { id: 'refTo', label: 'Ref to', align: 'left' },
-  { id: 'createDate', label: 'Created Date', align: 'left' },
+  { id: 'dateCreated', label: 'Created Date', align: 'left' },
   { id: 'dueDate', label: 'Due Date', align: 'left' },
   { id: 'type', label: 'Type', align: 'left' },
   { id: 'price', label: 'Total', align: 'center', width: 140 },
@@ -89,19 +91,38 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
+function applySortFilter(array, comparator, filterName, filterService, filterStatus, filterStartDate, filterEndDate) {
   const stabilizedThis = array.map((el, index) => [el, index]);
+
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
 
-  if (query) {
-    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  array = stabilizedThis.map((el) => el[0]);
+
+  if (filterName) {
+    array = array.filter((item) => item.refTo.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
   }
 
-  return stabilizedThis.map((el) => el[0]);
+  if (filterService !== 'all') {
+    array = array.filter((item) => item.items.some((c) => c.service === filterService));
+  }
+
+  if (filterStatus !== 'All') {
+    array = array.filter((item) => item.status === filterStatus);
+  }
+
+  if (filterStartDate && filterEndDate) {
+    array = array.filter(
+      (item) =>
+        new Date(item.dateCreated).getTime() >= filterStartDate.getTime() &&
+        new Date(item.dateCreated).getTime() <= filterEndDate.getTime()
+    );
+  }
+
+  return array;
 }
 
 // ----------------------------------------------------------------------
@@ -124,15 +145,37 @@ export default function InvoiceList() {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const { currentTab: filterStatus, onChangeTab: onFilterStatus } = useTabs('All');
+
+  // const dataFiltered = applySortFilter({
+  //   invoices,
+  //   comparator: getComparator(order, orderBy),
+  //   filterName,
+  //   filterService,
+  //   filterStatus,
+  //   filterStartDate,
+  //   filterEndDate
+  // });
+  // const isNotFound =
+  //   (!dataFiltered.length && !!filterName) ||
+  //   (!dataFiltered.length && !!filterStatus) ||
+  //   (!dataFiltered.length && !!filterService) ||
+  //   (!dataFiltered.length && !!filterEndDate) ||
+  //   (!dataFiltered.length && !!filterStartDate);
+
   const getLengthByStatus = (status) => invoices.data.filter((item) => item.status === status).length;
 
   const getTotalPriceByStatus = (status) => {
-    _.sumBy(
-      invoices.data.filter((item) => item.status === status),
-      'price'
-    );
+    const total = invoices.data.filter((item) => item.status === status).reduce((acc, item) => acc + item.total, 0);
+    return fCurrency(total);
   };
 
+  const getAllTotalPrice = (status) => {
+    if (status === 'All') {
+      const total = invoices.data.reduce((acc, item) => acc + item.total, 0);
+      return fCurrency(total);
+    }
+  };
   // const getTotal = (status) => {
   //   sumBy(
   //     invoices.data.filter((item) => item.status === status),
@@ -142,11 +185,11 @@ export default function InvoiceList() {
 
   const getPercentByStatus = (status) => (getLengthByStatus(status) / invoices.data.length) * 100;
   const TABS = [
-    { value: 'all', label: 'All', color: 'info', count: invoices.data.length },
-    { value: 'paid', label: 'Paid', color: 'success', count: getLengthByStatus('paid') },
-    { value: 'unpaid', label: 'Unpaid', color: 'warning', count: getLengthByStatus('unpaid') },
-    { value: 'overdue', label: 'Overdue', color: 'error', count: getLengthByStatus('overdue') },
-    { value: 'draft', label: 'Draft', color: 'default', count: getLengthByStatus('draft') }
+    { value: 'All', label: 'All', color: 'info', count: invoices.data.length },
+    { value: 'Paid', label: 'Paid', color: 'success', count: getLengthByStatus('Paid') },
+    { value: 'Unpaid', label: 'Unpaid', color: 'warning', count: getLengthByStatus('Unpaid') },
+    { value: 'Overdue', label: 'Overdue', color: 'error', count: getLengthByStatus('Overdue') },
+    { value: 'Draft', label: 'Draft', color: 'default', count: getLengthByStatus('Draft') }
   ];
 
   const pages = new Array(invoice.numberOfPages).fill(null).map((v, i) => i);
@@ -154,7 +197,8 @@ export default function InvoiceList() {
     setPage(Math.max(0, page - 1));
   };
   const handleFilterByName = (event) => {
-    setFilterName(event.target.value);
+    console.log(event);
+    setFilterName(event);
   };
   const handleFilterService = (event) => {
     setFilterService(event.target.value);
@@ -257,7 +301,15 @@ export default function InvoiceList() {
       }
       setSelected(newSelected);
     };
-    const filteredInvoices = applySortFilter(invoices.data, getComparator(order, orderBy), filterName);
+    const filteredInvoices = applySortFilter(
+      invoices.data,
+      getComparator(order, orderBy),
+      filterName,
+      filterService,
+      filterStatus,
+      filterStartDate,
+      filterEndDate
+    );
     const isInvoiceNotFound = filteredInvoices.length === 0;
 
     content = (
@@ -273,7 +325,7 @@ export default function InvoiceList() {
                 title="Total"
                 total={invoices.data.length}
                 percent={100}
-                price={sumBy(invoices, 'totalPrice')}
+                price={getAllTotalPrice('All')}
                 tableData
                 icon="ic:round-receipt"
                 color={theme.palette.info.main}
@@ -317,6 +369,30 @@ export default function InvoiceList() {
         <Divider />
 
         <Card>
+          <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            value={filterStatus}
+            onChange={onFilterStatus}
+            sx={{ px: 2, bgcolor: 'background.neutral' }}
+          >
+            {TABS.map((tab) => (
+              <Tab
+                disableRipple
+                key={tab.value}
+                value={tab.value}
+                label={
+                  <Stack spacing={1} direction="row" alignItems="center">
+                    <div>{tab.label}</div> <Label color={tab.color}> {tab.count} </Label>
+                  </Stack>
+                }
+              />
+            ))}
+          </Tabs>
+
+          <Divider />
+
           <InvoiceTableToolbar
             filterName={filterName}
             filterService={filterService}
@@ -351,6 +427,7 @@ export default function InvoiceList() {
                 <TableBody>
                   {filteredInvoices.map((row) => {
                     const { _id, refTo, dateCreated, dueDate, items, type, status } = row;
+
                     const total = items.map((item) => {
                       const { quantity, unitPrice, discount } = item;
                       const totalPrice = Number(quantity) * Number(unitPrice);
@@ -380,15 +457,15 @@ export default function InvoiceList() {
                             }}
                           >
                             {clients.data.map((client) => (
-                              <Typography variant="subtitle2" noWrap>
+                              <Typography variant="subtitle2" noWrap key={client._id}>
                                 {client._id === refTo && <ClientAvatar client={clients.data} />}
                               </Typography>
                             ))}
                           </Box>
                         </TableCell>
-                        {clients.data.map((client) => (
-                          <TableCell>{client._id === refTo && client.name}</TableCell>
-                        ))}
+                        {/* {clients.data.map((client) => (
+                          ))} */}
+                        <TableCell>{refTo}</TableCell>
                         <TableCell>{dateCreated}</TableCell>
                         <TableCell>{dueDate}</TableCell>
                         <TableCell>
@@ -396,7 +473,7 @@ export default function InvoiceList() {
                         </TableCell>
                         <TableCell>{fCurrency(total)}</TableCell>
                         <TableCell>
-                          <Chip label={status} color={status === 'Overdue' ? 'error' : 'success'} />
+                          <Chip label={status} />
                         </TableCell>
                         <TableCell align="right">
                           <InvoiceMoreMenu onDelete={() => handleDeleteInvoice(_id)} _id={_id} />
@@ -454,7 +531,7 @@ export default function InvoiceList() {
   } else {
     content = (
       <Card>
-        <Typography py={4} px={10} fontSize={20}>
+        <Typography py={4} px={10}>
           No Invoice Found
         </Typography>
       </Card>

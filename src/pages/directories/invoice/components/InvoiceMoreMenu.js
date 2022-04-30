@@ -40,7 +40,11 @@ export default function InvoiceMoreMenu({ onDelete, _id }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem component={RouterLink} to="/" sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          component={RouterLink}
+          to={`${PATH_ADMIN.profiles.invoiceProfile}/${_id}`}
+          sx={{ color: 'text.secondary' }}
+        >
           <ListItemIcon>
             <Icon icon={eyeFill} width={24} height={24} />
           </ListItemIcon>

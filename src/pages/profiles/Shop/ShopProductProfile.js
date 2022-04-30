@@ -20,7 +20,7 @@ import Page from '../../../components/Page';
 import Markdown from '../../../components/Markdown';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { ProductDetailsSumary, ProductDetailsReview, ProductDetailsCarousel } from './product-details/index';
-import CartWidget from '../../../components/_dashboard/e-commerce/CartWidget';
+import CartWidget from './checkout/checkout/CartWidget';
 
 // ----------------------------------------------------------------------
 
@@ -57,12 +57,12 @@ const SkeletonLoad = (
 export default function EcommerceProductDetails() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { _id } = useParams();
+  const { name } = useParams();
 
   const [value, setValue] = useState('1');
   const { products, error } = useSelector((state) => state.product);
 
-  const currentProduct = products?.data.find((product) => product._id === _id);
+  const currentProduct = products?.data.find((product) => product.name === name);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
@@ -86,7 +86,7 @@ export default function EcommerceProductDetails() {
           ]}
         />
 
-        {/* <CartWidget /> */}
+        <CartWidget />
 
         {products && (
           <>
@@ -132,7 +132,7 @@ export default function EcommerceProductDetails() {
 
         {!currentProduct && SkeletonLoad}
 
-        {error && <Typography variant="h6">404 Product not found</Typography>}
+        {/* {error && <Typography variant="h6">404 Product not found</Typography>} */}
       </Container>
     </Page>
   );

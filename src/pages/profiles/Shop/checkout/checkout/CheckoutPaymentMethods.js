@@ -42,8 +42,10 @@ CheckoutPaymentMethods.propTypes = {
   cardOptions: PropTypes.array
 };
 
-export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, formik }) {
+export default function CheckoutPaymentMethods({ paymentOptions, formik }) {
   const { errors, touched, values, getFieldProps } = formik;
+  console.log(errors.paymentType);
+
   return (
     <Card sx={{ my: 3 }}>
       <CardHeader title="Payment options" />
@@ -92,34 +94,6 @@ export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, fo
                         ))}
                       </Box>
                     </MHidden>
-
-                    {hasChildren && (
-                      <Collapse in={values.payment === 'credit_card'} sx={{ width: '100%' }}>
-                        <TextField
-                          select
-                          fullWidth
-                          label="Card"
-                          {...getFieldProps('card')}
-                          SelectProps={{ native: true }}
-                        >
-                          {cardOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </TextField>
-
-                        <Button
-                          id="add-card"
-                          type="button"
-                          size="small"
-                          startIcon={<Icon icon={plusFill} width={20} height={20} />}
-                          sx={{ my: 3 }}
-                        >
-                          Add new card
-                        </Button>
-                      </Collapse>
-                    )}
                   </OptionStyle>
                 </Grid>
               );
@@ -127,7 +101,7 @@ export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, fo
           </Grid>
         </RadioGroup>
 
-        {errors.payment && (
+        {errors.paymentType && (
           <FormHelperText error>
             <Box component="span" sx={{ px: 2 }}>
               {touched.payment && errors.payment}

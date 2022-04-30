@@ -100,9 +100,10 @@ export default function Router() {
         // profiles
         { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> },
         { path: `${PATH_ADMIN.profiles.orderProfile}/:_id`, element: <OrderProfilePage /> },
-        { path: `${PATH_ADMIN.profiles.shopProductProfile}/:_id`, element: <ShopProductProfile /> },
+        { path: `${PATH_ADMIN.profiles.shopProductProfile}/:name`, element: <ShopProductProfile /> },
+        { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceProfilePage /> },
         // checkout
-        { path: `${PATH_ADMIN.profiles.checkout}/:_id`, element: <CheckoutPage /> },
+        { path: `${PATH_ADMIN.profiles.checkout}/:name`, element: <CheckoutPage /> },
 
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
@@ -294,6 +295,7 @@ const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/cl
 const NewInvoiceForm = Loadable(lazy(() => import('../pages/forms/invoice/InvoiceForm')));
 // profiles
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
+const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
 const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
 const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/ShopProductProfile')));
 

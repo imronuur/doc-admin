@@ -31,7 +31,7 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ product }) {
   const { name, images, regularPrice, colors, status, salePrice } = product;
 
-  const linkTo = `${PATH_ADMIN.profiles.shopProductProfile}/${product._id}`;
+  const linkTo = `${PATH_ADMIN.profiles.shopProductProfile}/${name}`;
 
   return (
     <Card>

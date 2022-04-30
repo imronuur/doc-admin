@@ -87,6 +87,7 @@ export default function InvoiceTableToolbar({
         onChange={onFilterStartDate}
         renderInput={(params) => (
           <TextField
+            type="date"
             {...params}
             fullWidth
             sx={{
@@ -102,6 +103,7 @@ export default function InvoiceTableToolbar({
         onChange={onFilterEndDate}
         renderInput={(params) => (
           <TextField
+            type="date"
             {...params}
             fullWidth
             sx={{
