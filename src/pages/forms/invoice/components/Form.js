@@ -1,5 +1,7 @@
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid';
 import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { Link as RouterLink } from 'react-router-dom';
@@ -17,11 +19,16 @@ import {
   Button,
   Box,
   Modal,
-  Input
+  FormHelperText
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import { Icon } from '@iconify/react';
+
+import closeFill from '@iconify/icons-eva/close-fill';
+import { MIconButton } from '../../../../components/@material-extend';
+import { fCurrency } from '../../../../utils/formatNumber';
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
 import { Validations } from './Validations';
-
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -34,7 +41,7 @@ ClientsForm.propTypes = {
   clients: PropTypes.array
 };
 
-const statuses = [{ value: 'All' }, { value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
+const statuses = [{ value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
 const types = [{ value: 'Client' }, { value: 'User' }];
 
 // modal style
@@ -61,13 +68,15 @@ const stackStyle = {
 };
 
 export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading, clients }) {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
   const formik = useFormik({
     enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
     initialValues: currentInvoice
       ? currentInvoice
       : {
-          refTo: '',
+          refTo: {},
           invoiceNumber: '',
           dateCreated: '',
           dueDate: '',
@@ -83,12 +92,23 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
         },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-      try {
-        handleCreateInvoice(values);
-        setSubmitting(false);
-      } catch (error) {
-        setSubmitting(false);
-        setErrors(error);
+      if (new Date(values.dueDate) >= new Date(values.dateCreated)) {
+        try {
+          handleCreateInvoice(values);
+          setSubmitting(false);
+        } catch (error) {
+          setSubmitting(false);
+          setErrors(error);
+        }
+      } else {
+        enqueueSnackbar('Due Date Must be Greater Than Created Date', {
+          variant: 'error',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
       }
     }
   });
@@ -98,10 +118,11 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [toClient, setToClient] = useState(null);
-
+  const { user } = useSelector((state) => state.auth);
   const getClient = (client) => {
     setToClient(client);
-    setFieldValue('refTo', client._id);
+    setFieldValue('refTo', client);
+
     handleClose();
   };
 
@@ -116,6 +137,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
     setFieldValue('total', Number(total));
   }, [values.items]);
 
+  console.log(errors);
+
   return (
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
@@ -125,9 +148,9 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
               <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
                 From:
               </Typography>
-              <Typography fontWeight="600">Jayvion Simon</Typography>
+              <Typography fontWeight="600">{user.name}</Typography>
               <Typography variant="p">
-                19034 Verna Unions Apt. 164 - Honolulu, RI / 87535 <br /> Phone: 365-374-4961
+                {user.email} <br /> Role: {user.role}
               </Typography>
             </Stack>
             <Grid>
@@ -181,6 +204,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
             </Grid>
             <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Button onClick={handleOpen}>+ Add to</Button>
+              <FormHelperText error>{touched.refTo && errors.refTo}</FormHelperText>
             </Grid>
           </Grid>
           <Grid container spacing={3}>
@@ -285,14 +309,27 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                         />
                                       </Grid>
                                       <Grid item xs={2}>
-                                        <TextField
+                                        {/* <TextField
                                           fullWidth
                                           disabled
                                           label="Total"
+                                          defaultValue={total}
                                           {...getFieldProps(`items.${index}.total`)}
                                           error={Boolean(getIn(errors, `items.${index}.total`))}
                                           helperText={getIn(errors, `items.${index}.total`)}
-                                        />
+                                        /> */}
+                                        <Typography
+                                          disabled
+                                          sx={{
+                                            border: 1,
+                                            padding: 2,
+                                            borderRadius: 1,
+                                            borderColor: '#f1f1f1',
+                                            color: 'text.disabled'
+                                          }}
+                                        >
+                                          {fCurrency(Number(total))}
+                                        </Typography>
                                       </Grid>
                                     </Stack>
                                   </Stack>

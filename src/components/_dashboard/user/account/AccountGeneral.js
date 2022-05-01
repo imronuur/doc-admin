@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
+import { useSelector } from 'react-redux';
 import { Box, Grid, Card, Stack, Switch, TextField, FormControlLabel, Typography, FormHelperText } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
@@ -19,7 +20,7 @@ import countries from '../countries';
 export default function AccountGeneral() {
   const isMountedRef = useIsMountedRef();
   const { enqueueSnackbar } = useSnackbar();
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile } = useSelector((state) => state.auth);
 
   const UpdateUserSchema = Yup.object().shape({
     displayName: Yup.string().required('Name is required')
@@ -28,17 +29,17 @@ export default function AccountGeneral() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      displayName: user.displayName || '',
+      displayName: user.name || '',
       email: user.email,
-      photoURL: user.photoURL,
-      phoneNumber: user.phoneNumber,
-      country: user.country,
-      address: user.address,
-      state: user.state,
-      city: user.city,
-      zipCode: user.zipCode,
-      about: user.about,
-      isPublic: user.isPublic
+      photoURL: user?.photoURL,
+      phoneNumber: user?.phoneNumber,
+      country: user?.country,
+      address: user?.address,
+      state: user?.state,
+      city: user?.city,
+      zipCode: user?.zipCode,
+      about: user?.about,
+      isPublic: user?.isPublic
     },
 
     validationSchema: UpdateUserSchema,

@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createOrUpdateUser = createAsyncThunk('auth/createOrUpdateuser', async (authToken) => {
+export const createOrUpdateUser = createAsyncThunk('auth/createOrUpdateuser', async (accessToken) => {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: authToken.token
+    Authorization: accessToken
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_EXPRESS_BACKEND_API}/users`,
+    `${process.env.REACT_APP_BACKEND_API}/users`,
     {},
     {
       headers
@@ -23,6 +23,21 @@ export const tokenCheck = createAsyncThunk('auth/checkToken', async (authToken) 
   };
   const res = await axios.post(
     `${process.env.REACT_APP_EXPRESS_BACKEND_API}/users/token_check`,
+    {},
+    {
+      headers
+    }
+  );
+  return res;
+});
+
+export const getUser = createAsyncThunk('auth/getUser', async (accessToken) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
+  const res = await axios.post(
+    `${process.env.REACT_APP_BACKEND_API}/login-user`,
     {},
     {
       headers

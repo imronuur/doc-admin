@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
+import { useSelector } from 'react-redux';
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Link, Stack, Button, Drawer, Tooltip, Typography, CardActionArea } from '@mui/material';
 // hooks
-import useAuth from '../../hooks/useAuth';
 import useCollapseDrawer from '../../hooks/useCollapseDrawer';
 // routes
 import { PATH_DASHBOARD, PATH_DOCS } from '../../routes/paths';
@@ -18,7 +18,6 @@ import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
 import { DocIllustration } from '../../assets';
-
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 280;
@@ -93,7 +92,7 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
 
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } =
     useCollapseDrawer();
@@ -145,7 +144,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
               <MyAvatar />
               <Box sx={{ ml: 2 }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                  {user?.displayName}
+                  {user?.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   {user?.role}

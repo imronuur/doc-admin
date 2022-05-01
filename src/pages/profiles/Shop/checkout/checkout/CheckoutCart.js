@@ -14,7 +14,8 @@ import {
   applyDiscount,
   increaseQuantity,
   decreaseQuantity,
-  getTotals
+  getTotals,
+  getCart
 } from '../../../../../redux/slices/products';
 
 // routes
@@ -30,7 +31,10 @@ import CheckoutProductList from './CheckoutProductList';
 export default function CheckoutCart() {
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
-  const { cart, discount, subtotal, total } = checkout;
+  const { codes } = useSelector((state) => state.coupon);
+
+  const { cart, subtotal, total } = checkout;
+
   const isEmptyCart = cart.length === 0;
   const handleDeleteCart = (productId) => {
     dispatch(deleteCart(productId));
@@ -39,9 +43,11 @@ export default function CheckoutCart() {
   const handleNextStep = () => {
     dispatch(onNextStep());
   };
+
   useEffect(() => {
     dispatch(getTotals());
   }, [cart, dispatch]);
+
   const handleApplyDiscount = (value) => {
     dispatch(applyDiscount(value));
   };
@@ -118,13 +124,7 @@ export default function CheckoutCart() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CheckoutSummary
-              total={total}
-              enableDiscount
-              discount={discount}
-              subtotal={subtotal}
-              onApplyDiscount={handleApplyDiscount}
-            />
+            <CheckoutSummary codes={codes} total={total} subtotal={subtotal} onApplyDiscount={handleApplyDiscount} />
             <Button fullWidth size="large" type="submit" variant="contained" disabled={values.products.length === 0}>
               Check Out
             </Button>

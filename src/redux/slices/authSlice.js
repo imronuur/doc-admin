@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createOrUpdateUser } from '../thunk/authThunk';
+import { getUser } from '../thunk/authThunk';
 
 const initialState = {
   isLoading: false,
@@ -18,16 +18,16 @@ const slice = createSlice({
   name: 'auth',
   initialState,
   extraReducers: {
-    [createOrUpdateUser.pending]: (state) => {
+    [getUser.pending]: (state) => {
       state.isLoading = true;
     },
-    [createOrUpdateUser.fulfilled]: (state, { payload }) => {
+    [getUser.fulfilled]: (state, { payload }) => {
       state.isLoading = false;
       state.user = payload.data.user;
       state.isAuthenticated = true;
       state.token = payload.data.authorization;
     },
-    [createOrUpdateUser.rejected]: (state, { error }) => {
+    [getUser.rejected]: (state, { error }) => {
       state.error = error.message;
       state.isAuthenticated = false;
       state.isLoading = false;

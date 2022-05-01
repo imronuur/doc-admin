@@ -102,6 +102,8 @@ export default function Router() {
         { path: `${PATH_ADMIN.profiles.orderProfile}/:_id`, element: <OrderProfilePage /> },
         { path: `${PATH_ADMIN.profiles.shopProductProfile}/:name`, element: <ShopProductProfile /> },
         { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.productProfile}/:_id`, element: <ProductProfilePage /> },
+
         // checkout
         { path: `${PATH_ADMIN.profiles.checkout}/:name`, element: <CheckoutPage /> },
 
@@ -298,6 +300,7 @@ const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientPr
 const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
 const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
 const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/ShopProductProfile')));
+const ProductProfilePage = Loadable(lazy(() => import('../pages/profiles/productProfile/ProductProfilePage')));
 
 // checkout
 const CheckoutPage = Loadable(lazy(() => import('../pages/profiles/Shop/checkout/CheckoutPage')));

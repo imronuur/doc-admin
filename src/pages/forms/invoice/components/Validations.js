@@ -1,10 +1,11 @@
 import * as yup from 'yup';
 
 export const Validations = yup.object().shape({
-  status: yup.string().required('Status is required'),
+  // discount: yup.string().required('discount is required'),
   dueDate: yup.string().required('Date is required'),
-  type: yup.string().required('Type is required'),
+  type: yup.mixed().required('Type is required'),
   dateCreated: yup.string().required('Created Date is required'),
-  refTo: yup.string(),
-  invoiceNumber: yup.string()
+  refTo: yup.mixed().required('RefTo is required')
+  // unitPrice: yup.string().required('Unit Price is required'),
+  // invoiceNumber: yup.string()
 });

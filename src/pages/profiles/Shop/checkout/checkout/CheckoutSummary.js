@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import editFill from '@iconify/icons-eva/edit-fill';
 // material
@@ -27,25 +28,32 @@ CheckoutSummary.propTypes = {
   shipping: PropTypes.number,
   onEdit: PropTypes.func,
   enableEdit: PropTypes.bool,
-  onApplyDiscount: PropTypes.func,
-  enableDiscount: PropTypes.bool
+  onApplyDiscount: PropTypes.func
 };
 
 export default function CheckoutSummary({
   total,
   onEdit,
-  discount,
+  codes,
   subtotal,
   shipping = null,
   onApplyDiscount,
-  enableEdit = false,
-  enableDiscount = false
+  enableEdit = false
 }) {
   const displayShipping = shipping !== null ? 'Free' : '-';
-  const { codes } = useSelector((state) => state.coupon);
+  const [discountValue, setDiscountValue] = useState('');
+  const [calculateDiscount, setCalculateDiscount] = useState(false);
+  const coupouns = codes.data.find((c) => c);
 
-  const coupouns = codes.data.map((c) => c.discount);
-
+  const ApplyDiscount = () => {
+    if (discountValue === coupouns.name) {
+      onApplyDiscount(coupouns.discount);
+      setCalculateDiscount(true);
+    } else {
+      alert('Invalid Coupon');
+      setCalculateDiscount(false);
+    }
+  };
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
@@ -72,7 +80,7 @@ export default function CheckoutSummary({
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               Discount
             </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}</Typography>
+            <Typography variant="subtitle2">{calculateDiscount ? fCurrency(-coupouns.discount) : '-'}</Typography>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between">
@@ -96,22 +104,24 @@ export default function CheckoutSummary({
             </Box>
           </Stack>
 
-          {enableDiscount && (
+          {
             <TextField
               fullWidth
               placeholder="Discount codes / Gifts"
-              value={`DISCOUNT CODE: $${coupouns}`}
+              // value={`DISCOUNT CODE: $${coupouns}`}
+              value={discountValue}
+              onChange={(e) => setDiscountValue(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Button type="button" onClick={() => onApplyDiscount(coupouns)} sx={{ mr: -0.5 }}>
+                    <Button type="button" onClick={ApplyDiscount} sx={{ mr: -0.5 }}>
                       Apply
                     </Button>
                   </InputAdornment>
                 )
               }}
             />
-          )}
+          }
         </Stack>
       </CardContent>
     </Card>

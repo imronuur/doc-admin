@@ -146,7 +146,7 @@ export default function EcommerceShop() {
           products={products}
           // isLoad={!filteredProducts && !initialValues}
         />
-        {/* <CartWidget /> */}
+        <CartWidget />
       </Container>
     </Page>
   );

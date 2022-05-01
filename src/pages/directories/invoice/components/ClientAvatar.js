@@ -5,21 +5,19 @@ import createAvatar from '../../../../utils/createAvatar';
 
 // ----------------------------------------------------------------------
 
-export default function ClientAvatar({ client }) {
+export default function ClientAvatar({ client, ...other }) {
   return (
     <>
-      {client.length > 0 &&
-        client.map((item, index) => (
-          <MAvatar
-            key={index}
-            src={item.photoURL}
-            alt={item.name}
-            color={item.photoURL ? 'default' : createAvatar(item.name).color}
-            {...item}
-          >
-            {createAvatar(item.name).name}
-          </MAvatar>
-        ))}
+      {client.length > 0 && (
+        <MAvatar
+          src={client.photoURL}
+          alt={client.name}
+          color={client.photoURL ? 'default' : createAvatar(client.name).color}
+          {...other}
+        >
+          {createAvatar(client.name).name}
+        </MAvatar>
+      )}
     </>
   );
 }

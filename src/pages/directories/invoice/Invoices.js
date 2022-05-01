@@ -1,12 +1,11 @@
 import _, { filter, sumBy } from 'lodash';
-
+import { paramCase } from 'change-case';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
 import { Link as RouterLink } from 'react-router-dom';
-import { sentenceCase } from 'change-case';
 import { useTheme, styled } from '@mui/material/styles';
 import {
   Box,
@@ -103,7 +102,7 @@ function applySortFilter(array, comparator, filterName, filterService, filterSta
   array = stabilizedThis.map((el) => el[0]);
 
   if (filterName) {
-    array = array.filter((item) => item.refTo.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+    array = array.filter((item) => item.refTo.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
   }
 
   if (filterService !== 'all') {
@@ -274,7 +273,7 @@ export default function InvoiceList() {
           )
         });
         setLoading(false);
-      } else if (reduxRes.type === 'clients/delete-many/fulfilled') {
+      } else if (reduxRes.type === 'invoices/delete-many/fulfilled') {
         enqueueSnackbar(`Invoices Deleted!`, {
           variant: 'success',
           action: (key) => (
@@ -426,14 +425,9 @@ export default function InvoiceList() {
                 />
                 <TableBody>
                   {filteredInvoices.map((row) => {
-                    const { _id, refTo, dateCreated, dueDate, items, type, status } = row;
-
-                    const total = items.map((item) => {
-                      const { quantity, unitPrice, discount } = item;
-                      const totalPrice = Number(quantity) * Number(unitPrice);
-                      const price = totalPrice - totalPrice * (discount / 100);
-                      return price;
-                    });
+                    const { _id, refTo, dateCreated, total, dueDate, items, type, status } = row;
+                    // const currentClient = clients.data.find((client) => paramCase(client._id) === refTo);
+                    // console.log(currentClient);
                     const isItemSelected = selected.indexOf(_id) !== -1;
 
                     return (
@@ -456,16 +450,14 @@ export default function InvoiceList() {
                               alignItems: 'center'
                             }}
                           >
-                            {clients.data.map((client) => (
-                              <Typography variant="subtitle2" noWrap key={client._id}>
-                                {client._id === refTo && <ClientAvatar client={clients.data} />}
-                              </Typography>
-                            ))}
+                            <Typography variant="subtitle2" noWrap>
+                              {refTo && <ClientAvatar client={refTo} />}
+                            </Typography>
                           </Box>
                         </TableCell>
                         {/* {clients.data.map((client) => (
                           ))} */}
-                        <TableCell>{refTo}</TableCell>
+                        <TableCell>{refTo.name}</TableCell>
                         <TableCell>{dateCreated}</TableCell>
                         <TableCell>{dueDate}</TableCell>
                         <TableCell>
