@@ -181,7 +181,7 @@ const slice = createSlice({
       let subtotal = 0;
       state.checkout.cart.forEach((item) => {
         subtotal += item.salePrice * item.quantity;
-        total += subtotal - state.checkout.discount;
+        total = subtotal - (subtotal * state.checkout.discount) / 100;
       });
       state.checkout.total = total;
       state.checkout.subtotal = subtotal;

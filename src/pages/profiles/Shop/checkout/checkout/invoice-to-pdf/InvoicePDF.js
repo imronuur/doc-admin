@@ -72,33 +72,37 @@ InvoicePDF.propTypes = {
 };
 
 export default function InvoicePDF({ invoice: order, user, clients }) {
-  const orderedId = order.map((order) => order.orderTo);
-  const client = clients.map((client, i) => client._id === orderedId);
+  const orderedId = String(order.map((order) => order.orderTo));
+  const current = clients.find((client, i) => client._id);
 
+  // const clientMatches = String(current._id) === orderedId;
+  // console.log(clientMatches);
+  // console.log(orderedId);
+  console.log(order);
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* <View style={[styles.gridContainer, styles.mb40]}>
+        <View style={[styles.gridContainer, styles.mb40]}>
           <Image source="/static/brand/logo_full.jpg" style={{ height: 32 }} />
           <View style={{ alignItems: 'right', flexDirection: 'column' }}>
-            <Text style={styles.h3}>{orderStatus}</Text>
-            <Text>INV-{orderId}</Text>
+            <Text style={styles.h3}>{order[0].orderStatus}</Text>
+            <Text>INV-{orderedId}</Text>
           </View>
-        </View> */}
+        </View>
 
         <View style={[styles.gridContainer, styles.mb40]}>
           <View style={styles.col6}>
             <Text style={[styles.overline, styles.mb8]}>Invoice from</Text>
-            <Text style={styles.body1}>{user.displayName}</Text>
-            <Text style={styles.body1}>{user.state}</Text>
-            <Text style={styles.body1}>{user.phoneNumber}</Text>
+            <Text style={styles.body1}>{user.name}</Text>
+            <Text style={styles.body1}>{user.role.toLowerCase()}</Text>
+            <Text style={styles.body1}>{user?.phoneNumber}</Text>
           </View>
           <View style={styles.col6}>
             <Text style={[styles.overline, styles.mb8]}>Invoice To</Text>
 
-            <Text style={styles.body1}>{client.name || 'Abdi Zamed Mohamed'}</Text>
-            <Text style={styles.body1}>{client.state || 'Mogadishu'}</Text>
-            <Text style={styles.body1}>{client.phone}</Text>
+            <Text style={styles.body1}>{current.name}</Text>
+            <Text style={styles.body1}>{current.state}</Text>
+            <Text style={styles.body1}>{current.phone}</Text>
           </View>
         </View>
 
@@ -125,26 +129,30 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
             </View>
           </View>
           <View style={styles.tableBody}>
-            {/* {products?.map((item, index) => (
-              <View style={styles.tableRow} key={item._id}>
-                <View style={styles.tableCell_1}>
-                  <Text>{index + 1}</Text>
+            {order.length > 0 &&
+              order.map((item, index) => (
+                <View style={styles.tableRow} key={item._id}>
+                  <View style={styles.tableCell_1}>
+                    <Text>{index + 1}</Text>
+                  </View>
+                  <View style={styles.tableCell_2}>
+                    <Text style={styles.subtitle2}>{item.products.title}</Text>
+                    <Text>{item.products.description || 'Samsung A71'}</Text>
+                  </View>
+                  {item &&
+                    item.products.map((product) => (
+                      <View style={styles.tableCell_3}>
+                        <Text>{product.count}</Text>
+                      </View>
+                    ))}
+                  <View style={styles.tableCell_3}>
+                    <Text>{item.orderInfo.amount}</Text>
+                  </View>
+                  <View style={[styles.tableCell_3, styles.alignRight]}>
+                    <Text>{fCurrency(item.orderInfo.amount)}</Text>
+                  </View>
                 </View>
-                <View style={styles.tableCell_2}>
-                  <Text style={styles.subtitle2}>{item.title}</Text>
-                  <Text>{item.description}</Text>
-                </View>
-                <View style={styles.tableCell_3}>
-                  <Text>{item.count}</Text>
-                </View>
-                <View style={styles.tableCell_3}>
-                  <Text>{orderInfo.amount}</Text>
-                </View>
-                <View style={[styles.tableCell_3, styles.alignRight]}>
-                  <Text>{fCurrency(orderInfo.amount)}</Text>
-                </View>
-              </View>
-            ))} */}
+              ))}
             {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />

@@ -15,7 +15,7 @@ export const createClient = createAsyncThunk('clients/create', async ({ client }
   return res;
 });
 
-export const deleteClient = createAsyncThunk('clients/delete', async ({ _id }) => {
+export const deleteClient = createAsyncThunk('client/delete', async ({ _id }) => {
   const headers = {
     'Content-Type': 'application/json'
   };

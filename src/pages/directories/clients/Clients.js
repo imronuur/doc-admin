@@ -127,7 +127,7 @@ export default function ClientList() {
       _id
     };
     const reduxRes = await dispatch(deleteClient(reqObject));
-    if (reduxRes.type === 'clients/delete/rejected') {
+    if (reduxRes.type === 'client/delete/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -136,7 +136,7 @@ export default function ClientList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'clients/delete/fulfilled') {
+    } else if (reduxRes.type === 'client/delete/fulfilled') {
       enqueueSnackbar(`Client Deleted!`, {
         variant: 'success',
         action: (key) => (

@@ -35,7 +35,7 @@ export default function RouteProfilePage() {
     <Page title="Client |  iDAN">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={`Client Profile ${_id}`}
+          heading={`Client Profile -  ${currentClient.name}`}
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
             { name: 'Profiles Directory', href: PATH_ADMIN.directories.clients },

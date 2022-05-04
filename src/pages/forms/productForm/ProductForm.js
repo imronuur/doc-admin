@@ -32,7 +32,7 @@ export default function ProductForm() {
   const { products } = useSelector((state) => state.product);
   const isEdit = pathname.includes('edit');
   const currentProduct = products.data.find((product) => paramCase(product._id) === _id);
-
+  console.log(currentProduct);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);

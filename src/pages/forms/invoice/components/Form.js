@@ -204,7 +204,6 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
             </Grid>
             <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Button onClick={handleOpen}>+ Add to</Button>
-              <FormHelperText error>{touched.refTo && errors.refTo}</FormHelperText>
             </Grid>
           </Grid>
           <Grid container spacing={3}>
@@ -227,7 +226,12 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                   </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Select Type</FormLabel>
-                    <Select fullWidth {...getFieldProps('type')}>
+                    <Select
+                      fullWidth
+                      {...getFieldProps('type')}
+                      error={Boolean(touched.type && errors.type)}
+                      helperText={touched.type && errors.type}
+                    >
                       {types.map((option, index) => (
                         <MenuItem key={index} value={option.value}>
                           {option.value}

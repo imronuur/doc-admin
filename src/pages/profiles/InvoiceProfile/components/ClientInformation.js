@@ -26,31 +26,42 @@ export default function InvoiceInformation({ invoice }) {
   return (
     <CardStyle>
       <CardHeader title="Client Information" />
-
       <Stack spacing={2} sx={{ p: 3 }}>
         <Stack direction="row">
           <IconStyle icon={userOutlined} />
-          <Typography variant="body2">{invoice.type}</Typography>
-        </Stack>
-
-        <Stack direction="row">
-          <IconStyle icon={calendarFilled} />
-          <Typography variant="body2">{invoice.total}</Typography>
-        </Stack>
-        {/* <Stack direction="row">
-          <IconStyle icon={calendarFilled} />
-          <Typography variant="body2">{client.phone}</Typography>
-        </Stack>
-        <Stack direction="row">
-          <IconStyle icon={fileDoneOutlined} />
-          <Typography variant="subtitle2" color="text.primary">
-            {client?.state}
+          <Typography variant="body2">
+            Client Name :-
+            <span style={{ paddingLeft: 10, fontWeight: 800 }}>{invoice.refTo.name}</span>
           </Typography>
         </Stack>
         <Stack direction="row">
-          <IconStyle icon={shopFilled} />
-          <Typography variant="body2">{client?.company || ''}</Typography>
-        </Stack> */}
+          <IconStyle icon={userOutlined} />
+          <Typography variant="body2">
+            Client Email :-
+            <span style={{ paddingLeft: 10, fontWeight: 800 }}>{invoice.refTo.email}</span>
+          </Typography>
+        </Stack>
+        <Stack direction="row">
+          <IconStyle icon={userOutlined} />
+          <Typography variant="body2">
+            Phone Number :-
+            <span style={{ paddingLeft: 10, fontWeight: 800 }}>{invoice.refTo.phone}</span>
+          </Typography>
+        </Stack>
+        <Stack direction="row">
+          <IconStyle icon={userOutlined} />
+          <Typography variant="body2">
+            State :-
+            <span style={{ paddingLeft: 10, fontWeight: 800 }}>{invoice.refTo.state}</span>
+          </Typography>
+        </Stack>
+        <Stack direction="row">
+          <IconStyle icon={userOutlined} />
+          <Typography variant="body2">
+            Company :-
+            <span style={{ paddingLeft: 10, fontWeight: 800 }}>{invoice.refTo.company}</span>
+          </Typography>
+        </Stack>
       </Stack>
     </CardStyle>
   );

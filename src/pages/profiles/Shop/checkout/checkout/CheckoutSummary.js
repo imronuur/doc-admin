@@ -43,11 +43,11 @@ export default function CheckoutSummary({
   const displayShipping = shipping !== null ? 'Free' : '-';
   const [discountValue, setDiscountValue] = useState('');
   const [calculateDiscount, setCalculateDiscount] = useState(false);
-  const coupouns = codes.data.find((c) => c);
+  const coupouns = codes?.data.find((c) => c);
 
   const ApplyDiscount = () => {
-    if (discountValue === coupouns.name) {
-      onApplyDiscount(coupouns.discount);
+    if (discountValue === coupouns?.name) {
+      onApplyDiscount(coupouns?.discount);
       setCalculateDiscount(true);
     } else {
       alert('Invalid Coupon');

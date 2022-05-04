@@ -41,7 +41,7 @@ export default function ClientsForm({ isEdit, currentClient, handleCreate, loadi
     enableReinitialize: true,
     initialValues: {
       name: currentClient?.name || '',
-      state: currentClient?.state || '',
+      address: currentClient?.address || '',
       email: currentClient?.email || '',
       phone: currentClient?.phone || '',
       company: currentClient?.company || '',
@@ -99,10 +99,10 @@ export default function ClientsForm({ isEdit, currentClient, handleCreate, loadi
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="State"
-                    {...getFieldProps('state')}
-                    error={Boolean(touched.state && errors.state)}
-                    helperText={touched.state && errors.state}
+                    label="Address"
+                    {...getFieldProps('address')}
+                    error={Boolean(touched.address && errors.address)}
+                    helperText={touched.address && errors.address}
                   />
                 </Grid>
                 <Grid item xs={12} mt>

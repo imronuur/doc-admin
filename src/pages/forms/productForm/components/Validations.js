@@ -11,7 +11,7 @@ export const Validations = yup.object().shape({
   inStock: yup.bool(),
   shipping: yup.bool(),
   brand: yup.string().required('Brand is required'),
-  size: yup.string().required('Size is required'),
+  size: yup.array().required('Size is required'),
   sold: yup.string(),
   category: yup.string().required('Category is required')
 });

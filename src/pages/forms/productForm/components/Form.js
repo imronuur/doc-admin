@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik } from 'formik';
+import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
@@ -12,9 +12,9 @@ import {
   Switch,
   Select,
   TextField,
-  InputLabel,
+  Button,
   Typography,
-  FormControl,
+  CardHeader,
   Autocomplete,
   InputAdornment,
   FormHelperText,
@@ -64,7 +64,7 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
       inStock: currentProduct?.inStock || true, //
       shipping: currentProduct?.shipping || true, //
       brand: currentProduct?.brand || 'Samsung', //
-      size: currentProduct?.size || '200ml', //
+      size: currentProduct?.size || [], //
       sold: currentProduct?.sold || '2', //
       category: currentProduct?.category?._id || '',
       slug: currentProduct?.slug || ''
@@ -195,12 +195,51 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <TextField
-                        fullWidth
-                        label="Size"
-                        {...getFieldProps('size')}
-                        error={Boolean(touched.size && errors.size)}
-                        helperText={touched.size && errors.size}
+                      <FieldArray
+                        name="size"
+                        render={(arrayHelpers) => (
+                          <>
+                            {arrayHelpers.form.values.size && arrayHelpers.form.values.size.length >= 0 ? (
+                              <>
+                                {arrayHelpers.form.values.size.map((res, index) => (
+                                  <Grid container>
+                                    <TextField
+                                      fullWidth
+                                      label="Size"
+                                      {...getFieldProps(`size.${index}`)}
+                                      error={Boolean(touched.size && errors.size)}
+                                      helperText={touched.size && errors.size}
+                                    />
+
+                                    <Grid item xs={2} sx={{ marginBottom: '3%' }}>
+                                      <Button
+                                        variant="contained"
+                                        disabled={arrayHelpers.form.values.size.length === 1}
+                                        color="secondary"
+                                        onClick={() => arrayHelpers.remove(index)}
+                                        sx={{ mt: 3, ml: 1 }}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </Grid>
+                                  </Grid>
+                                ))}
+                                <Grid item xs={12}>
+                                  <Button
+                                    type="button"
+                                    variant="text"
+                                    onClick={() => arrayHelpers.push()}
+                                    sx={{ mt: 3, ml: 1 }}
+                                  >
+                                    + Add Size
+                                  </Button>
+                                </Grid>
+                              </>
+                            ) : (
+                              <Typography> Nothing</Typography>
+                            )}
+                          </>
+                        )}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>

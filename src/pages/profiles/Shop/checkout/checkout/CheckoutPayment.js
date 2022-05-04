@@ -54,8 +54,8 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
   const { total, discount, subtotal, shipping } = checkout;
-  const { user } = useAuth();
-  console.log(user);
+  const { user } = useSelector((state) => state.auth);
+
   const handleNextStep = () => {
     dispatch(onNextStep());
   };

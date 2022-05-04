@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
 
 import { Grid, Stack } from '@mui/material';
-import InvoiceInformation from './InvoiceInformation';
-import ClientOrder from './ClientOrder';
+import InvoiceInformation from './ClientInformation';
+import ClientInvoice from './ClientInvoice';
 
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
 RouteAbout.propTypes = {
-  client: PropTypes.object
+  invoice: PropTypes.object
 };
-
-export default function RouteAbout({ invoice, order }) {
+export default function RouteAbout({ invoice }) {
   return (
     <Grid container>
       <Grid item xs={12} md={6}>
@@ -20,11 +19,11 @@ export default function RouteAbout({ invoice, order }) {
           <InvoiceInformation invoice={invoice} />
         </Stack>
       </Grid>
-      {/* <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6}>
         <Stack sx={{ pl: 3 }}>
-          <ClientOrder order={order} />
+          <ClientInvoice invoice={invoice} />
         </Stack>
-      </Grid> */}
+      </Grid>
     </Grid>
   );
 }

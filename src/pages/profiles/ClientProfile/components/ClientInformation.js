@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import carFilled from '@iconify/icons-ant-design/car-filled';
-import calendarFilled from '@iconify/icons-ant-design/calendar-filled';
 import shopFilled from '@iconify/icons-ant-design/shop-filled';
 import fileDoneOutlined from '@iconify/icons-ant-design/file-done-outlined';
 import userOutlined from '@iconify/icons-ant-design/user-outlined';
@@ -34,21 +33,21 @@ export default function ClientInformation({ client }) {
         </Stack>
 
         <Stack direction="row">
-          <IconStyle icon={calendarFilled} />
+          <IconStyle icon={userOutlined} />
           <Typography variant="body2">{client.email}</Typography>
         </Stack>
         <Stack direction="row">
-          <IconStyle icon={calendarFilled} />
+          <IconStyle icon={userOutlined} />
           <Typography variant="body2">{client.phone}</Typography>
         </Stack>
         <Stack direction="row">
-          <IconStyle icon={fileDoneOutlined} />
+          <IconStyle icon={userOutlined} />
           <Typography variant="subtitle2" color="text.primary">
-            {client?.state}
+            {client.state}
           </Typography>
         </Stack>
         <Stack direction="row">
-          <IconStyle icon={shopFilled} />
+          <IconStyle icon={userOutlined} />
           <Typography variant="body2">{client?.company || ''}</Typography>
         </Stack>
       </Stack>

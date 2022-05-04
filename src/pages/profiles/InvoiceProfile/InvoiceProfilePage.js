@@ -34,11 +34,11 @@ export default function RouteProfilePage() {
     <Page title="Client |  iDAN">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={`Invoice Profile ${_id}`}
+          heading={`Invoice Profile - ${currentInvoice.refTo.name}`}
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
-            { name: 'Profiles Directory', href: PATH_ADMIN.directories.invoices },
-            { name: currentInvoice?.name || '' }
+            { name: 'Invoice', href: PATH_ADMIN.directories.invoices },
+            { name: currentInvoice?.type || '' }
           ]}
         />
 

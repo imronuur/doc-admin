@@ -84,7 +84,7 @@ export default function EcommerceCheckout() {
   const { checkout } = useSelector((state) => state.product);
   const { cart, billing, activeStep } = checkout;
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const isComplete = activeStep === STEPS.length;
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   // const navigate = useNavigate();

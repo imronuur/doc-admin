@@ -428,6 +428,7 @@ export default function InvoiceList() {
                     const { _id, refTo, dateCreated, total, dueDate, items, type, status } = row;
                     // const currentClient = clients.data.find((client) => paramCase(client._id) === refTo);
                     // console.log(currentClient);
+
                     const isItemSelected = selected.indexOf(_id) !== -1;
 
                     return (
