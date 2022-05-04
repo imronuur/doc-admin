@@ -65,7 +65,7 @@ export default function UploadMultiFile({
   sx,
   ...other
 }) {
-  const hasFile = files.length > 0;
+  const hasFile = files?.length > 0;
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     ...other
@@ -136,7 +136,7 @@ export default function UploadMultiFile({
 
       <List disablePadding sx={{ ...(hasFile && { my: 3 }) }}>
         <AnimatePresence>
-          {files.map((file) => {
+          {files?.map((file) => {
             const { name, size, preview } = file;
             const key = isString(file) ? file : name;
 
