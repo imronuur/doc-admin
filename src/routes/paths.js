@@ -43,7 +43,8 @@ export const PATH_ADMIN = {
     invoices: path(ROOTS_ADMIN, '/invoice-directory'),
     orders: path(ROOTS_ADMIN, '/order-directory'),
     couponCode: path(ROOTS_ADMIN, '/coupon-code-directory'),
-    shop: path(ROOTS_ADMIN, '/shop-directory')
+    shop: path(ROOTS_ADMIN, '/shop-directory'),
+    offers: path(ROOTS_ADMIN, '/offers-directory')
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
@@ -59,7 +60,9 @@ export const PATH_ADMIN = {
     newClients: path(ROOTS_ADMIN, '/new-clients'),
     editClients: path(ROOTS_ADMIN, '/edit-clients'),
     newInvoice: path(ROOTS_ADMIN, '/new-invoice'),
-    editInvoice: path(ROOTS_ADMIN, '/edit-invoice')
+    editInvoice: path(ROOTS_ADMIN, '/edit-invoice'),
+    newOffer: path(ROOTS_ADMIN, '/new-offer'),
+    editOffer: path(ROOTS_ADMIN, '/edit-offer')
   },
   profiles: {
     clientProfile: path(ROOTS_ADMIN, '/client-profile'),

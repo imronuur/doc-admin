@@ -83,6 +83,7 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.shop}`, element: <Shop /> },
         { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
         { path: `${PATH_ADMIN.directories.invoices}`, element: <Invoices /> },
+        { path: `${PATH_ADMIN.directories.offers}`, element: <SpecialOffers /> },
 
         { path: `${PATH_ADMIN.directories.orders}`, element: <Orders /> },
         { path: `${PATH_ADMIN.directories.couponCode}`, element: <CouponCodeList /> },
@@ -112,7 +113,9 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
         { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> },
         { path: `${PATH_ADMIN.forms.newInvoice}`, element: <NewInvoiceForm /> },
-        { path: `${PATH_ADMIN.forms.editInvoice}/:_id`, element: <NewInvoiceForm /> }
+        { path: `${PATH_ADMIN.forms.editInvoice}/:_id`, element: <NewInvoiceForm /> },
+        { path: `${PATH_ADMIN.forms.newOffer}`, element: <SpecialOffersForm /> },
+        { path: `${PATH_ADMIN.forms.editOffer}/:_id`, element: <SpecialOffersForm /> }
       ]
     },
 
@@ -286,6 +289,7 @@ const Clients = Loadable(lazy(() => import('../pages/directories/clients/Clients
 const Invoices = Loadable(lazy(() => import('../pages/directories/invoice/Invoices')));
 const Orders = Loadable(lazy(() => import('../pages/directories/Orders/Orders')));
 const Shop = Loadable(lazy(() => import('../pages/directories/shop/ShopDirectory')));
+const SpecialOffers = Loadable(lazy(() => import('../pages/directories/specialOffers/SpecialOffers')));
 // Form
 
 const CategoryForm = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
@@ -295,6 +299,7 @@ const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/Coup
 const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
 const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/clientsForm')));
 const NewInvoiceForm = Loadable(lazy(() => import('../pages/forms/invoice/InvoiceForm')));
+const SpecialOffersForm = Loadable(lazy(() => import('../pages/forms/specialOffers/OffersForm')));
 // profiles
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));

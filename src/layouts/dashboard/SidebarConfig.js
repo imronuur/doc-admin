@@ -9,7 +9,7 @@ import roundInventory2 from '@iconify/icons-ic/round-inventory-2';
 import roundMessage from '@iconify/icons-ic/round-message';
 import roundPercentage from '@iconify/icons-ic/round-percentage';
 import sharpShoppingCart from '@iconify/icons-ic/sharp-shopping-cart';
-
+import roundLocalOffer from '@iconify/icons-ic/round-local-offer';
 // routes
 // components
 import SvgIconStyle from '../../components/SvgIconStyle';
@@ -28,7 +28,8 @@ const ICONS = {
   invoices: getIconify(roundInventory2),
   orders: getIconify(roundMessage),
   coupon: getIconify(roundPercentage),
-  shop: getIconify(sharpShoppingCart)
+  shop: getIconify(sharpShoppingCart),
+  roundLocalOffer: getIconify(roundLocalOffer)
 };
 
 const sidebarConfig = [
@@ -48,6 +49,7 @@ const sidebarConfig = [
       { title: 'Invoices', path: PATH_ADMIN.directories.invoices, icon: ICONS.invoices },
       { title: 'Orders', path: PATH_ADMIN.directories.orders, icon: ICONS.orders },
       { title: 'Shop', path: PATH_ADMIN.directories.shop, icon: ICONS.shop },
+      { title: 'Special Offers', path: PATH_ADMIN.directories.offers, icon: ICONS.roundLocalOffer },
       { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon }
     ]
   }

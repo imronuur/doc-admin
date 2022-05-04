@@ -10,7 +10,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
 import { sentenceCase } from 'change-case';
 import { useTheme, styled } from '@mui/material/styles';
-
 import {
   Box,
   Card,
@@ -39,26 +38,21 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
-import Label from '../../../components/Label';
 
-import { getClients } from '../../../redux/slices/clients';
-import { deleteClient, deleteManyClients } from '../../../redux/thunk/clientsThunk';
-import ClientListToolbar from './components/ClientsListToolbar';
-import ClientListHead from './components/ClientsListHead';
-import ClientMoreMenu from './components/ClientsMoreMenu';
-import { ClientAvatar } from './components';
+import { getOffers } from '../../../redux/slices/offerSlice';
+import { deleteOffer, deleteManyOffers } from '../../../redux/thunk/offerThunk';
+import { OfferListHead, OfferListToolbar, OfferMoreMenu } from './components';
+import { fCurrency } from '../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'avatar', label: 'Avatar', align: 'left' },
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'email', label: 'Email Address', align: 'left' },
-  { id: 'phone', label: 'Phone Number', align: 'left' },
-  { id: 'state', label: 'State', align: 'left' },
-  { id: 'company', label: 'Company', align: 'left' },
+  { id: 'productName', label: 'Product Name', align: 'left' },
+  { id: 'offerTitle', label: 'Offer Title', align: 'left' },
+  { id: 'price', label: 'Price', align: 'left' },
+  { id: 'expiryDate', label: 'Expiry Date', align: 'left' },
   { id: '' }
 ];
 
@@ -89,7 +83,7 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_product) => _product.product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -101,9 +95,8 @@ export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { client } = useSelector((state) => state);
-
-  const { clients } = client;
+  const { offer } = useSelector((state) => state);
+  const { offers } = offer;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -113,21 +106,21 @@ export default function ClientList() {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(clients.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(offers.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(clients.numberOfPages - 1, page + 1));
+    setPage(Math.min(offers.numberOfPages - 1, page + 1));
   };
 
-  const handleDeleteClient = async (_id) => {
+  const handleDeleteOffer = async (_id) => {
     const reqObject = {
       _id
     };
-    const reduxRes = await dispatch(deleteClient(reqObject));
-    if (reduxRes.type === 'client/delete/rejected') {
+    const reduxRes = await dispatch(deleteOffer(reqObject));
+    if (reduxRes.type === 'offer/delete/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -136,8 +129,8 @@ export default function ClientList() {
           </MIconButton>
         )
       });
-    } else if (reduxRes.type === 'client/delete/fulfilled') {
-      enqueueSnackbar(`Client Deleted!`, {
+    } else if (reduxRes.type === 'offer/delete/fulfilled') {
+      enqueueSnackbar(`Offer Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -146,7 +139,7 @@ export default function ClientList() {
         )
       });
 
-      dispatch(getClients({ page }));
+      dispatch(getOffers({ page }));
     }
   };
 
@@ -154,7 +147,7 @@ export default function ClientList() {
     const reqObject = {
       page
     };
-    dispatch(getClients(reqObject));
+    dispatch(getOffers(reqObject));
   }, [dispatch, page]);
 
   const handleDeleteMany = async (ids) => {
@@ -162,8 +155,8 @@ export default function ClientList() {
     const reqObject = {
       ids
     };
-    const reduxRes = await dispatch(deleteManyClients(reqObject));
-    if (reduxRes.type === 'clients/delete-many/rejected') {
+    const reduxRes = await dispatch(deleteManyOffers(reqObject));
+    if (reduxRes.type === 'offers/delete-many/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -173,8 +166,8 @@ export default function ClientList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'clients/delete-many/fulfilled') {
-      enqueueSnackbar(`Clients Deleted!`, {
+    } else if (reduxRes.type === 'offers/delete-many/fulfilled') {
+      enqueueSnackbar(`Offers Deleted!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -186,7 +179,7 @@ export default function ClientList() {
     }
   };
 
-  if (clients?.data?.length) {
+  if (offers?.data.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -195,7 +188,7 @@ export default function ClientList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = clients.data.map((n) => n._id);
+        const newSelecteds = offers.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -221,13 +214,13 @@ export default function ClientList() {
       setFilterName(event.target.value);
     };
 
-    const filteredCleints = applySortFilter(clients.data, getComparator(order, orderBy), filterName);
+    const filteredOffers = applySortFilter(offers.data, getComparator(order, orderBy), filterName);
 
-    const isClientNotFound = filteredCleints.length === 0;
+    const isOfferNotFound = filteredOffers.length === 0;
 
     content = (
       <Card>
-        <ClientListToolbar
+        <OfferListToolbar
           handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
@@ -238,18 +231,18 @@ export default function ClientList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <ClientListHead
+              <OfferListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={clients.data.length}
+                rowCount={offers.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filteredCleints.map((row) => {
-                  const { _id, name, email, phone, state, company } = row;
+                {filteredOffers.map((row) => {
+                  const { _id, product, name, title, price, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -265,9 +258,7 @@ export default function ClientList() {
                       <TableCell padding="checkbox">
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, _id)} />
                       </TableCell>
-                      <TableCell>
-                        <ClientAvatar name={name} />
-                      </TableCell>
+
                       <TableCell component="th" scope="row" padding="none">
                         <Box
                           sx={{
@@ -277,25 +268,24 @@ export default function ClientList() {
                           }}
                         >
                           <Typography variant="subtitle2" noWrap>
-                            {name}
+                            {product.name}
                           </Typography>
                         </Box>
                       </TableCell>
 
-                      <TableCell>{email}</TableCell>
-                      <TableCell>{phone}</TableCell>
+                      <TableCell>{title}</TableCell>
 
-                      <TableCell>{state}</TableCell>
-                      <TableCell>{company}</TableCell>
+                      <TableCell>{fCurrency(price)}</TableCell>
+                      <TableCell>{createdAt}</TableCell>
 
                       <TableCell align="right">
-                        <ClientMoreMenu onDelete={() => handleDeleteClient(_id)} _id={_id} />
+                        <OfferMoreMenu onDelete={() => handleDeleteOffer(_id)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isClientNotFound && (
+              {isOfferNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -309,7 +299,7 @@ export default function ClientList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {clients.data.length > 0 && (
+        {offers.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -334,7 +324,7 @@ export default function ClientList() {
         )}
       </Card>
     );
-  } else if (client.isLoading) {
+  } else if (offer.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -344,26 +334,26 @@ export default function ClientList() {
     content = (
       <Card>
         <Typography px={10} py={4}>
-          No Clients found
+          No Offers found
         </Typography>
       </Card>
     );
   }
 
   return (
-    <Page title="Clients List | iDan">
+    <Page title="Offers List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Clients List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.clients }, { name: 'Clients List' }]}
+          heading="Offers List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.offers }, { name: 'Offers List' }]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_ADMIN.forms.newClients}
+              to={PATH_ADMIN.forms.newOffer}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Client
+              New Offer
             </Button>
           }
         />

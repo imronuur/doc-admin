@@ -22,11 +22,11 @@ import {
   MenuItem,
   FormLabel
 } from '@mui/material';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { QuillEditor } from '../../../../components/editor';
 import { UploadMultiFile } from '../../../../components/upload';
 import { loadSubCategory } from '../../../../redux/slices/subCategories';
 import { storage } from '../../../../Firebase';
-
 import { Validations } from './Validations';
 
 // ----------------------------------------------------------------------
@@ -88,10 +88,10 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
       setFileLoading(true);
       const newImages = [...values.images];
       acceptedFiles.map(async (file) => {
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(file.name);
-        await fileRef.put(file);
-        const fileUrl = await fileRef.getDownloadURL();
+        // const storageRef = ;
+        const fileRef = ref(storage, file.name);
+        await uploadBytes(fileRef, file);
+        const fileUrl = await getDownloadURL(fileRef);
         newImages.push(fileUrl);
         setFieldValue('images', newImages);
       });

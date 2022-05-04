@@ -205,6 +205,14 @@ export function getProducts({ page }) {
     }
   };
 }
+export const getAllProducts = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // ----------------------------------------------------------------------
 export const {

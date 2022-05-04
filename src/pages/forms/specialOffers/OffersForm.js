@@ -10,7 +10,8 @@ import { MIconButton } from '../../../components/@material-extend';
 
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { createClient } from '../../../redux/thunk/clientsThunk';
+import { createOffer } from '../../../redux/thunk/offerThunk';
+import { getAllProducts } from '../../../redux/slices/products';
 
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
@@ -29,35 +30,42 @@ export default function ClientsForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
 
-  const { client } = useSelector((state) => state);
-  const { clients } = client;
+  const { offers } = useSelector((state) => state.offer);
+
   const isEdit = pathname.includes('edit');
-  const currentClient = clients?.data.find((cli) => paramCase(cli._id) === _id);
+  const currentOffer = offers?.data.find((off) => paramCase(off._id) === _id);
 
   const [loading, setLoading] = useState(false);
 
-  // const [client, setClient] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  // useEffect(() => {
-  //   const loadClients = async () => {
-  //     const res = await getClients();
-  //     setClient(res.data);
-  //   };
-  //   loadClients();
-  // }, []);
+  useEffect(() => {
+    let isSubscribed = true;
+
+    if (isSubscribed) {
+      const loadProducts = async () => {
+        const res = await getAllProducts();
+        setProducts(res.data);
+      };
+
+      loadProducts();
+    }
+
+    return () => (isSubscribed = false);
+  }, []);
 
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const handleCreate = async (client) => {
+  const handleCreate = async (offer) => {
     setLoading(true);
 
     const reqObject = {
-      client
+      offer
     };
 
-    const reduxRes = await dispatch(createClient(reqObject));
-    if (reduxRes.type === 'client/create/rejected') {
+    const reduxRes = await dispatch(createOffer(reqObject));
+    if (reduxRes.type === 'offer/create/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -67,8 +75,8 @@ export default function ClientsForm() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'client/create/fulfilled') {
-      enqueueSnackbar(`Client Created!`, {
+    } else if (reduxRes.type === 'offer/create/fulfilled') {
+      enqueueSnackbar(`Offer Created!`, {
         variant: 'success',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -77,26 +85,32 @@ export default function ClientsForm() {
         )
       });
       setLoading(false);
-      navigate(`${PATH_ADMIN.directories.clients}`);
+      navigate(`${PATH_ADMIN.directories.offers}`);
     }
   };
 
   return (
-    <Page title="Create a new client | iDan">
+    <Page title="Create a new offer | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={!isEdit ? 'Create a new client' : 'Edit Client'}
+          heading={!isEdit ? 'Create a new offer' : 'Edit offer'}
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: 'Clients List',
-              href: PATH_ADMIN.directories.clients
+              name: 'Offers List',
+              href: PATH_ADMIN.directories.offers
             },
-            { name: !isEdit ? 'New Clients' : currentClient?.name }
+            { name: !isEdit ? 'New Offer' : currentOffer?.name }
           ]}
         />
 
-        <Form isEdit={isEdit} currentClient={currentClient} handleCreate={handleCreate} loading={loading} />
+        <Form
+          isEdit={isEdit}
+          currentOffer={currentOffer}
+          products={products}
+          handleCreate={handleCreate}
+          loading={loading}
+        />
       </Container>
     </Page>
   );
