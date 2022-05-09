@@ -305,7 +305,7 @@ export default function CategoryList() {
               <Button
                 key={pageIndex}
                 onClick={() => setPage(pageIndex)}
-                color={pageIndex === page ? 'warning' : 'success'}
+                color={pageIndex === page - 1 ? 'warning' : 'success'}
               >
                 {pageIndex + 1}
               </Button>

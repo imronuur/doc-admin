@@ -25,10 +25,8 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { QuillEditor } from '../../../../components/editor';
 import { UploadMultiFile } from '../../../../components/upload';
-import { loadSubCategory } from '../../../../redux/slices/subCategories';
-import { storage } from '../../../../Firebase';
+import { storage, deleteFirebaseObject, refFirebase } from '../../../../Firebase';
 import { Validations } from './Validations';
-
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -102,14 +100,18 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
 
   const handleRemoveAll = (files) => {
     setFileLoading(true);
-    files.map(async (file) => storage.refFromURL(file).delete());
+    files.map(async (file) => {
+      const delRef = await refFirebase(storage, file);
+      deleteFirebaseObject(delRef);
+    });
     setFieldValue('images', []);
     setFileLoading(false);
   };
 
   const handleRemove = async (file) => {
     setFileLoading(true);
-    await storage.refFromURL(file).delete();
+    const delRef = await refFirebase(storage, file);
+    await deleteFirebaseObject(delRef);
     const filteredItems = values.images.filter((_file) => _file !== file);
     setFieldValue('images', filteredItems);
     setFileLoading(false);

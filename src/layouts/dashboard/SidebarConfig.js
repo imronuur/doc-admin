@@ -52,7 +52,8 @@ const sidebarConfig = [
       { title: 'Shop', path: PATH_ADMIN.directories.shop, icon: ICONS.shop },
       { title: 'Special Offers', path: PATH_ADMIN.directories.offers, icon: ICONS.roundLocalOffer },
       { title: 'Brands', path: PATH_ADMIN.directories.brands, icon: ICONS.brands },
-      { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon }
+      { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon },
+      { title: 'Roles and Permissions', path: PATH_ADMIN.directories.roles, icon: ICONS.coupon }
     ]
   }
 ];

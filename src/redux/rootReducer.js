@@ -20,6 +20,8 @@ import invoiceReducer from './slices/invoiceSlice';
 import orderReducer from './slices/orderSlice';
 import offerReducer from './slices/offerSlice';
 import brandReducer from './slices/brandsSlice';
+import roleReducer from './slices/roleSlice';
+
 // ----------------------------------------------------------------------
 
 const rootPersistConfig = {
@@ -37,7 +39,8 @@ const rootPersistConfig = {
     'invoice',
     'order',
     'offer',
-    'brand'
+    'brand',
+    'role'
   ]
 };
 
@@ -66,7 +69,8 @@ const rootReducer = combineReducers({
   invoice: invoiceReducer,
   order: orderReducer,
   offer: offerReducer,
-  brand: brandReducer
+  brand: brandReducer,
+  role: roleReducer
 });
 
 export { rootPersistConfig, rootReducer };
