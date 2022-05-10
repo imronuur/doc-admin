@@ -31,7 +31,9 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
     enableReinitialize: true,
     initialValues: {
       name: currentRole?.name || '',
-      permissions: currentRole?.permissions || [] //
+      permissions: currentRole?.permissions || [],
+      _id: currentRole?._id,
+      permissionId: []
     },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
@@ -49,7 +51,10 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
 
   const handlePermissionCheck = (checked, value) => {
     if (checked) {
-      values.permissions.push(value);
+      const index = values.permissions.indexOf(value);
+      if (index < 0) {
+        values.permissions.push(value);
+      }
     } else {
       const index = values.permissions.indexOf(value);
       if (index > -1) {
@@ -59,11 +64,18 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
     console.log(values);
   };
 
-  const handleParentPermissionCheck = (checked, value) => {
+  const handleParentPermissionCheck = (checked, value, id) => {
     console.log({ checked, value });
     const newArray = value.split(',');
     if (checked) {
-      newArray.map((res) => values.permissions.push(res));
+      const oldItems = [];
+      newArray.map((res) => oldItems.push(values.permissions.indexOf(res)));
+      if (oldItems.length > -1) {
+        oldItems.map((res) => values.permissions.splice(res, oldItems.length));
+        newArray.map((res) => values.permissions.push(res));
+      } else {
+        newArray.map((res) => values.permissions.push(res));
+      }
     } else {
       const itemsToRemove = [];
       newArray.map((res) => itemsToRemove.push(values.permissions.indexOf(res)));
@@ -91,18 +103,18 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
             </Grid>
             <Grid item xs={12}>
               <LabelStyle> Allow Permissions </LabelStyle>
-              {permissionsList.map((res, index) => (
+              {permissionsList.map((permission, index) => (
                 <Card sx={{ p: 3, margin: '1% ' }} key={index}>
                   <FormControlLabel
                     control={
                       <Checkbox
-                        value={res.operations.map((res) => res.value)}
-                        onChange={(e) => handleParentPermissionCheck(e.target.checked, e.target.value)}
+                        value={permission.operations.map((res) => res.value)}
+                        onChange={(e) => handleParentPermissionCheck(e.target.checked, e.target.value, permission.id)}
                       />
                     }
-                    label={res.title}
+                    label={permission.title}
                   />
-                  {res.operations.map((res, index) => (
+                  {permission.operations.map((res, index) => (
                     <Grid item xs={12} key={index} sx={{ marginLeft: '1%' }}>
                       <FormControlLabel
                         control={
