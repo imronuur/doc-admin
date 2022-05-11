@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik, FieldArray } from 'formik';
+import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
@@ -25,15 +24,12 @@ CategoryNewForm.propTypes = {
 };
 
 export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loading }) {
-  const [fileLoading, setFileLoading] = useState(false);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       name: currentRole?.name || '',
       permissions: currentRole?.permissions || [],
-      _id: currentRole?._id,
-      permissionId: []
+      _id: currentRole?._id
     },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
@@ -49,48 +45,57 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
 
   const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
 
-  const handlePermissionCheck = (checked, value) => {
+  // const handlePermissionCheck = (checked, value) => {
+  //   console.log({ checked, value });
+  //   if (checked) {
+  //     values.permissions.push(value);
+  //   } else {
+  //     const index = values.permissions.indexOf(value);
+  //     if (index > -1) {
+  //       values.permissions.splice(index, 1);
+  //     }
+  //   }
+  // };
+
+  const handleChange = (e) => {
+    const { checked, value } = e.target;
     if (checked) {
-      const index = values.permissions.indexOf(value);
-      if (index < 0) {
-        values.permissions.push(value);
-      }
+      setFieldValue('permissions', [...values.permissions, value]);
     } else {
-      const index = values.permissions.indexOf(value);
-      if (index > -1) {
-        values.permissions.splice(index, 1);
-      }
+      setFieldValue(
+        'permissions',
+        values.permissions.filter((v) => v !== value)
+      );
     }
-    console.log(values);
   };
 
-  const handleParentPermissionCheck = (checked, value, id) => {
-    console.log({ checked, value });
-    const newArray = value.split(',');
-    if (checked) {
-      const oldItems = [];
-      newArray.map((res) => oldItems.push(values.permissions.indexOf(res)));
-      if (oldItems.length > -1) {
-        oldItems.map((res) => values.permissions.splice(res, oldItems.length));
-        newArray.map((res) => values.permissions.push(res));
-      } else {
-        newArray.map((res) => values.permissions.push(res));
-      }
-    } else {
-      const itemsToRemove = [];
-      newArray.map((res) => itemsToRemove.push(values.permissions.indexOf(res)));
-      if (itemsToRemove.length > -1) {
-        itemsToRemove.map((res) => values.permissions.splice(res, itemsToRemove.length));
-      }
-    }
+  // const handleParentPermissionCheck = (checked, value, id) => {
+  //   console.log({ checked, value });
+  //   const newArray = value.split(',');
+  //   if (checked) {
+  //     const oldItems = [];
+  //     newArray.map((res) => oldItems.push(values.permissions.indexOf(res)));
+  //     if (oldItems.length > -1) {
+  //       oldItems.map((res) => values.permissions.splice(res, oldItems.length));
+  //       newArray.map((res) => values.permissions.push(res));
+  //     } else {
+  //       newArray.map((res) => values.permissions.push(res));
+  //     }
+  //   } else {
+  //     const itemsToRemove = [];
+  //     newArray.map((res) => itemsToRemove.push(values.permissions.indexOf(res)));
+  //     if (itemsToRemove.length > -1) {
+  //       itemsToRemove.map((res) => values.permissions.splice(res, itemsToRemove.length));
+  //     }
+  //   }
 
-    console.log(values);
-  };
+  //   console.log(values);
+  // };
 
   return (
-    <Card sx={{ p: 3 }}>
-      <FormikProvider value={formik}>
-        <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
+    <FormikProvider value={formik}>
+      <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
+        <Card sx={{ p: 3 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <TextField
@@ -105,23 +110,15 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
               <LabelStyle> Allow Permissions </LabelStyle>
               {permissionsList.map((permission, index) => (
                 <Card sx={{ p: 3, margin: '1% ' }} key={index}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        value={permission.operations.map((res) => res.value)}
-                        onChange={(e) => handleParentPermissionCheck(e.target.checked, e.target.value, permission.id)}
-                      />
-                    }
-                    label={permission.title}
-                  />
+                  <LabelStyle> {permission.title} </LabelStyle>
                   {permission.operations.map((res, index) => (
                     <Grid item xs={12} key={index} sx={{ marginLeft: '1%' }}>
                       <FormControlLabel
                         control={
                           <Checkbox
+                            defaultChecked={values.permissions.includes(res.value)}
                             value={res.value}
-                            checked={values.permissions.includes(res.value)}
-                            onChange={(e) => handlePermissionCheck(e.target.checked, res.value)}
+                            onChange={handleChange}
                           />
                         }
                         label={res.name}
@@ -137,8 +134,8 @@ export default function CategoryNewForm({ isEdit, currentRole, handleCreate, loa
               </LoadingButton>
             </Grid>
           </Grid>
-        </Form>
-      </FormikProvider>
-    </Card>
+        </Card>
+      </Form>
+    </FormikProvider>
   );
 }

@@ -22,7 +22,7 @@ export const tokenCheck = createAsyncThunk('auth/checkToken', async (authToken) 
     Authorization: authToken
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_EXPRESS_BACKEND_API}/users/token_check`,
+    `${process.env.REACT_APP_BACKEND_API}/users/token-check`,
     {},
     {
       headers

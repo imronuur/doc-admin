@@ -4,6 +4,7 @@ export const permissionsList = [
     id: '0001',
     operations: [
       { name: 'Can Create Or Update Category', value: 'canCreateOrUpdateCategory' },
+      { name: 'Can List Category', value: 'canListCategory' },
       { name: 'Can Delete Category', value: 'canDeleteCategory' },
       { name: 'Can Create Bulk Categories', value: 'canCreateBulkCategories' },
       { name: 'Can Delete Multi Categories', value: 'canDeleteMultiCategories' }
@@ -45,7 +46,6 @@ export const permissionsList = [
     operations: [
       { name: 'Can Create Or Update User', value: 'canCreateOrUpdateUser' },
       { name: 'Can Delete User', value: 'canDeleteUser' },
-      { name: 'Can Delete Multi Users', value: 'canDeleteMultiUsers' },
       { name: 'Can List Users', value: 'canListUsers' },
       { name: 'Can See User Orders', value: 'canSeeUserOrders' },
       { name: 'Can See User Invoices', value: 'canSeeUserInvoices' },
@@ -58,6 +58,7 @@ export const permissionsList = [
     operations: [
       { name: 'Can Create Or Update Coupon', value: 'canCreateOrUpdateCoupon' },
       { name: 'Can Delete Coupon', value: 'canDeleteCoupon' },
+      { name: 'Can List Coupons', value: 'canListCoupons' },
       { name: 'Can Delete Multi Coupons', value: 'canDeleteMultiCoupons' }
     ]
   },
@@ -66,6 +67,7 @@ export const permissionsList = [
     id: '0007',
     operations: [
       { name: 'Can Create Or Update Invoice', value: 'canCreateOrUpdateInvoice' },
+      { name: 'Can List Invoices', value: 'canListInvoices' },
       { name: 'Can Delete Invoice', value: 'canDeleteInvoice' },
       { name: 'Can Delete Multi Invoices', value: 'canDeleteMultiInvoices' }
     ]
@@ -87,6 +89,27 @@ export const permissionsList = [
       { name: 'Can Create Or Update Offer', value: 'canCreateOrUpdateOffer' },
       { name: 'Can Delete Offer', value: 'canDeleteOffer' },
       { name: 'Can Delete Multi Offers', value: 'canDeleteMultiOffers' }
+    ]
+  },
+  {
+    title: 'Brand',
+    id: '0010',
+    operations: [
+      { name: 'Can Create Or Update Brand', value: 'canCreateOrUpdateBrand' },
+      { name: 'Can List Brands', value: 'canListBrands' },
+      { name: 'Can Delete Brand', value: 'canDeleteBrand' },
+      { name: 'Can Delete Multi Brands', value: 'canDeleteMultiBrands' }
+    ]
+  },
+  {
+    title: 'Role',
+    id: '0011',
+    operations: [
+      { name: 'Can Create Or Update Role', value: 'canCreateOrUpdateRole' },
+      { name: 'Can List Roles', value: 'canListRoles' },
+      { name: 'Can List All Roles', value: 'canListAllRoles' },
+      { name: 'Can Read Role', value: 'canReadRole' },
+      { name: 'Can Delete Role', value: 'canDeleteRole' }
     ]
   }
 ];

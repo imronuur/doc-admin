@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 // material
 import { styled, useTheme } from '@mui/material/styles';
 // hooks
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import useCollapseDrawer from '../../hooks/useCollapseDrawer';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
-
+import { useFirebaseAuth } from '../../contexts/authContext';
+import { tokenCheck } from '../../redux/thunk/authThunk';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -38,6 +41,28 @@ export default function DashboardLayout() {
   const theme = useTheme();
   const { collapseClick } = useCollapseDrawer();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { logout } = useFirebaseAuth();
+  const { token } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const handleExpiredToken = async () => {
+      await logout();
+      window.location.reload();
+      navigate('/');
+    };
+
+    // Token Check
+    const checkToken = async (token) => {
+      const res = await dispatch(tokenCheck(token));
+      if (res.type === 'auth/checkToken/rejected') {
+        handleExpiredToken();
+      }
+    };
+
+    checkToken(token);
+  }, [dispatch, logout, navigate, token]);
 
   return (
     <RootStyle>

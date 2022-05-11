@@ -4,7 +4,6 @@ import { Icon } from '@iconify/react';
 import { useSnackbar } from 'notistack';
 import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
-import closeFill from '@iconify/icons-eva/close-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
 import roundClose from '@iconify/icons-ic/round-close';
 // material

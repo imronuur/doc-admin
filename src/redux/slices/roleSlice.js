@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from 'axios';
+import { func } from 'prop-types';
 
 // ----------------------------------------------------------------------
 
@@ -39,11 +40,31 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getRoles({ page }) {
+export function getRoles({ page, authToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: authToken
+  };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/roles?page=${page}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/roles?page=${page}`, { headers });
+      dispatch(slice.actions.getRolesSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getAllRoles({ authToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: authToken
+  };
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/roles-list-all`, { headers });
       dispatch(slice.actions.getRolesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

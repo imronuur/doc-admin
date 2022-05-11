@@ -21,7 +21,7 @@ export const deleteRole = createAsyncThunk('role/delete', async ({ _id, authToke
     'Content-Type': 'application/json',
     Authorization: authToken
   };
-  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/role/${_id}`, {
+  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/roles/${_id}`, {
     headers
   });
   return res;

@@ -25,7 +25,7 @@ const slice = createSlice({
       state.isLoading = false;
       state.user = payload.data.user;
       state.isAuthenticated = true;
-      state.token = payload.data.authorization;
+      state.token = payload.data.accessToken;
     },
     [getUser.rejected]: (state, { error }) => {
       state.error = error.message;

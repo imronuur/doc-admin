@@ -5,7 +5,6 @@ import storage from 'redux-persist/lib/storage';
 import mailReducer from './slices/mail';
 import chatReducer from './slices/chat';
 import blogReducer from './slices/blog';
-import userReducer from './slices/user';
 import calendarReducer from './slices/calendar';
 import kanbanReducer from './slices/kanban';
 import categoryReducer from './slices/categories';
@@ -21,6 +20,7 @@ import orderReducer from './slices/orderSlice';
 import offerReducer from './slices/offerSlice';
 import brandReducer from './slices/brandsSlice';
 import roleReducer from './slices/roleSlice';
+import userReducer from './slices/usersSlice';
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +40,8 @@ const rootPersistConfig = {
     'order',
     'offer',
     'brand',
-    'role'
+    'role',
+    'user'
   ]
 };
 
@@ -55,7 +56,6 @@ const rootReducer = combineReducers({
   mail: mailReducer,
   chat: chatReducer,
   blog: blogReducer,
-  user: userReducer,
   calendar: calendarReducer,
   kanban: kanbanReducer,
   category: persistReducer(categoryPersistConfig, categoryReducer),
@@ -70,7 +70,8 @@ const rootReducer = combineReducers({
   order: orderReducer,
   offer: offerReducer,
   brand: brandReducer,
-  role: roleReducer
+  role: roleReducer,
+  user: userReducer
 });
 
 export { rootPersistConfig, rootReducer };

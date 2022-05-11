@@ -15,12 +15,12 @@ import { PATH_ADMIN } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-RolesMoreMenu.propTypes = {
+UserMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   _id: PropTypes.string
 };
 
-export default function RolesMoreMenu({ onDelete, _id }) {
+export default function UserMoreMenu({ onDelete, _id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,7 +42,7 @@ export default function RolesMoreMenu({ onDelete, _id }) {
       >
         <MenuItem
           component={RouterLink}
-          to={`${PATH_ADMIN.profiles.roleProfile}/${_id}`}
+          to={`${PATH_ADMIN.profiles.userprofile}/${_id}`}
           sx={{ color: 'text.secondary' }}
         >
           <ListItemIcon>
@@ -50,7 +50,6 @@ export default function RolesMoreMenu({ onDelete, _id }) {
           </ListItemIcon>
           <ListItemText primary="View More" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-
         <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
@@ -58,7 +57,7 @@ export default function RolesMoreMenu({ onDelete, _id }) {
           <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }} component={RouterLink} to={`${PATH_ADMIN.forms.editRole}/${_id}`}>
+        <MenuItem component={RouterLink} to={`${PATH_ADMIN.forms.editUser}/${_id}`} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
