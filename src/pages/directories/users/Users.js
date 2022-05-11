@@ -1,15 +1,12 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { sentenceCase } from 'change-case';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+
 import {
   Box,
   Card,
@@ -38,21 +35,24 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
+import Label from '../../../components/Label';
 
-import { getOffers } from '../../../redux/slices/offerSlice';
-import { deleteOffer, deleteManyOffers } from '../../../redux/thunk/offerThunk';
-import { OfferListHead, OfferListToolbar, OfferMoreMenu } from './components';
-import { fCurrency } from '../../../utils/formatNumber';
+import { getUsers } from '../../../redux/slices/usersSlice';
+import { deleteUser } from '../../../redux/thunk/usersThunk';
+
+import { UserAvatar, UserListHead, UserListToolbar, UserMoreMenu, Dialog } from './components';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'productName', label: 'Product Name', align: 'left' },
-  { id: 'offerTitle', label: 'Offer Title', align: 'left' },
-  { id: 'price', label: 'Price', align: 'left' },
-  { id: 'expiryDate', label: 'Expiry Date', align: 'left' },
+  { id: 'avatar', label: 'Avatar', align: 'left' },
+  { id: 'name', label: 'Name', align: 'left' },
+  { id: 'email', label: 'Email Address', align: 'left' },
+  { id: 'phone', label: 'Phone Number', align: 'left' },
+  { id: 'address', label: 'Address', align: 'left' },
+  { id: 'role', label: 'Role', align: 'left' },
   { id: '' }
 ];
 
@@ -83,7 +83,7 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -94,9 +94,11 @@ function applySortFilter(array, comparator, query) {
 export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
-  const { offer } = useSelector((state) => state);
-  const { offers } = offer;
+  const { user, auth } = useSelector((state) => state);
+
+  const { users } = user;
+  const { token } = auth;
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -104,60 +106,32 @@ export default function ClientList() {
   const [orderBy, setOrderBy] = useState('createdAt');
   const [loading, setLoading] = useState(false);
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const pages = new Array(offers.numberOfPages).fill(null).map((v, i) => i);
+  const pages = new Array(users.numberOfPages).fill(null).map((v, i) => i);
   const gotoPrevious = () => {
     setPage(Math.max(0, page - 1));
   };
 
   const gotoNext = () => {
-    setPage(Math.min(offers.numberOfPages - 1, page + 1));
+    setPage(Math.min(users.numberOfPages - 1, page + 1));
   };
 
-  const handleDeleteOffer = async (_id) => {
-    const reqObject = {
-      _id
-    };
-    const reduxRes = await dispatch(deleteOffer(reqObject));
-    if (reduxRes.type === 'offer/delete/rejected') {
-      enqueueSnackbar(`${reduxRes.error.message}`, {
-        variant: 'error',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-    } else if (reduxRes.type === 'offer/delete/fulfilled') {
-      enqueueSnackbar(`Offer Deleted!`, {
-        variant: 'success',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
+  const handleDeleteUser = async (_id, email, role) => {
+    const notAllowedToBeDeletedRoles = ['superAdmin', 'admin'];
 
-      dispatch(getOffers({ page }));
-    }
-  };
-
-  useEffect(() => {
-    const reqObject = {
-      page
-    };
-    dispatch(getOffers(reqObject));
-  }, [dispatch, page]);
-
-  const handleDeleteMany = async (ids) => {
-    setLoading(true);
-    const reqObject = {
-      ids
-    };
-    const reduxRes = await dispatch(deleteManyOffers(reqObject));
-    if (reduxRes.type === 'offers/delete-many/rejected') {
-      enqueueSnackbar(`${reduxRes.error.message}`, {
+    if (notAllowedToBeDeletedRoles.includes(role)) {
+      enqueueSnackbar(`Admin Users can not be deleted!`, {
         variant: 'error',
         action: (key) => (
           <MIconButton size="small" onClick={() => closeSnackbar(key)}>
@@ -166,20 +140,49 @@ export default function ClientList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'offers/delete-many/fulfilled') {
-      enqueueSnackbar(`Offers Deleted!`, {
-        variant: 'success',
-        action: (key) => (
-          <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-            <Icon icon={closeFill} />
-          </MIconButton>
-        )
-      });
-      window.location.reload();
+    } else {
+      setLoading(true);
+      const reqObject = {
+        _id,
+        authToken: token,
+        userEmail: email
+      };
+      const reduxRes = await dispatch(deleteUser(reqObject));
+      if (reduxRes.type === 'user/delete/rejected') {
+        enqueueSnackbar(`${reduxRes.error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        setLoading(false);
+      } else if (reduxRes.type === 'user/delete/fulfilled') {
+        enqueueSnackbar(`User Deleted!`, {
+          variant: 'success',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        handleClose();
+        setLoading(false);
+        dispatch(getUsers({ page, authToken: token }));
+      }
     }
   };
 
-  if (offers?.data.length) {
+  useEffect(() => {
+    const reqObject = {
+      page,
+      authToken: token
+    };
+    dispatch(getUsers(reqObject));
+  }, [dispatch, page, token]);
+
+  if (users?.data.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
       setOrder(isAsc ? 'desc' : 'asc');
@@ -188,7 +191,7 @@ export default function ClientList() {
 
     const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-        const newSelecteds = offers.data.map((n) => n._id);
+        const newSelecteds = users.data.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -214,35 +217,33 @@ export default function ClientList() {
       setFilterName(event.target.value);
     };
 
-    const filteredOffers = applySortFilter(offers.data, getComparator(order, orderBy), filterName);
+    const filteredUsers = applySortFilter(
+      users.data.filter((user) => user._id !== auth.user._id),
+      getComparator(order, orderBy),
+      filterName
+    );
 
-    const isOfferNotFound = filteredOffers.length === 0;
+    const isUserNotFound = filteredUsers.length === 0;
 
     content = (
       <Card>
-        <OfferListToolbar
-          handleDeleteMany={handleDeleteMany}
-          loading={loading}
-          selected={selected}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
+        <UserListToolbar selected={selected} filterName={filterName} onFilterName={handleFilterByName} />
 
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <OfferListHead
+              <UserListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={offers.data.length}
+                rowCount={users.data.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filteredOffers.map((row) => {
-                  const { _id, product, name, title, price, createdAt } = row;
+                {filteredUsers.map((row) => {
+                  const { _id, name, email, phone, address, role } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -258,7 +259,9 @@ export default function ClientList() {
                       <TableCell padding="checkbox">
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, _id)} />
                       </TableCell>
-
+                      <TableCell>
+                        <UserAvatar name={name} />
+                      </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Box
                           sx={{
@@ -268,24 +271,38 @@ export default function ClientList() {
                           }}
                         >
                           <Typography variant="subtitle2" noWrap>
-                            {product?.name}
+                            {name}
                           </Typography>
                         </Box>
                       </TableCell>
 
-                      <TableCell>{title}</TableCell>
+                      <TableCell>{email}</TableCell>
+                      <TableCell>{phone}</TableCell>
 
-                      <TableCell>{fCurrency(price)}</TableCell>
-                      <TableCell>{createdAt}</TableCell>
+                      <TableCell>{address?.address1}</TableCell>
+                      <TableCell>
+                        <Label>{role}</Label>
+                      </TableCell>
 
                       <TableCell align="right">
-                        <OfferMoreMenu onDelete={() => handleDeleteOffer(_id)} _id={_id} />
+                        <UserMoreMenu onDelete={() => handleClickOpen()} _id={_id} />
                       </TableCell>
+                      {open && (
+                        <Dialog
+                          id={_id}
+                          email={email}
+                          role={role}
+                          handleAgree={handleDeleteUser}
+                          open={open}
+                          handleClose={handleClose}
+                          loading={loading}
+                        />
+                      )}
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isOfferNotFound && (
+              {isUserNotFound && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -299,7 +316,7 @@ export default function ClientList() {
             </Table>
           </TableContainer>
         </Scrollbar>
-        {offers.data.length > 0 && (
+        {users.data.length > 0 && (
           <Box
             sx={{
               display: 'flex',
@@ -324,7 +341,7 @@ export default function ClientList() {
         )}
       </Card>
     );
-  } else if (offer.isLoading) {
+  } else if (user.isLoading) {
     content = (
       <Card sx={{ padding: '10%' }}>
         <LoadingScreen />
@@ -334,26 +351,26 @@ export default function ClientList() {
     content = (
       <Card>
         <Typography px={10} py={4}>
-          No Offers found
+          No User found
         </Typography>
       </Card>
     );
   }
 
   return (
-    <Page title="Offers List | iDan">
+    <Page title="Users List | iDan">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Offers List"
-          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.offers }, { name: 'Offers List' }]}
+          heading="Users List"
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.directories.users }, { name: 'Users List' }]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_ADMIN.forms.newOffer}
+              to={PATH_ADMIN.forms.newUser}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Offer
+              New User
             </Button>
           }
         />

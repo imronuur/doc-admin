@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from 'axios';
+import { func } from 'prop-types';
 
 // ----------------------------------------------------------------------
 
 const initialState = {
   isLoading: false,
   error: false,
-  brands: {
+  roles: {
     data: [],
     currentPage: null,
     numberOfPages: null
@@ -15,7 +16,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'brands',
+  name: 'roles',
   initialState,
   reducers: {
     startLoading(state) {
@@ -27,9 +28,9 @@ const slice = createSlice({
       state.error = action.payload;
     },
 
-    getBrandsSuccess(state, action) {
+    getRolesSuccess(state, action) {
       state.isLoading = false;
-      state.brands = action.payload;
+      state.roles = action.payload;
     }
   }
 });
@@ -39,7 +40,7 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getBrands({ page, authToken }) {
+export function getRoles({ page, authToken }) {
   const headers = {
     'Content-Type': 'application/json',
     Authorization: authToken
@@ -47,8 +48,24 @@ export function getBrands({ page, authToken }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/brands?page=${page}`, { headers });
-      dispatch(slice.actions.getBrandsSuccess(response.data));
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/roles?page=${page}`, { headers });
+      dispatch(slice.actions.getRolesSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getAllRoles({ authToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: authToken
+  };
+  return async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/roles-list-all`, { headers });
+      dispatch(slice.actions.getRolesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

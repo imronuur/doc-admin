@@ -7,7 +7,7 @@ import axios from 'axios';
 const initialState = {
   isLoading: false,
   error: false,
-  brands: {
+  users: {
     data: [],
     currentPage: null,
     numberOfPages: null
@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const slice = createSlice({
-  name: 'brands',
+  name: 'user',
   initialState,
   reducers: {
     startLoading(state) {
@@ -27,9 +27,9 @@ const slice = createSlice({
       state.error = action.payload;
     },
 
-    getBrandsSuccess(state, action) {
+    getUsersSuccess(state, action) {
       state.isLoading = false;
-      state.brands = action.payload;
+      state.users = action.payload;
     }
   }
 });
@@ -39,7 +39,7 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getBrands({ page, authToken }) {
+export function getUsers({ page, authToken }) {
   const headers = {
     'Content-Type': 'application/json',
     Authorization: authToken
@@ -47,8 +47,8 @@ export function getBrands({ page, authToken }) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/brands?page=${page}`, { headers });
-      dispatch(slice.actions.getBrandsSuccess(response.data));
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/users?page=${page}`, { headers });
+      dispatch(slice.actions.getUsersSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

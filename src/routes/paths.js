@@ -45,7 +45,9 @@ export const PATH_ADMIN = {
     couponCode: path(ROOTS_ADMIN, '/coupon-code-directory'),
     shop: path(ROOTS_ADMIN, '/shop-directory'),
     offers: path(ROOTS_ADMIN, '/offers-directory'),
-    brands: path(ROOTS_ADMIN, '/brands-directory')
+    brands: path(ROOTS_ADMIN, '/brands-directory'),
+    roles: path(ROOTS_ADMIN, '/roles-directory'),
+    users: path(ROOTS_ADMIN, '/users-directory')
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
@@ -65,7 +67,11 @@ export const PATH_ADMIN = {
     newOffer: path(ROOTS_ADMIN, '/new-offer'),
     editOffer: path(ROOTS_ADMIN, '/edit-offer'),
     newBrand: path(ROOTS_ADMIN, '/new-brand'),
-    editBrand: path(ROOTS_ADMIN, '/edit-brand')
+    editBrand: path(ROOTS_ADMIN, '/edit-brand'),
+    newRole: path(ROOTS_ADMIN, '/new-role'),
+    editRole: path(ROOTS_ADMIN, '/edit-role'),
+    newUser: path(ROOTS_ADMIN, '/new-user'),
+    editUser: path(ROOTS_ADMIN, '/edit-user')
   },
   profiles: {
     clientProfile: path(ROOTS_ADMIN, '/client-profile'),
@@ -73,7 +79,9 @@ export const PATH_ADMIN = {
     shopProductProfile: path(ROOTS_ADMIN, '/shop-product-profile'),
     checkout: path(ROOTS_ADMIN, '/shop-product-profile/checkout'),
     invoiceProfile: path(ROOTS_ADMIN, '/invoice-profile'),
-    productProfile: path(ROOTS_ADMIN, '/product-profile')
+    productProfile: path(ROOTS_ADMIN, '/product-profile'),
+    roleProfile: path(ROOTS_ADMIN, '/role-profile'),
+    userprofile: path(ROOTS_ADMIN, '/user-profile')
   }
 };
 

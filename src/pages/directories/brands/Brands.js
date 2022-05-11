@@ -101,8 +101,10 @@ export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { brand } = useSelector((state) => state);
+  const { brand, auth } = useSelector((state) => state);
   const { brands } = brand;
+  const { token } = auth;
+
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -151,7 +153,8 @@ export default function ClientList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      authToken: token
     };
     dispatch(getBrands(reqObject));
   }, [dispatch, page]);

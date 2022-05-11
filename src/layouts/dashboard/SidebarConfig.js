@@ -11,6 +11,9 @@ import roundPercentage from '@iconify/icons-ic/round-percentage';
 import sharpShoppingCart from '@iconify/icons-ic/sharp-shopping-cart';
 import roundLocalOffer from '@iconify/icons-ic/round-local-offer';
 import outlineAdsClick from '@iconify/icons-ic/outline-ads-click';
+import roundSecurity from '@iconify/icons-ic/round-security';
+import roundSupervisedUserCircle from '@iconify/icons-ic/round-supervised-user-circle';
+
 // components
 import SvgIconStyle from '../../components/SvgIconStyle';
 import Label from '../../components/Label';
@@ -24,13 +27,15 @@ const ICONS = {
   overview: getIconify(roundSpaceDashboard),
   products: getIconify(roundShoppingCart),
   categories: getIconify(roundCategory),
-  users: getIconify(roundPeopleAlt),
+  clients: getIconify(roundPeopleAlt),
   invoices: getIconify(roundInventory2),
   orders: getIconify(roundMessage),
   coupon: getIconify(roundPercentage),
   shop: getIconify(sharpShoppingCart),
   roundLocalOffer: getIconify(roundLocalOffer),
-  brands: getIconify(outlineAdsClick)
+  brands: getIconify(outlineAdsClick),
+  roles: getIconify(roundSecurity),
+  users: getIconify(roundSupervisedUserCircle)
 };
 
 const sidebarConfig = [
@@ -46,13 +51,15 @@ const sidebarConfig = [
       },
       { title: 'Products', path: PATH_ADMIN.directories.products, icon: ICONS.products },
       { title: 'Categories', path: PATH_ADMIN.directories.categories, icon: ICONS.categories },
-      { title: 'Clients', path: PATH_ADMIN.directories.clients, icon: ICONS.users },
+      { title: 'Clients', path: PATH_ADMIN.directories.clients, icon: ICONS.clients },
       { title: 'Invoices', path: PATH_ADMIN.directories.invoices, icon: ICONS.invoices },
       { title: 'Orders', path: PATH_ADMIN.directories.orders, icon: ICONS.orders },
       { title: 'Shop', path: PATH_ADMIN.directories.shop, icon: ICONS.shop },
       { title: 'Special Offers', path: PATH_ADMIN.directories.offers, icon: ICONS.roundLocalOffer },
       { title: 'Brands', path: PATH_ADMIN.directories.brands, icon: ICONS.brands },
-      { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon }
+      { title: 'Coupon Codes', path: PATH_ADMIN.directories.couponCode, icon: ICONS.coupon },
+      { title: 'Roles and Permissions', path: PATH_ADMIN.directories.roles, icon: ICONS.roles },
+      { title: 'Users', path: PATH_ADMIN.directories.users, icon: ICONS.users }
     ]
   }
 ];

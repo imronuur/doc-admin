@@ -124,6 +124,7 @@
     "redux-persist": "^6.0.0",
     "rehype-highlight": "^5.0.0",
     "rehype-raw": "^6.1.0",
+    "sentence-case": "^3.0.4",
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.3.5",
     "slick-carousel": "^1.8.1",
