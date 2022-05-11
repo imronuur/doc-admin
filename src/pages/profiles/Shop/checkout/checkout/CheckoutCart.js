@@ -31,7 +31,6 @@ import CheckoutProductList from './CheckoutProductList';
 export default function CheckoutCart() {
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
-  const { codes } = useSelector((state) => state.coupon);
 
   const { cart, subtotal, total } = checkout;
 
@@ -124,7 +123,7 @@ export default function CheckoutCart() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CheckoutSummary codes={codes} total={total} subtotal={subtotal} onApplyDiscount={handleApplyDiscount} />
+            <CheckoutSummary total={total} subtotal={subtotal} onApplyDiscount={handleApplyDiscount} />
             <Button fullWidth size="large" type="submit" variant="contained" disabled={values.products.length === 0}>
               Check Out
             </Button>

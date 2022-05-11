@@ -84,12 +84,12 @@ export default function CheckoutOrderComplete({ user, ...other }) {
         <Divider sx={{ my: 3 }} />
 
         <Stack direction={{ xs: 'column-reverse', sm: 'row' }} justifyContent="space-between" spacing={2}>
-          <Button color="inherit" onClick={handleResetStep} startIcon={<Icon icon={arrowIosBackFill} />}>
-            Continue Shopping
-          </Button>
+          <LoadingButton size="small" variant="contained" color="success" endIcon={<Icon icon={downloadFill} />}>
+            Print
+          </LoadingButton>
 
           <PDFDownloadLink
-            document={<InvoicePDF invoice={orders.data} user={user} clients={clients.data} />}
+            document={<InvoicePDF key={user._id} invoice={orders.data} user={user} clients={clients.data} />}
             fileName={`INVOICE-${orders.data[0]?.orderInfo.orderId}` || 'INVOICE-789'}
             style={{ textDecoration: 'none' }}
           >

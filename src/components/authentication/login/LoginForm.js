@@ -68,6 +68,15 @@ export default function LoginForm() {
               </MIconButton>
             )
           });
+        } else if (reduxRes.type === 'auth/getUser/rejected') {
+          enqueueSnackbar('Error!, Incorrect Email or Password', {
+            variant: 'error',
+            action: (key) => (
+              <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+                <Icon icon={closeFill} />
+              </MIconButton>
+            )
+          });
         }
         if (isMountedRef.current) {
           setSubmitting(false);

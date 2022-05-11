@@ -119,7 +119,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
-  const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity } = currentProduct;
+  const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity, size } = currentProduct;
 
   const alreadyProduct = checkout.cart.map((item) => [...item._id]).includes(_id);
   const isMaxQuantity = checkout.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
@@ -141,7 +141,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
       available,
       salePrice,
       regularPrice,
-      size: 'xl',
+      size,
       quantity: available < 1 ? 0 : 1
     },
     onSubmit: async (values, { setSubmitting }) => {
@@ -170,7 +170,6 @@ export default function ProductDetailsSumary({ currentProduct }) {
       subtotal: values.price * values.quantity
     });
   };
-  console.log(alreadyProduct);
 
   return (
     <RootStyle>
@@ -229,12 +228,11 @@ export default function ProductDetailsSumary({ currentProduct }) {
                   </Link>
                 }
               >
-                <option>XL</option>
-                {/* {sizes.map((size) => (
+                {size.map((size) => (
                   <option key={size} value={size}>
                     {size}
                   </option>
-                ))} */}
+                ))}
               </TextField>
             </Stack>
 

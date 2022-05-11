@@ -2,9 +2,7 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import clockFill from '@iconify/icons-eva/clock-fill';
-import roundVerified from '@iconify/icons-ic/round-verified';
-import roundVerifiedUser from '@iconify/icons-ic/round-verified-user';
+
 // material
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '@mui/material';
@@ -60,7 +58,7 @@ export default function EcommerceProductDetails() {
   const { name } = useParams();
 
   const [value, setValue] = useState('1');
-  const { products, error } = useSelector((state) => state.product);
+  const { products } = useSelector((state) => state.product);
 
   const currentProduct = products?.data.find((product) => product.name === name);
 
@@ -80,9 +78,9 @@ export default function EcommerceProductDetails() {
               href: PATH_ADMIN.directories.products
             },
             {
-              name: currentProduct?.name || ''
+              name: sentenceCase(currentProduct?.name) || ''
             }
-            // { name: sentenceCase(name) }
+            // { name:  }
           ]}
         />
 

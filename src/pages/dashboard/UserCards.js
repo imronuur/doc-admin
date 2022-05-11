@@ -28,7 +28,7 @@ const SkeletonLoad = (
 export default function UserCards() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getUsers());
@@ -46,13 +46,11 @@ export default function UserCards() {
           ]}
         />
         <Grid container spacing={3}>
-          {users.map((user) => (
-            <Grid key={user.id} item xs={12} sm={6} md={4}>
-              <UserCard user={user} />
-            </Grid>
-          ))}
+          <Grid item xs={12} sm={6} md={4}>
+            <UserCard user={user} />
+          </Grid>
 
-          {!users.length && SkeletonLoad}
+          {!user.length && SkeletonLoad}
         </Grid>
       </Container>
     </Page>

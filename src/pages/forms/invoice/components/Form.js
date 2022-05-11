@@ -1,7 +1,8 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
+import closeFill from '@iconify/icons-eva/close-fill';
+import { Icon } from '@iconify/react';
 import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { Link as RouterLink } from 'react-router-dom';
@@ -22,13 +23,12 @@ import {
   FormHelperText
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { Icon } from '@iconify/react';
 
-import closeFill from '@iconify/icons-eva/close-fill';
 import { MIconButton } from '../../../../components/@material-extend';
 import { fCurrency } from '../../../../utils/formatNumber';
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
 import { Validations } from './Validations';
+import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
+import { getInvoiceTotal } from '../../../../redux/slices/invoiceSlice';
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -80,9 +80,9 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
           invoiceNumber: '',
           dateCreated: '',
           dueDate: '',
+          total: 0,
           items: [
             {
-              total: 0,
               itemName: '',
               unitPrice: '',
               quantity: '',
@@ -118,6 +118,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [toClient, setToClient] = useState(null);
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const getClient = (client) => {
     setToClient(client);
@@ -126,18 +127,22 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
     handleClose();
   };
 
-  const total = values.items.map((item) => {
-    const { quantity, unitPrice, discount } = item;
-    const totalPrice = Number(quantity) * Number(unitPrice);
-    const price = totalPrice - totalPrice * (discount / 100);
-    return price;
-  });
-
   useEffect(() => {
-    setFieldValue('total', Number(total));
-  }, [values.items]);
+    dispatch(getInvoiceTotal());
+  }, [values.items, dispatch]);
 
-  console.log(errors);
+  // const total = values.items.map((item) => {
+  //   const { quantity, unitPrice, discount } = item;
+  //   const totalPrice = Number(quantity) * Number(unitPrice);
+  //   const price = totalPrice - totalPrice * (discount / 100);
+  //   return price;
+  // });
+
+  // useEffect(() => {
+  //   setFieldValue('total', Number(total));
+  // }, [values.items]);
+
+  console.log(values);
 
   return (
     <FormikProvider value={formik}>
@@ -332,7 +337,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                             color: 'text.disabled'
                                           }}
                                         >
-                                          {fCurrency(Number(total))}
+                                          {fCurrency(Number(values.total))}
                                         </Typography>
                                       </Grid>
                                     </Stack>

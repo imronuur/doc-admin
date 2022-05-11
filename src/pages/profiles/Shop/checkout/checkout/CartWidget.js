@@ -40,6 +40,7 @@ export default function CartWidget() {
   const totalItems = sum(checkout.cart.map((item) => item.quantity));
   const params = useParams();
   const { name } = params;
+
   return (
     <RootStyle to={`${PATH_ADMIN.profiles.checkout}/${name}`}>
       <Badge showZero badgeContent={totalItems} color="error" max={99}>

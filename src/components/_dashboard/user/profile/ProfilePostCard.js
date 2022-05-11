@@ -26,10 +26,10 @@ import {
   FormControlLabel
 } from '@mui/material';
 // utils
+import { useSelector } from 'react-redux';
 import { fDate } from '../../../../utils/formatTime';
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // hooks
-import useAuth from '../../../../hooks/useAuth';
 //
 import MyAvatar from '../../../MyAvatar';
 import EmojiPicker from '../../../EmojiPicker';
@@ -41,7 +41,7 @@ ProfilePostCard.propTypes = {
 };
 
 export default function ProfilePostCard({ post }) {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const commentInputRef = useRef(null);
   const fileInputRef = useRef(null);
   const [isLiked, setLiked] = useState(post.isLiked);
@@ -78,7 +78,7 @@ export default function ProfilePostCard({ post }) {
         avatar={<MyAvatar />}
         title={
           <Link to="#" variant="subtitle2" color="text.primary" component={RouterLink}>
-            {user.displayName}
+            {user.name}
           </Link>
         }
         subheader={

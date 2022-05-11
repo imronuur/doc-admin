@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Typography } from '@mui/material';
 // hooks
-import useAuth from '../../../../hooks/useAuth';
 //
+import { useSelector } from 'react-redux';
 import MyAvatar from '../../../MyAvatar';
 
 // ----------------------------------------------------------------------
@@ -53,7 +53,7 @@ ProfileCover.propTypes = {
 };
 
 export default function ProfileCover({ myProfile }) {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const { position, cover } = myProfile;
 
   return (
@@ -77,7 +77,7 @@ export default function ProfileCover({ myProfile }) {
             textAlign: { xs: 'center', md: 'left' }
           }}
         >
-          <Typography variant="h4">{user.displayName}</Typography>
+          <Typography variant="h4">{user.name}</Typography>
           <Typography sx={{ opacity: 0.72 }}>{position}</Typography>
         </Box>
       </InfoStyle>

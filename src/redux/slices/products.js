@@ -90,7 +90,7 @@ const slice = createSlice({
         state.checkout.cart = [...state.checkout.cart, product];
       } else {
         state.checkout.cart = map(state.checkout.cart, (_product) => {
-          const isExisted = _product.id === product.id;
+          const isExisted = _product._id === product._id;
           if (isExisted) {
             return {
               ..._product,

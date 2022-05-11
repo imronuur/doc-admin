@@ -23,7 +23,7 @@ ProductList.propTypes = {
 export default function ProductList({ products, ...other }) {
   return (
     <Grid container spacing={3} {...other}>
-      {products.data.map((product) => (
+      {products?.data?.map((product) => (
         <Grid key={product._id} item xs={12} sm={6} md={3}>
           <ShopProductCard product={product} />
         </Grid>

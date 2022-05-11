@@ -101,7 +101,6 @@ export default function EcommerceCheckout() {
   }, [dispatch, activeStep]);
 
   const handleCreate = async (order) => {
-    console.log('handleCreate', order);
     setLoading(true);
 
     const reqObject = {

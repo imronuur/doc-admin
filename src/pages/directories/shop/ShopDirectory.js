@@ -6,7 +6,7 @@ import { Backdrop, Container, Typography, CircularProgress, Card, Stack } from '
 import { sentenceCase } from 'change-case';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getProducts, filterProducts } from '../../../redux/slices/products';
+import { getAllProducts, filterProducts } from '../../../redux/slices/products';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // utils
@@ -17,7 +17,7 @@ import useSettings from '../../../hooks/useSettings';
 import Page from '../../../components/Page';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { ShopProductList } from './index';
-import CartWidget from '../../../components/_dashboard/e-commerce/CartWidget';
+import CartWidget from '../../profiles/Shop/checkout/checkout/CartWidget';
 
 // ----------------------------------------------------------------------
 
@@ -74,12 +74,27 @@ export default function EcommerceShop() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const [openFilter, setOpenFilter] = useState(false);
-  const { products } = useSelector((state) => state.product);
+  const [products, setProducts] = useState([]);
+  // const { products } = useSelector((state) => state.product);
   // const filteredProducts = applyFilter(products, sortBy, filters);
 
+  // useEffect(() => {
+  //   dispatch(getProducts({ page: 0 }));
+  // }, [dispatch]);
+
   useEffect(() => {
-    dispatch(getProducts({ page: 0 }));
-  }, [dispatch]);
+    let isSubscribed = true;
+
+    if (isSubscribed) {
+      const loadProducts = async () => {
+        const res = await getAllProducts();
+        setProducts(res.data);
+      };
+      loadProducts();
+    }
+
+    return () => (isSubscribed = false);
+  }, []);
 
   // useEffect(() => {
   //   dispatch(filterProducts(values));
@@ -119,7 +134,7 @@ export default function EcommerceShop() {
           ]}
         />
 
-        {products.data.length === 0 && (
+        {products.data?.length === 0 && (
           <Card sx={{ p: 3 }}>
             <Typography component="span" variant="subtitle1">
               {products.length}

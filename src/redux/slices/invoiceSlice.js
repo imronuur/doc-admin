@@ -30,12 +30,22 @@ const slice = createSlice({
     getInvoicesSuccess(state, action) {
       state.isLoading = false;
       state.invoices = action.payload;
+    },
+    getInvoiceTotal(state) {
+      let total = 0;
+      state.invoices.data.items?.forEach((item) => {
+        const totalPrice = Number(item.quantity) * Number(item.unitPrice);
+        total += totalPrice - totalPrice * (Number(item.discount) / 100);
+      });
+
+      state.invoices.data.map((item) => (item.total = total));
     }
   }
 });
 
 // Reducer
 export default slice.reducer;
+export const { getInvoiceTotal } = slice.actions;
 
 // ----------------------------------------------------------------------
 

@@ -78,7 +78,7 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
   // const clientMatches = String(current._id) === orderedId;
   // console.log(clientMatches);
   // console.log(orderedId);
-  console.log(order);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>

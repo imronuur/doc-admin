@@ -62,6 +62,7 @@ export default function AccountPopover() {
     try {
       await logout();
       navigate('/');
+      window.location.reload();
       if (isMountedRef.current) {
         handleClose();
       }

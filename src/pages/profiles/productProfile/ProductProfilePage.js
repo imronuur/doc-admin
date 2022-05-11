@@ -24,7 +24,6 @@ export default function RouteProfilePage() {
   if (Array.isArray(products.data)) {
     currentProduct = products.data.find((p) => p._id === _id);
   }
-  console.log(currentProduct);
 
   return (
     <Page title="Product |  iDAN">

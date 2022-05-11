@@ -34,21 +34,27 @@ CheckoutSummary.propTypes = {
 export default function CheckoutSummary({
   total,
   onEdit,
-  codes,
+
   subtotal,
   shipping = null,
   onApplyDiscount,
   enableEdit = false
 }) {
+  const { codes } = useSelector((state) => state.coupon);
+
   const displayShipping = shipping !== null ? 'Free' : '-';
   const [discountValue, setDiscountValue] = useState('');
   const [calculateDiscount, setCalculateDiscount] = useState(false);
-  const coupouns = codes?.data.find((c) => c);
+  const coupouns = codes.data.find((c) => c);
 
   const ApplyDiscount = () => {
-    if (discountValue === coupouns?.name) {
-      onApplyDiscount(coupouns?.discount);
-      setCalculateDiscount(true);
+    if (discountValue === coupouns.name) {
+      if (new Date().getTime() >= new Date(coupouns.expiryDate).getTime()) {
+        onApplyDiscount(coupouns?.discount);
+        setCalculateDiscount(true);
+      } else {
+        alert('Coupon has expired');
+      }
     } else {
       alert('Invalid Coupon');
       setCalculateDiscount(false);
