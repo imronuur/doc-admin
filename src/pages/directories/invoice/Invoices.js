@@ -130,9 +130,9 @@ export default function InvoiceList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { invoice } = useSelector((state) => state);
+  const { invoice, auth } = useSelector((state) => state);
   const { invoices } = invoice;
-  const { clients } = useSelector((state) => state.client);
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -209,7 +209,8 @@ export default function InvoiceList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getInvoice(reqObject));
   }, [dispatch, page]);
@@ -232,7 +233,8 @@ export default function InvoiceList() {
 
     const handleDeleteInvoice = async (_id) => {
       const reqObject = {
-        _id
+        _id,
+        accessToken: token
       };
       const reduxRes = await dispatch(deleteInvoice(reqObject));
       if (reduxRes.type === 'invoice/delete/rejected') {
@@ -260,7 +262,8 @@ export default function InvoiceList() {
     const handleDeleteMany = async (ids) => {
       setLoading(true);
       const reqObject = {
-        ids
+        ids,
+        accessToken: token
       };
       const reduxRes = await dispatch(deleteManyInvoices(reqObject));
       if (reduxRes.type === 'invoices/delete-many/rejected') {

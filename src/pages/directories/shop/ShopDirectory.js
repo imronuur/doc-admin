@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
-import { filter, includes, orderBy } from 'lodash';
+import { filter, includes, orderBy, set } from 'lodash';
 // material
 import { Backdrop, Container, Typography, CircularProgress, Card, Stack } from '@mui/material';
 import { sentenceCase } from 'change-case';
@@ -10,7 +10,7 @@ import { getAllProducts, filterProducts } from '../../../redux/slices/products';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // utils
-import fakeRequest from '../../../utils/fakeRequest';
+import LoadingScreen from '../../../components/LoadingScreen';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 // components
@@ -75,7 +75,8 @@ export default function EcommerceShop() {
   const dispatch = useDispatch();
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
-  // const { products } = useSelector((state) => state.product);
+  const { token } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
   // const filteredProducts = applyFilter(products, sortBy, filters);
 
   // useEffect(() => {
@@ -86,8 +87,13 @@ export default function EcommerceShop() {
     let isSubscribed = true;
 
     if (isSubscribed) {
+      const reqObject = {
+        accessToken: token
+      };
       const loadProducts = async () => {
-        const res = await getAllProducts();
+        setIsLoading(true);
+        const res = await getAllProducts(reqObject);
+        setIsLoading(false);
         setProducts(res.data);
       };
       loadProducts();
@@ -156,11 +162,16 @@ export default function EcommerceShop() {
               ))}
           </Stack>
         </Stack> */}
-
-        <ShopProductList
-          products={products}
-          // isLoad={!filteredProducts && !initialValues}
-        />
+        {isLoading ? (
+          <Card sx={{ padding: '10%' }}>
+            <LoadingScreen />
+          </Card>
+        ) : (
+          <ShopProductList
+            products={products}
+            // isLoad={!filteredProducts && !initialValues}
+          />
+        )}
         <CartWidget />
       </Container>
     </Page>

@@ -31,6 +31,7 @@ export default function ClientsForm() {
   const { _id } = useParams();
 
   const { brands } = useSelector((state) => state.brand);
+  const { token } = useSelector((state) => state.auth);
 
   const isEdit = pathname.includes('edit');
   const currentBrand = brands?.data.find((off) => paramCase(off._id) === _id);
@@ -61,7 +62,8 @@ export default function ClientsForm() {
     setLoading(true);
 
     const reqObject = {
-      brand
+      brand,
+      accessToken: token
     };
 
     const reduxRes = await dispatch(createBrand(reqObject));

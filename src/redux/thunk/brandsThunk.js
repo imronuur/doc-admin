@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createBrand = createAsyncThunk('brand/create', async ({ brand }) => {
+export const createBrand = createAsyncThunk('brand/create', async ({ brand, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/brands`,
@@ -15,9 +16,10 @@ export const createBrand = createAsyncThunk('brand/create', async ({ brand }) =>
   return res;
 });
 
-export const deleteBrand = createAsyncThunk('brand/delete', async ({ _id }) => {
+export const deleteBrand = createAsyncThunk('brand/delete', async ({ _id, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/brand/${_id}`, {
     headers
@@ -25,9 +27,10 @@ export const deleteBrand = createAsyncThunk('brand/delete', async ({ _id }) => {
   return res;
 });
 
-export const deleteManyBrands = createAsyncThunk('brands/delete-many', async ({ ids }) => {
+export const deleteManyBrands = createAsyncThunk('brands/delete-many', async ({ ids, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/brands-delete-many`,

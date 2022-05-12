@@ -89,9 +89,9 @@ function applySortFilter(array, comparator, query) {
 export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { coupon } = useSelector((state) => state);
+  const { coupon, auth } = useSelector((state) => state);
   const { codes } = coupon;
-
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -112,7 +112,8 @@ export default function CategoryList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getCoupon(reqObject));
   }, [dispatch, page]);
@@ -135,7 +136,8 @@ export default function CategoryList() {
 
     const handleDeleteOne = async (_id) => {
       const reqObject = {
-        _id
+        _id,
+        accessToken: token
       };
       const reduxRes = await dispatch(deleteCoupon(reqObject));
       if (reduxRes.type === 'coupon/delete/rejected') {
@@ -163,7 +165,8 @@ export default function CategoryList() {
     const handleDeleteMany = async (ids) => {
       setLoading(true);
       const reqObject = {
-        ids
+        ids,
+        accessToken: token
       };
       const reduxRes = await dispatch(deleteManyCoupons(reqObject));
       if (reduxRes.type === 'coupons/delete-many/rejected') {

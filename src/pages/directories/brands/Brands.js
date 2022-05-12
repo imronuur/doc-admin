@@ -125,7 +125,8 @@ export default function ClientList() {
 
   const handleDeleteOffer = async (_id) => {
     const reqObject = {
-      _id
+      _id,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteBrand(reqObject));
     if (reduxRes.type === 'brand/delete/rejected') {
@@ -154,7 +155,7 @@ export default function ClientList() {
   useEffect(() => {
     const reqObject = {
       page,
-      authToken: token
+      accessToken: token
     };
     dispatch(getBrands(reqObject));
   }, [dispatch, page]);
@@ -162,7 +163,8 @@ export default function ClientList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyBrands(reqObject));
     if (reduxRes.type === 'brands/delete-many/rejected') {

@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createClient = createAsyncThunk('clients/create', async ({ client }) => {
+export const createClient = createAsyncThunk('clients/create', async ({ client, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/client`,
@@ -15,9 +16,10 @@ export const createClient = createAsyncThunk('clients/create', async ({ client }
   return res;
 });
 
-export const deleteClient = createAsyncThunk('client/delete', async ({ _id }) => {
+export const deleteClient = createAsyncThunk('client/delete', async ({ _id, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/client/${_id}`, {
     headers
@@ -25,9 +27,10 @@ export const deleteClient = createAsyncThunk('client/delete', async ({ _id }) =>
   return res;
 });
 
-export const deleteManyClients = createAsyncThunk('clients/delete-many', async ({ ids }) => {
+export const deleteManyClients = createAsyncThunk('clients/delete-many', async ({ ids, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/client-delete-many`,

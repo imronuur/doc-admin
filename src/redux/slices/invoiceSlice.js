@@ -49,11 +49,16 @@ export const { getInvoiceTotal } = slice.actions;
 
 // ----------------------------------------------------------------------
 
-export function getInvoice({ page }) {
+export function getInvoice({ page, accessToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+
+    Authorization: accessToken
+  };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/invoices?page=${page}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/invoices?page=${page}`, { headers });
       dispatch(slice.actions.getInvoicesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

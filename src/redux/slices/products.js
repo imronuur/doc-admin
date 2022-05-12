@@ -194,20 +194,28 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getProducts({ page }) {
+export function getProducts({ page, accessToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/products?page=${page}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/products?page=${page}`, { headers });
       dispatch(slice.actions.getProductsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
   };
 }
-export const getAllProducts = async () => {
+export const getAllProducts = async ({ accessToken }) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
   try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`);
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`, { headers });
     return response;
   } catch (error) {
     console.log(error);

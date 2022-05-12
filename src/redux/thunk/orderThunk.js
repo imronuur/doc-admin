@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createOrder = createAsyncThunk('order/create', async ({ order }) => {
+export const createOrder = createAsyncThunk('order/create', async ({ order, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/order`,
@@ -14,9 +15,10 @@ export const createOrder = createAsyncThunk('order/create', async ({ order }) =>
   );
   return res;
 });
-export const updateOrderStatus = createAsyncThunk('update-order-status/create', async ({ status }) => {
+export const updateOrderStatus = createAsyncThunk('update-order-status/update', async ({ status, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/update-order-status`,
@@ -28,9 +30,10 @@ export const updateOrderStatus = createAsyncThunk('update-order-status/create', 
   return res;
 });
 
-export const deleteOrder = createAsyncThunk('order/delete', async ({ _id }) => {
+export const deleteOrder = createAsyncThunk('order/delete', async ({ _id, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/order/${_id}`, {
     headers
@@ -38,9 +41,10 @@ export const deleteOrder = createAsyncThunk('order/delete', async ({ _id }) => {
   return res;
 });
 
-export const deleteManyOrders = createAsyncThunk('orders/delete-many', async ({ ids }) => {
+export const deleteManyOrders = createAsyncThunk('orders/delete-many', async ({ ids, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/orders-delete-many`,

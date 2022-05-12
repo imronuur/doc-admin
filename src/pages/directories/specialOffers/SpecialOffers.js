@@ -95,8 +95,9 @@ export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { offer } = useSelector((state) => state);
+  const { offer, auth } = useSelector((state) => state);
   const { offers } = offer;
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -117,7 +118,8 @@ export default function ClientList() {
 
   const handleDeleteOffer = async (_id) => {
     const reqObject = {
-      _id
+      _id,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteOffer(reqObject));
     if (reduxRes.type === 'offer/delete/rejected') {
@@ -145,7 +147,8 @@ export default function ClientList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getOffers(reqObject));
   }, [dispatch, page]);
@@ -153,7 +156,8 @@ export default function ClientList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyOffers(reqObject));
     if (reduxRes.type === 'offers/delete-many/rejected') {

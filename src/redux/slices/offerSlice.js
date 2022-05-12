@@ -39,11 +39,15 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getOffers({ page }) {
+export function getOffers({ page, accessToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/super-offer?page=${page}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/super-offer?page=${page}`, { headers });
       dispatch(slice.actions.getOffersSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

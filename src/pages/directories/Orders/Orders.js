@@ -102,10 +102,11 @@ export default function OrdersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { orders } = useSelector((state) => state.order);
-
+  const { order, auth } = useSelector((state) => state);
+  const { orders } = order;
+  const { token } = auth;
   const [page, setPage] = useState(0);
-  const [order, setOrder] = useState('asc');
+  const [orderAsc, setOrderAsc] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [orderBy, setOrderBy] = useState('createdAt');
@@ -124,10 +125,11 @@ export default function OrdersList() {
   const handleUpdateOrder = async (status) => {
     setLoading(true);
     const reqObject = {
-      status
+      status,
+      accessToken: token
     };
     const reduxRes = await dispatch(updateOrderStatus(reqObject));
-    if (reduxRes.type === 'update-order-status/create/rejected') {
+    if (reduxRes.type === 'update-order-status/update/rejected') {
       enqueueSnackbar(`${reduxRes.error.message}`, {
         variant: 'error',
         action: (key) => (
@@ -137,7 +139,7 @@ export default function OrdersList() {
         )
       });
       setLoading(false);
-    } else if (reduxRes.type === 'update-order-status/create/fulfilled') {
+    } else if (reduxRes.type === 'update-order-status/update/fulfilled') {
       enqueueSnackbar(`Order Status Updated!`, {
         variant: 'success',
         action: (key) => (
@@ -160,7 +162,8 @@ export default function OrdersList() {
 
   const handleDeleteOrder = async (_id) => {
     const reqObject = {
-      _id
+      _id,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteOrder(reqObject));
     if (reduxRes.type === 'order/delete/rejected') {
@@ -188,7 +191,8 @@ export default function OrdersList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getOrders(reqObject));
   }, [dispatch, page]);
@@ -196,7 +200,8 @@ export default function OrdersList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyOrders(reqObject));
     if (reduxRes.type === 'orders/delete-many/rejected') {
@@ -225,7 +230,7 @@ export default function OrdersList() {
   if (orders?.data?.length) {
     const handleRequestSort = (event, property) => {
       const isAsc = orderBy === property && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderAsc(isAsc ? 'desc' : 'asc');
       setOrderBy(property);
     };
 

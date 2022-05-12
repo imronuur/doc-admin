@@ -117,9 +117,10 @@ export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { product, bulkProduct } = useSelector((state) => state);
+  const { product, bulkProduct, auth } = useSelector((state) => state);
   const { bulkProducts } = bulkProduct;
   const { products } = product;
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -140,7 +141,8 @@ export default function CategoryList() {
 
   const handleDeleteProduct = async (slug) => {
     const reqObject = {
-      slug
+      slug,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteProduct(reqObject));
     if (reduxRes.type === 'product/delete/rejected') {
@@ -167,7 +169,8 @@ export default function CategoryList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getProducts(reqObject));
   }, [dispatch, page]);
@@ -198,7 +201,8 @@ export default function CategoryList() {
   const handleBulkProductUpload = async (products) => {
     setLoading(true);
     const reqObject = {
-      products
+      products,
+      accessToken: token
     };
     const reduxRes = await dispatch(createBulkProduct(reqObject));
     if (reduxRes.type === 'product/create-bulk/rejected') {
@@ -229,7 +233,8 @@ export default function CategoryList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyProducts(reqObject));
     if (reduxRes.type === 'product/delete-many/rejected') {

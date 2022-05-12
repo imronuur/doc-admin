@@ -39,10 +39,10 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getBrands({ page, authToken }) {
+export function getBrands({ page, accessToken }) {
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: authToken
+    Authorization: accessToken
   };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());

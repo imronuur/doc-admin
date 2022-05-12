@@ -101,9 +101,9 @@ export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { client } = useSelector((state) => state);
-
+  const { client, auth } = useSelector((state) => state);
   const { clients } = client;
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -124,7 +124,8 @@ export default function ClientList() {
 
   const handleDeleteClient = async (_id) => {
     const reqObject = {
-      _id
+      _id,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteClient(reqObject));
     if (reduxRes.type === 'client/delete/rejected') {
@@ -152,7 +153,8 @@ export default function ClientList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getClients(reqObject));
   }, [dispatch, page]);
@@ -160,7 +162,8 @@ export default function ClientList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyClients(reqObject));
     if (reduxRes.type === 'clients/delete-many/rejected') {
