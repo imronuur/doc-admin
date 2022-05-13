@@ -149,6 +149,7 @@ export default function OrdersList() {
         )
       });
     }
+    window.location.reload();
   };
 
   const pages = new Array(orders.numberOfPages).fill(null).map((v, i) => i);
@@ -337,7 +338,7 @@ export default function OrdersList() {
                       <OrdersModal
                         open={open}
                         handleClose={handleClose}
-                        orderId={orderInfo?.orderId}
+                        orderId={_id}
                         handleUpdateOrder={handleUpdateOrder}
                       />
                       {/* orders modal */}

@@ -19,7 +19,7 @@ export default function RouteProfilePage() {
   const { themeStretch } = useSettings();
 
   const { _id } = params;
-  const { order } = useSelector((state) => ({ ...state }));
+  const { order, auth } = useSelector((state) => ({ ...state }));
   const { orders } = order;
 
   let currentOrder = null;
@@ -35,10 +35,10 @@ export default function RouteProfilePage() {
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
             { name: 'Profiles Directory', href: PATH_ADMIN.directories.orders },
-            { name: currentOrder?.name || '' }
+            { name: currentOrder?.orderStatus || '' }
           ]}
         />
-        <OrdersAbout order={currentOrder} />
+        <OrdersAbout currentOrder={currentOrder} accessToken={auth.token} />
       </Container>
     </Page>
   );
