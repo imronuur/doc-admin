@@ -119,7 +119,7 @@ export default function OrdersList() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleChangeStatus = async (status) => {
+  const handleOpenModal = async (status) => {
     handleOpen();
   };
   const handleUpdateOrder = async (status) => {
@@ -329,7 +329,7 @@ export default function OrdersList() {
 
                       <TableCell align="right">
                         <OrdersMoreMenu
-                          onChangeStatus={() => handleChangeStatus(row)}
+                          onOpen={() => handleOpenModal(row)}
                           onDelete={() => handleDeleteOrder(_id)}
                           _id={_id}
                         />

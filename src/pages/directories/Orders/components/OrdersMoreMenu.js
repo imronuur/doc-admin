@@ -18,10 +18,10 @@ import { PATH_ADMIN } from '../../../../routes/paths';
 OrderMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   _id: PropTypes.string,
-  onChangeStatus: PropTypes.func
+  onOpen: PropTypes.func
 };
 
-export default function OrderMoreMenu({ _id, onDelete, onChangeStatus }) {
+export default function OrderMoreMenu({ _id, onDelete, onOpen }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -51,7 +51,7 @@ export default function OrderMoreMenu({ _id, onDelete, onChangeStatus }) {
           </ListItemIcon>
           <ListItemText primary="View More" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-        <MenuItem onClick={onChangeStatus} sx={{ color: 'text.secondary' }}>
+        <MenuItem onClick={onOpen} sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
