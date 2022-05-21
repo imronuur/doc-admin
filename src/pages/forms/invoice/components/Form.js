@@ -1,12 +1,15 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import closeFill from '@iconify/icons-eva/close-fill';
+import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { Link as RouterLink } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import downloadFill from '@iconify/icons-eva/download-fill';
 import {
   Card,
   Grid,
@@ -19,17 +22,16 @@ import {
   CardHeader,
   Button,
   Box,
-  Modal,
-  FormHelperText
+  Modal
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
 
-import { MIconButton } from '../../../../components/@material-extend';
 import { fCurrency } from '../../../../utils/formatNumber';
 import { Validations } from './Validations';
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
-import { getInvoiceTotal } from '../../../../redux/slices/invoiceSlice';
+import { PATH_ADMIN } from '../../../../routes/paths';
+
+import { MIconButton } from '../../../../components/@material-extend';
 // ----------------------------------------------------------------------
+import InvoicePDF from '../invoice-to-pdf/InvoicePDF';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +40,8 @@ ClientsForm.propTypes = {
   currentInvoice: PropTypes.object,
   handleCreate: PropTypes.func,
   loading: PropTypes.bool,
-  clients: PropTypes.array
+  clients: PropTypes.array,
+  handleCreateInvoice: PropTypes.func
 };
 
 const statuses = [{ value: 'Paid' }, { value: 'Unpaid' }, { value: 'Overdue' }, { value: 'Draft' }];
@@ -118,7 +121,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [toClient, setToClient] = useState(null);
-  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
   const getClient = (client) => {
     setToClient(client);
@@ -127,22 +130,22 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
     handleClose();
   };
 
+  // useEffect(() => {}, [values.items, dispatch]);
+  // const totalInvoice = () => {
+  // };
+
+  const total = values.items.map((item) => {
+    const { quantity, unitPrice, discount } = item;
+    const totalPrice = Number(quantity) * Number(unitPrice);
+    const price = totalPrice - totalPrice * (discount / 100);
+    return price;
+  });
+
   useEffect(() => {
-    dispatch(getInvoiceTotal());
-  }, [values.items, dispatch]);
+    setFieldValue('total', Number(total));
+  }, [values.items, setFieldValue, total]);
 
-  // const total = values.items.map((item) => {
-  //   const { quantity, unitPrice, discount } = item;
-  //   const totalPrice = Number(quantity) * Number(unitPrice);
-  //   const price = totalPrice - totalPrice * (discount / 100);
-  //   return price;
-  // });
-
-  // useEffect(() => {
-  //   setFieldValue('total', Number(total));
-  // }, [values.items]);
-
-  console.log(values);
+  // console.log(totalInvoice);
 
   return (
     <FormikProvider value={formik}>
@@ -195,7 +198,12 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                   </Stack>
                   {clients.length > 0
                     ? clients.map((client) => (
-                        <Stack sx={stackStyle} id="modal-modal-description" onClick={() => getClient(client)}>
+                        <Stack
+                          sx={stackStyle}
+                          key={client._id}
+                          id="modal-modal-description"
+                          onClick={() => getClient(client)}
+                        >
                           <Typography sx={{ cursor: 'pointer', paddingLeft: '4px' }}>{client.name}</Typography>
                           <Typography color="primary" sx={{ cursor: 'pointer', paddingLeft: '4px' }}>
                             {client.email}
@@ -382,10 +390,29 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                     />
                   </Grid>
                 </Stack>
-                <Grid item xs={6} mt={2} my={2} sx={{ display: 'flex', justifyContent: 'flex-end' }} gap={3}>
+                <Grid item xs={12} mt={2} my={2} sx={{ display: 'flex', justifyContent: 'flex-end' }} gap={3}>
                   <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={loading}>
                     {!isEdit ? 'Create Invoice' : 'Save Changes'}
                   </LoadingButton>
+                  {!isEdit && (
+                    <PDFDownloadLink
+                      document={<InvoicePDF key={user._id} invoice={values} user={user} clients={values.refTo} />}
+                      fileName="IDAN | INVOICE"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      {() => (
+                        <LoadingButton
+                          size="large"
+                          // loading={loading}
+                          variant="contained"
+                          loadingPosition="end"
+                          endIcon={<Icon icon={downloadFill} />}
+                        >
+                          Download
+                        </LoadingButton>
+                      )}
+                    </PDFDownloadLink>
+                  )}
                 </Grid>
               </Card>
             </Grid>

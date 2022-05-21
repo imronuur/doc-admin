@@ -63,7 +63,7 @@ export const getAllCategories = async () => {
     const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/categories/list-all`);
     return response;
   } catch (error) {
-    console.log(error);
+    return error.message;
   }
 };
 
@@ -72,7 +72,7 @@ export const getAllSubCategories = async () => {
     const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/sub-categories/list-all`);
     return response;
   } catch (error) {
-    console.log(error);
+    return error.message;
   }
 };
 
@@ -81,7 +81,7 @@ export const loadSubCategory = async (_id) => {
     const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/category/get-sub/${_id}`);
     return response;
   } catch (error) {
-    console.log(error);
+    return error.message;
   }
 };
 

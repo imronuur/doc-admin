@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Page, View, Text, Font, Image, Document, StyleSheet } from '@react-pdf/renderer';
 // utils
-import { fCurrency } from '../../../../../../utils/formatNumber';
+import { fCurrency } from '../../../../utils/formatNumber';
 // ----------------------------------------------------------------------
 
 Font.register({
@@ -67,14 +67,11 @@ const styles = StyleSheet.create({
 
 InvoicePDF.propTypes = {
   invoice: PropTypes.object.isRequired,
-  clients: PropTypes.array,
+  clients: PropTypes.object,
   user: PropTypes.object
 };
 
-export default function InvoicePDF({ invoice: order, user, clients }) {
-  const orderedId = String(order.map((order) => order.orderTo));
-  const current = clients.find((client) => client._id);
-
+export default function InvoicePDF({ invoice, user, clients }) {
   // const clientMatches = String(current._id) === orderedId;
   // console.log(clientMatches);
   // console.log(orderedId);
@@ -86,7 +83,7 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
           <Image source="/static/brand/logo_full.jpg" style={{ height: 32 }} />
           <View style={{ alignItems: 'right', flexDirection: 'column' }}>
             <Text style={styles.h3}>Not Processed</Text>
-            <Text>INV-{orderedId}</Text>
+            <Text>INV-{invoice._id}</Text>
           </View>
         </View>
 
@@ -100,9 +97,9 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
           <View style={styles.col6}>
             <Text style={[styles.overline, styles.mb8]}>Invoice To</Text>
 
-            <Text style={styles.body1}>{current.name}</Text>
-            <Text style={styles.body1}>{current.state}</Text>
-            <Text style={styles.body1}>{current.phone}</Text>
+            <Text style={styles.body1}>{clients?.name}</Text>
+            <Text style={styles.body1}>{clients?.state}</Text>
+            <Text style={styles.body1}>{clients?.phone}</Text>
           </View>
         </View>
 
@@ -129,30 +126,30 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
             </View>
           </View>
           <View style={styles.tableBody}>
-            {order.length > 0 &&
-              order.map((item, index) => (
-                <View style={styles.tableRow} key={index}>
-                  <View style={styles.tableCell_1}>
-                    <Text>{index + 1}</Text>
-                  </View>
+            <View style={styles.tableRow} key={invoice}>
+              <View style={styles.tableCell_1}>
+                <Text>{invoice.length + 1}</Text>
+              </View>
+              {invoice.items.map((product) => (
+                <>
+                  {' '}
                   <View style={styles.tableCell_2}>
-                    <Text style={styles.subtitle2}>{item.products.title}</Text>
-                    <Text>{item.products.description || 'Samsung A71'}</Text>
+                    <Text style={styles.subtitle2}>{product.name}</Text>
+                    <Text>{product.name}</Text>
                   </View>
-                  {item &&
-                    item.products.map((product, i) => (
-                      <View style={styles.tableCell_3} key={i}>
-                        <Text>{product.count}</Text>
-                      </View>
-                    ))}
                   <View style={styles.tableCell_3}>
-                    <Text>{item.orderInfo.amount}</Text>
+                    <Text>{product.quantity}</Text>
                   </View>
-                  <View style={[styles.tableCell_3, styles.alignRight]}>
-                    <Text>{fCurrency(item.orderInfo.amount)}</Text>
+                  <View style={styles.tableCell_3}>
+                    <Text>{product.unitPrice}</Text>
                   </View>
-                </View>
+                </>
               ))}
+              <View style={[styles.tableCell_3, styles.alignRight]}>
+                <Text>{fCurrency(invoice.total)}</Text>
+              </View>
+            </View>
+
             {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />
@@ -187,7 +184,6 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
                 <Text>{fCurrency(taxes)}</Text>
               </View>
             </View> */}
-
             {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />

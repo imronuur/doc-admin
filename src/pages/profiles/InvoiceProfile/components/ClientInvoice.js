@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
-import calendarFilled from '@iconify/icons-ant-design/calendar-filled';
-import shopFilled from '@iconify/icons-ant-design/shop-filled';
-import fileDoneOutlined from '@iconify/icons-ant-design/file-done-outlined';
 import userOutlined from '@iconify/icons-ant-design/user-outlined';
 
 // material
 import { styled } from '@mui/material/styles';
-import { Link, Card, Typography, CardHeader, Stack } from '@mui/material';
+import { Card, Typography, CardHeader, Stack } from '@mui/material';
 import { fCurrency } from '../../../../utils/formatNumber';
 
 // styles
@@ -23,13 +20,16 @@ const CardStyle = styled(Card)(({ theme }) => ({
   paddingBottom: theme.spacing(0)
 }));
 
+ClientInvoice.propTypes = {
+  invoice: PropTypes.object
+};
+
 export default function ClientInvoice({ invoice }) {
-  console.log(invoice);
   return (
     <CardStyle>
       <CardHeader title="Invoice Information" />
       {invoice.items.map((item) => (
-        <Stack spacing={2} sx={{ p: 3 }}>
+        <Stack spacing={2} sx={{ p: 3 }} key={item}>
           <Stack direction="row">
             <IconStyle icon={userOutlined} />
             <Typography variant="body2">

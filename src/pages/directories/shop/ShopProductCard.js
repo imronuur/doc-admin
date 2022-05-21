@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { paramCase } from 'change-case';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { Box, Card, Link, Typography, Stack } from '@mui/material';

@@ -4,11 +4,13 @@ import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
+
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { Card, Grid, Stack, TextField, Typography, FormHelperText } from '@mui/material';
+import { Card, Grid, Stack, TextField, Box, Typography, Button } from '@mui/material';
 import UploadAvatar from './UploadAvatar';
-import { storage } from '../../../../Firebase';
+import { storage, deleteFirebaseObject } from '../../../../Firebase';
 import { Validations } from './Validations';
+import { fData } from '../../../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
@@ -51,8 +53,6 @@ export default function OffersForm({ isEdit, currentBrand, handleCreate, loading
 
   const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
 
-  console.log(values);
-
   const handleDrop = useCallback(
     (acceptedFiles) => {
       setFileLoading(true);
@@ -70,19 +70,10 @@ export default function OffersForm({ isEdit, currentBrand, handleCreate, loading
     [setFieldValue]
   );
 
-  const handleRemoveAll = (files) => {
-    setFileLoading(true);
-    files.map(async (file) => storage.refFromURL(file).delete());
-    setFieldValue('logo', []);
-    setFileLoading(false);
-  };
-
-  const handleRemove = async (file) => {
-    setFileLoading(true);
-    await storage.refFromURL(file).delete();
-    const filteredItems = values.logo.filter((_file) => _file !== file);
-    setFieldValue('logo', filteredItems);
-    setFileLoading(false);
+  const handleRemove = async (fileName) => {
+    const desertRef = ref(storage, fileName);
+    await deleteFirebaseObject(desertRef);
+    setFieldValue('logo', '');
   };
 
   return (
@@ -109,10 +100,34 @@ export default function OffersForm({ isEdit, currentBrand, handleCreate, loading
                     accept="image/*"
                     file={values.logo}
                     onDrop={handleDrop}
-                    onRemove={handleRemove}
-                    onRemoveAll={() => handleRemoveAll(values.logo)}
                     error={Boolean(touched.logo && errors.logo)}
                     fileLoading={fileLoading}
+                    caption={
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          flexDirection: 'column',
+                          alignItems: 'center'
+                        }}
+                        gap={2}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            mt: 2,
+                            mx: 'auto',
+                            display: 'block',
+                            textAlign: 'center',
+                            color: 'text.secondary'
+                          }}
+                        >
+                          Allowed *.jpeg, *.jpg, *.png, *.gif
+                          <br /> max size of {fData(3145728)}
+                        </Typography>
+                        {values.logo && <Button onClick={() => handleRemove(values.logo)}> Remove </Button>}
+                      </Box>
+                    }
                   />
                 </Grid>
               </Stack>

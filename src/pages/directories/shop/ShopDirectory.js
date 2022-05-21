@@ -1,12 +1,11 @@
-import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
-import { filter, includes, orderBy, set } from 'lodash';
+import { filter } from 'lodash';
 // material
-import { Backdrop, Container, Typography, CircularProgress, Card, Stack } from '@mui/material';
-import { sentenceCase } from 'change-case';
+import { Backdrop, Container, CircularProgress, Card, TextField, Autocomplete, Grid } from '@mui/material';
 // redux
-import { useDispatch, useSelector } from '../../../redux/store';
-import { getAllProducts, filterProducts } from '../../../redux/slices/products';
+
+import { useSelector } from '../../../redux/store';
+import { getAllProducts } from '../../../redux/slices/products';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // utils
@@ -70,11 +69,44 @@ import CartWidget from '../../profiles/Shop/checkout/checkout/CartWidget';
 //   return products;
 // }
 
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function applySortFilter(array, comparator, query) {
+  const stabilizedThis = array?.map((el, index) => [el, index]);
+  stabilizedThis?.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
+
+  if (query) {
+    return filter(array, (_product) => _product.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+  }
+
+  return stabilizedThis?.map((el) => el[0]);
+}
+
 export default function EcommerceShop() {
   const { themeStretch } = useSettings();
-  const dispatch = useDispatch();
-  const [openFilter, setOpenFilter] = useState(false);
+  // const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
+  const [order] = useState('asc');
+  const [orderBy] = useState('createdAt');
+  const [filterName, setFilterName] = useState('');
   const { token } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   // const filteredProducts = applyFilter(products, sortBy, filters);
@@ -83,6 +115,9 @@ export default function EcommerceShop() {
   //   dispatch(getProducts({ page: 0 }));
   // }, [dispatch]);
 
+  const handleFilterByName = (event) => {
+    setFilterName(event.target.value);
+  };
   useEffect(() => {
     let isSubscribed = true;
 
@@ -100,24 +135,27 @@ export default function EcommerceShop() {
     }
 
     return () => (isSubscribed = false);
-  }, []);
+  }, [token]);
 
   // useEffect(() => {
   //   dispatch(filterProducts(values));
   // }, [dispatch, values]);
 
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
-  };
+  // const handleOpenFilter = () => {
+  //   setOpenFilter(true);
+  // };
 
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
-  };
+  // const handleCloseFilter = () => {
+  //   setOpenFilter(false);
+  // };
 
-  const handleResetFilter = () => {
-    // handleSubmit();
-    // resetForm();
-  };
+  // const handleResetFilter = () => {
+  //   // handleSubmit();
+  //   // resetForm();
+  // };
+
+  const filteredProducts = applySortFilter(products?.data, getComparator(order, orderBy), filterName);
+  const isProductNotFound = filteredProducts.length === 0;
 
   return (
     <Page title="Ecommerce: Shop | Minimal-UI">
@@ -140,14 +178,7 @@ export default function EcommerceShop() {
           ]}
         />
 
-        {products.data?.length === 0 && (
-          <Card sx={{ p: 3 }}>
-            <Typography component="span" variant="subtitle1">
-              {products.length}
-            </Typography>
-            &nbsp;No Products found
-          </Card>
-        )}
+        {isProductNotFound && <Card sx={{ p: 3 }}>&nbsp;No Products found</Card>}
         {/* 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
@@ -167,10 +198,24 @@ export default function EcommerceShop() {
             <LoadingScreen />
           </Card>
         ) : (
-          <ShopProductList
-            products={products}
-            // isLoad={!filteredProducts && !initialValues}
-          />
+          <>
+            {' '}
+            <Grid item xs={12}>
+              <Autocomplete
+                onChange={handleFilterByName}
+                options={products.data}
+                sx={{ mb: 2 }}
+                getOptionLabel={(option) => option.name}
+                filterSelectedOptions
+                renderInput={(params) => <TextField {...params} label="Product" />}
+              />
+            </Grid>
+            <ShopProductList
+              products={filteredProducts}
+
+              // isLoad={!filteredProducts && !initialValues}
+            />
+          </>
         )}
         <CartWidget />
       </Container>

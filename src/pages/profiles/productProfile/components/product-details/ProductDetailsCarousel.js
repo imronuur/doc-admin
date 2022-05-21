@@ -7,8 +7,8 @@ import { alpha, styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 // redux
 //
-import LightboxModal from '../../../../components/LightboxModal';
-import CarouselControlsArrowsIndex from '../../../../components/carousel/controls/CarouselControlsArrowsIndex';
+import LightboxModal from '../../../../../components/LightboxModal';
+import CarouselControlsArrowsIndex from '../../../../../components/carousel/controls/CarouselControlsArrowsIndex';
 
 // ----------------------------------------------------------------------
 
@@ -91,7 +91,6 @@ function ThumbnailItem({ item }) {
 ProductDetailsCarousel.propTypes = {
   currentProduct: PropTypes.object
 };
-
 export default function ProductDetailsCarousel({ currentProduct }) {
   const [openLightbox, setOpenLightbox] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -102,7 +101,7 @@ export default function ProductDetailsCarousel({ currentProduct }) {
   const slider2 = useRef(null);
 
   // const { product } = useSelector((state) => state.product);
-  const imagesLightbox = currentProduct?.images.find((_image) => _image);
+  const imagesLightbox = currentProduct.images.find((_image) => _image);
 
   const handleOpenLightbox = (url) => {
     const selectedImage = findIndex(imagesLightbox, (index) => index === url);

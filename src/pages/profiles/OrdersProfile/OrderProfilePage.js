@@ -1,10 +1,9 @@
 // material
-import { Grid, Container, Icon } from '@mui/material';
+import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 // hooks
-import shopFilled from '@iconify/icons-ant-design/shop-filled';
 import useSettings from '../../../hooks/useSettings';
 // components
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';

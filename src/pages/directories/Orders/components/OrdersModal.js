@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, Box, Button, Select, MenuItem, Typography, Grid, FormLabel } from '@mui/material';
+import PropTypes from 'prop-types';
+import { Modal, Box, Select, MenuItem, Typography, Grid, FormLabel } from '@mui/material';
 import { FormikProvider, Form, useFormik } from 'formik';
 import { LoadingButton } from '@mui/lab';
 
@@ -16,6 +17,14 @@ const style = {
   p: 4
 };
 const statuses = ['Not Processed', 'Cash On Delivery', 'processing', 'Dispatched', 'Cancelled', 'Completed'];
+
+OrdersModal.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  handleClose: PropTypes.func,
+  handleUpdateOrder: PropTypes.func,
+  orderId: PropTypes.string
+};
 
 export default function OrdersModal({ open, handleClose, handleUpdateOrder, orderId }) {
   const formik = useFormik({

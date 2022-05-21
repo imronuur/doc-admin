@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';

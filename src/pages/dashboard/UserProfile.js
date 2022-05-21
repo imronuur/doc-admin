@@ -14,7 +14,6 @@ import { getPosts, getGallery, getFriends, getProfile, getFollowers, onToggleFol
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
-import useAuth from '../../hooks/useAuth';
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';

@@ -1,5 +1,4 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
@@ -16,6 +15,7 @@ import {
   Card,
   Table,
   Button,
+  Stack,
   TableRow,
   Checkbox,
   TableBody,
@@ -31,7 +31,6 @@ import { useDispatch, useSelector } from '../../../redux/store';
 import { getProducts } from '../../../redux/slices/products';
 import { loadBulkProducts, removeBulkProducts } from '../../../redux/slices/bulkProducts';
 import { deleteProduct, createBulkProduct, deleteManyProducts } from '../../../redux/thunk/productThunk';
-import { createCategory } from '../../../redux/thunk/categoryThunk';
 
 import { fCurrency } from '../../../utils/formatNumber';
 
@@ -173,7 +172,7 @@ export default function CategoryList() {
       accessToken: token
     };
     dispatch(getProducts(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   // BULK Category creation
   const handleBulkAdd = async (e) => {
@@ -361,12 +360,12 @@ export default function CategoryList() {
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                           color={
-                            (Number(quantity) <= 0 && 'error') || (Number(quantity) <= 10 && 'warning') || 'success'
+                            (product.quantity <= 0 && 'error') || (product.quantity <= 10 && 'warning') || 'success'
                           }
                         >
-                          {(Number(quantity) >= 10 && sentenceCase('In Stock')) ||
-                            (Number(quantity) <= 10 && sentenceCase('Low In Stock')) ||
-                            (Number(quantity) <= 0 && sentenceCase('Out of Stock'))}
+                          {product.quantity >= 10 && sentenceCase('In Stock')}
+                          {product.quantity < 10 && product.quantity > 0 && sentenceCase('Low In Stock')}
+                          {product.quantity <= 0 && sentenceCase('Out of Stock')}
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>
@@ -449,7 +448,8 @@ export default function CategoryList() {
             </Button>
           }
         />
-        <Grid container spacing={3}>
+
+        <Grid container>
           <Grid item xs={12}>
             {content}
           </Grid>

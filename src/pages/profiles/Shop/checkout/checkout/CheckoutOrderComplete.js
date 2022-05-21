@@ -1,18 +1,14 @@
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
-
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import filePdfFilled from '@iconify/icons-ant-design/file-pdf-filled';
-import arrowIosBackFill from '@iconify/icons-eva/arrow-ios-back-fill';
 import { LoadingButton } from '@mui/lab';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Button, Divider, Typography, Stack, Tooltip, IconButton, DialogActions } from '@mui/material';
+import { Box, Link, Divider, Typography, Stack, Tooltip, IconButton, DialogActions } from '@mui/material';
 // redux
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
-import eyeFill from '@iconify/icons-eva/eye-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
-import shareFill from '@iconify/icons-eva/share-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
 // redux
 import { useDispatch, useSelector } from '../../../../../redux/store';
@@ -24,7 +20,6 @@ import { DialogAnimate } from '../../../../../components/animate';
 
 import { OrderCompleteIllustration } from '../../../../../assets';
 import InvoicePDF from './invoice-to-pdf/InvoicePDF';
-import useAuth from '../../../../../hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +34,9 @@ const DialogStyle = styled(DialogAnimate)(({ theme }) => ({
 }));
 
 // ----------------------------------------------------------------------
+CheckoutOrderComplete.propTypes = {
+  user: PropTypes.object
+};
 
 export default function CheckoutOrderComplete({ user, ...other }) {
   const navigate = useNavigate();

@@ -14,10 +14,7 @@ import outlineAdsClick from '@iconify/icons-ic/outline-ads-click';
 import roundSecurity from '@iconify/icons-ic/round-security';
 import roundSupervisedUserCircle from '@iconify/icons-ic/round-supervised-user-circle';
 
-// components
-import SvgIconStyle from '../../components/SvgIconStyle';
-import Label from '../../components/Label';
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../routes/paths';
+import { PATH_ADMIN } from '../../routes/paths';
 
 // ----------------------------------------------------------------------
 

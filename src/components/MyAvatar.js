@@ -1,5 +1,4 @@
 // hooks
-import useAuth from '../hooks/useAuth';
 //
 import { MAvatar } from './@material-extend';
 import createAvatar from '../utils/createAvatar';

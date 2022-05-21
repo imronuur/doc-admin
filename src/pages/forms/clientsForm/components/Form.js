@@ -1,27 +1,8 @@
-import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
-import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
-import {
-  Card,
-  Chip,
-  Grid,
-  Stack,
-  Switch,
-  Select,
-  TextField,
-  InputLabel,
-  Typography,
-  FormControl,
-  Autocomplete,
-  InputAdornment,
-  FormHelperText,
-  FormControlLabel,
-  MenuItem,
-  FormLabel
-} from '@mui/material';
+import { Card, Grid, Stack, TextField } from '@mui/material';
 
 import { Validations } from './Validations';
 
@@ -59,7 +40,7 @@ export default function ClientsForm({ isEdit, currentClient, handleCreate, loadi
     }
   });
 
-  const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
+  const { errors, touched, handleSubmit, getFieldProps } = formik;
 
   return (
     <FormikProvider value={formik}>

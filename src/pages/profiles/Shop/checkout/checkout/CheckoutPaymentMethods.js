@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
-import plusFill from '@iconify/icons-eva/plus-fill';
 import checkmarkCircle2Fill from '@iconify/icons-eva/checkmark-circle-2-fill';
 // material
 import { styled } from '@mui/material/styles';
@@ -9,9 +8,6 @@ import {
   Card,
   Grid,
   Radio,
-  Button,
-  Collapse,
-  TextField,
   Typography,
   RadioGroup,
   CardHeader,
@@ -44,7 +40,6 @@ CheckoutPaymentMethods.propTypes = {
 
 export default function CheckoutPaymentMethods({ paymentOptions, formik }) {
   const { errors, touched, values, getFieldProps } = formik;
-  console.log(errors.paymentType);
 
   return (
     <Card sx={{ my: 3 }}>

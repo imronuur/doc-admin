@@ -1,16 +1,5 @@
 import PropTypes from 'prop-types';
-import {
-  Stack,
-  InputAdornment,
-  TextField,
-  MenuItem,
-  Box,
-  Toolbar,
-  Tooltip,
-  IconButton,
-  Typography,
-  OutlinedInput
-} from '@mui/material';
+import { Stack, InputAdornment, TextField, MenuItem, Tooltip, IconButton } from '@mui/material';
 import DatePicker from '@mui/lab/DatePicker';
 // components
 import trash2Fill from '@iconify/icons-eva/trash-2-fill';
@@ -29,7 +18,10 @@ InvoiceTableToolbar.propTypes = {
   onFilterEndDate: PropTypes.func,
   onFilterService: PropTypes.func,
   onFilterStartDate: PropTypes.func,
-  optionsService: PropTypes.arrayOf(PropTypes.string)
+  optionsService: PropTypes.arrayOf(PropTypes.string),
+  handleDeleteMany: PropTypes.func,
+  loading: PropTypes.bool,
+  selected: PropTypes.array
 };
 
 export default function InvoiceTableToolbar({

@@ -61,7 +61,8 @@ UploadAvatar.propTypes = {
   error: PropTypes.bool,
   file: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   caption: PropTypes.node,
-  sx: PropTypes.object
+  sx: PropTypes.object,
+  fileLoading: PropTypes.bool
 };
 
 export default function UploadAvatar({ error, file, fileLoading, caption, sx, ...other }) {

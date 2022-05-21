@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
@@ -27,7 +27,6 @@ import { useDispatch } from '../../../redux/store';
 import { getUser } from '../../../redux/thunk/authThunk';
 import { PATH_AUTH } from '../../../routes/paths';
 // hooks
-import useAuth from '../../../hooks/useAuth';
 import { useFirebaseAuth } from '../../../contexts/authContext';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 //

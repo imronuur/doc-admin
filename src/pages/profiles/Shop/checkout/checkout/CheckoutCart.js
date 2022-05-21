@@ -14,8 +14,7 @@ import {
   applyDiscount,
   increaseQuantity,
   decreaseQuantity,
-  getTotals,
-  getCart
+  getTotals
 } from '../../../../../redux/slices/products';
 
 // routes
@@ -67,7 +66,6 @@ export default function CheckoutCart() {
         setSubmitting(true);
         handleNextStep();
       } catch (error) {
-        console.error(error);
         setErrors(error.message);
       }
     }

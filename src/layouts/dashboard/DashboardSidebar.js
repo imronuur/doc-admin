@@ -4,11 +4,11 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { useSelector } from 'react-redux';
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Stack, Button, Drawer, Tooltip, Typography, CardActionArea } from '@mui/material';
+import { Box, Link, Stack, Drawer, Tooltip, Typography, CardActionArea } from '@mui/material';
 // hooks
 import useCollapseDrawer from '../../hooks/useCollapseDrawer';
 // routes
-import { PATH_DASHBOARD, PATH_DOCS } from '../../routes/paths';
+import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import Logo from '../../components/Logo';
 import MyAvatar from '../../components/MyAvatar';
@@ -17,7 +17,6 @@ import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
-import { DocIllustration } from '../../assets';
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 280;

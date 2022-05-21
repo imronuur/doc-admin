@@ -9,7 +9,6 @@ import { Box, Grid, Card, Button, Typography } from '@mui/material';
 import { useDispatch, useSelector } from '../../../../../redux/store';
 import { onBackStep, onNextStep, createBilling } from '../../../../../redux/slices/products';
 // utils
-import mockData from '../../../../../utils/mock-data';
 //
 import Label from '../../../../../components/Label';
 import CheckoutSummary from './CheckoutSummary';
@@ -17,19 +16,10 @@ import CheckoutNewAddressForm from './CheckoutNewAddressForm';
 
 // ----------------------------------------------------------------------
 
-const MOCK_ADDRESS_BOOKS = [...Array(5)].map((_, index) => ({
-  id: mockData.id(index),
-  receiver: mockData.name.fullName(index),
-  fullAddress: mockData.address.fullAddress(index),
-  phone: mockData.phoneNumber(index),
-  addressType: index === 0 ? 'Home' : 'Office',
-  isDefault: index === 0
-}));
-
 // ----------------------------------------------------------------------
 
 AddressItem.propTypes = {
-  address: PropTypes.object,
+  client: PropTypes.object,
   onNextStep: PropTypes.func,
   onCreateBilling: PropTypes.func
 };

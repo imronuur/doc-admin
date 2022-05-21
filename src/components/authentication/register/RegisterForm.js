@@ -12,20 +12,17 @@ import { LoadingButton } from '@mui/lab';
 // hooks
 import { createOrUpdateUser } from '../../../redux/thunk/authThunk';
 import { useDispatch } from '../../../redux/store';
-import useAuth from '../../../hooks/useAuth';
-import useIsMountedRef from '../../../hooks/useIsMountedRef';
+// import useIsMountedRef from '../../../hooks/useIsMountedRef';
 //
-import { MIconButton } from '../../@material-extend';
 import { useFirebaseAuth } from '../../../contexts/authContext';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
   const { register } = useFirebaseAuth();
-  const isMountedRef = useIsMountedRef();
+  // const isMountedRef = useIsMountedRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const RegisterSchema = Yup.object().shape({
@@ -43,7 +40,7 @@ export default function RegisterForm() {
       password: ''
     },
     validationSchema: RegisterSchema,
-    onSubmit: async (values, { setErrors, setSubmitting }) => {
+    onSubmit: async (values) => {
       try {
         const name = values.firstName.concat(values.lastName);
         const { accessToken } = await register(values.email, values.password);
@@ -64,7 +61,6 @@ export default function RegisterForm() {
               </Button>
             )
           });
-          setLoading(false);
         }
       } catch (error) {
         enqueueSnackbar(`${error.message}`, {
@@ -75,7 +71,6 @@ export default function RegisterForm() {
             </Button>
           )
         });
-        setLoading(false);
       }
     }
   });

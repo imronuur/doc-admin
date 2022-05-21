@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
-import { paramCase } from 'change-case';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
-import eyeFill from '@iconify/icons-eva/eye-fill';
 
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -15,12 +13,12 @@ import { PATH_ADMIN } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
-OfferMoreMenu.propTypes = {
+BrandMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   _id: PropTypes.string
 };
 
-export default function OfferMoreMenu({ onDelete, _id }) {
+export default function BrandMoreMenu({ onDelete, _id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 

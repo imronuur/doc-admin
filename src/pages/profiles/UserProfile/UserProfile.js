@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 // material
 import { capitalCase } from 'change-case';
 //

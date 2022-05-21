@@ -1,12 +1,10 @@
-import _, { filter, sumBy } from 'lodash';
-import { paramCase } from 'change-case';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
 import { Link as RouterLink } from 'react-router-dom';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -170,10 +168,11 @@ export default function InvoiceList() {
   };
 
   const getAllTotalPrice = (status) => {
+    let total = 0;
     if (status === 'All') {
-      const total = invoices.data.reduce((acc, item) => acc + item.total, 0);
-      return fCurrency(total);
+      total = invoices.data.reduce((acc, item) => acc + item.total, 0);
     }
+    return fCurrency(total);
   };
   // const getTotal = (status) => {
   //   sumBy(
@@ -213,7 +212,7 @@ export default function InvoiceList() {
       accessToken: token
     };
     dispatch(getInvoice(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   if (invoices?.data.length) {
     const handleRequestSort = (event, property) => {
@@ -428,9 +427,7 @@ export default function InvoiceList() {
                 />
                 <TableBody>
                   {filteredInvoices.map((row) => {
-                    const { _id, refTo, dateCreated, total, dueDate, items, type, status } = row;
-                    // const currentClient = clients.data.find((client) => paramCase(client._id) === refTo);
-                    // console.log(currentClient);
+                    const { _id, refTo, dateCreated, total, dueDate, type, status } = row;
 
                     const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -469,7 +466,16 @@ export default function InvoiceList() {
                         </TableCell>
                         <TableCell>{fCurrency(total)}</TableCell>
                         <TableCell>
-                          <Chip label={status} />
+                          <Chip
+                            // variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+                            color={
+                              (status === 'Overdue' && 'error') ||
+                              (status === 'Paid' && 'success') ||
+                              (status === 'Draft' && 'default') ||
+                              (status === 'Unpaid' && 'warning')
+                            }
+                            label={status}
+                          />
                         </TableCell>
                         <TableCell align="right">
                           <InvoiceMoreMenu onDelete={() => handleDeleteInvoice(_id)} _id={_id} />

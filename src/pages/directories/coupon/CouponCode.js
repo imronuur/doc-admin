@@ -24,7 +24,6 @@ import {
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
-import { getCategories } from '../../../redux/slices/categories';
 import { getCoupon } from '../../../redux/slices/couponSlice';
 
 // routes
@@ -116,7 +115,7 @@ export default function CategoryList() {
       accessToken: token
     };
     dispatch(getCoupon(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   if (codes?.data.length) {
     const handleRequestSort = (event, property) => {

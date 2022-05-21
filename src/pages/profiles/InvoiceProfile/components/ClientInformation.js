@@ -1,14 +1,11 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
-import carFilled from '@iconify/icons-ant-design/car-filled';
-import calendarFilled from '@iconify/icons-ant-design/calendar-filled';
-import shopFilled from '@iconify/icons-ant-design/shop-filled';
-import fileDoneOutlined from '@iconify/icons-ant-design/file-done-outlined';
+
 import userOutlined from '@iconify/icons-ant-design/user-outlined';
 // material
 import { styled } from '@mui/material/styles';
 
-import { Link, Card, Typography, CardHeader, Stack } from '@mui/material';
+import { Card, Typography, CardHeader, Stack } from '@mui/material';
 
 const IconStyle = styled(Icon)(({ theme }) => ({
   width: 20,
@@ -21,6 +18,10 @@ const IconStyle = styled(Icon)(({ theme }) => ({
 const CardStyle = styled(Card)(({ theme }) => ({
   paddingBottom: theme.spacing(0)
 }));
+
+InvoiceInformation.propTypes = {
+  invoice: PropTypes.object
+};
 
 export default function InvoiceInformation({ invoice }) {
   return (

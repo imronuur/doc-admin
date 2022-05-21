@@ -4,12 +4,10 @@ import { useFormik, Form, FormikProvider } from 'formik';
 // material
 import {
   Stack,
-  Radio,
   Button,
   Divider,
   Checkbox,
   TextField,
-  RadioGroup,
   DialogTitle,
   DialogActions,
   FormControlLabel
@@ -64,7 +62,6 @@ export default function CheckoutNewAddressForm({ open, onClose, onNextStep, onCr
           isDefault: values.isDefault
         });
       } catch (error) {
-        console.error(error);
         setSubmitting(false);
       }
     }

@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
+import { Form, FormikProvider, useFormik, FieldArray } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
 import {
   Card,
-  Chip,
   Grid,
   Stack,
   Switch,
@@ -14,7 +13,6 @@ import {
   TextField,
   Button,
   Typography,
-  CardHeader,
   Autocomplete,
   InputAdornment,
   FormHelperText,
@@ -79,7 +77,7 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
     }
   });
 
-  const { errors, values, touched, handleSubmit, isSubmitting, setFieldValue, getFieldProps } = formik;
+  const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -98,7 +96,7 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
     [setFieldValue]
   );
 
-  const handleRemoveAll = (files) => {
+  const handleRemoveAll = async (files) => {
     setFileLoading(true);
     files.map(async (file) => {
       const delRef = await refFirebase(storage, file);
@@ -204,7 +202,7 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                             {arrayHelpers.form.values.size && arrayHelpers.form.values.size.length >= 0 ? (
                               <>
                                 {arrayHelpers.form.values.size.map((res, index) => (
-                                  <Grid container>
+                                  <Grid container key={index}>
                                     <TextField
                                       fullWidth
                                       label="Size"

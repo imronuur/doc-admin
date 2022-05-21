@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import { useFormik, Form, FormikProvider } from 'formik';
 import arrowIosBackFill from '@iconify/icons-eva/arrow-ios-back-fill';
@@ -15,7 +16,6 @@ import CheckoutSummary from './CheckoutSummary';
 import CheckoutDelivery from './CheckoutDelivery';
 import CheckoutBillingInfo from './CheckoutBillingInfo';
 import CheckoutPaymentMethods from './CheckoutPaymentMethods';
-import useAuth from '../../../../../hooks/useAuth';
 // ----------------------------------------------------------------------
 
 const DELIVERY_OPTIONS = [
@@ -50,11 +50,19 @@ const PAYMENT_OPTIONS = [
 
 // ----------------------------------------------------------------------
 
+CheckoutPayment.propTypes = {
+  billing: PropTypes.object.isRequired,
+  loading: PropTypes.bool,
+  cart: PropTypes.array.isRequired,
+  handleCreate: PropTypes.func
+};
+
 export default function CheckoutPayment({ billing, handleCreate, loading, cart }) {
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
   const { total, discount, subtotal, shipping } = checkout;
   const { user } = useSelector((state) => state.auth);
+  const productInCart = cart.find((item) => item);
 
   const handleNextStep = () => {
     dispatch(onNextStep());
@@ -80,9 +88,9 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
     initialValues: {
       products: [
         {
-          _id: cart._id,
-          count: cart.quantity,
-          size: cart.size
+          _id: productInCart._id,
+          count: productInCart.quantity,
+          size: productInCart.size
         }
       ],
       orderInfo: {
@@ -90,7 +98,7 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
         amount: total
       },
       orderStatus: 'Not Processed',
-      orderBy: '62516ee84f2c551bf8d92533',
+      orderBy: user._id,
       orderTo: billing._id,
       paymentType: ''
     },
@@ -100,13 +108,12 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
         handleCreate(values);
         handleNextStep();
       } catch (error) {
-        console.error(error);
         setSubmitting(false);
         setErrors(error.message);
       }
     }
   });
-  const { isSubmitting, handleSubmit } = formik;
+  const { handleSubmit } = formik;
 
   return (
     <FormikProvider value={formik}>

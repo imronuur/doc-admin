@@ -5,7 +5,7 @@ import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@
 
 // ----------------------------------------------------------------------
 
-OfferListHead.propTypes = {
+BrandListHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
   orderBy: PropTypes.string,
   rowCount: PropTypes.number,
@@ -15,7 +15,7 @@ OfferListHead.propTypes = {
   onSelectAllClick: PropTypes.func
 };
 
-export default function OfferListHead({
+export default function BrandListHead({
   order,
   orderBy,
   rowCount,
