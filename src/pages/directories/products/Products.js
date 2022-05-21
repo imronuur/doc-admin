@@ -58,7 +58,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Product', align: 'left' },
   { id: 'category', label: 'Category', align: 'left' },
   { id: 'salePrice', label: 'Sale Price', align: 'left' },
-  { id: 'quantity', label: 'Quantity', align: 'left' },
+  { id: 'available', label: 'Available Quantity', align: 'left' },
   { id: 'inStock', label: 'In Stock', align: 'left' },
   { id: 'brand', label: 'Brand', align: 'left' },
   { id: 'created', label: 'Date created', align: 'left' },
@@ -173,7 +173,7 @@ export default function CategoryList() {
       accessToken: token
     };
     dispatch(getProducts(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   // BULK Category creation
   const handleBulkAdd = async (e) => {
@@ -323,7 +323,7 @@ export default function CategoryList() {
               />
               <TableBody>
                 {filtredProducts.map((row) => {
-                  const { _id, name, slug, category, salePrice, quantity, brand, images, createdAt } = row;
+                  const { _id, name, slug, category, salePrice, available, brand, images, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -355,18 +355,18 @@ export default function CategoryList() {
                       </TableCell>
                       <TableCell>{category?.name}</TableCell>
                       <TableCell>{fCurrency(salePrice)}</TableCell>
-                      <TableCell>{quantity}</TableCell>
+                      <TableCell>{available}</TableCell>
 
                       <TableCell style={{ minWidth: 160 }}>
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                           color={
-                            (Number(quantity) <= 0 && 'error') || (Number(quantity) <= 10 && 'warning') || 'success'
+                            (Number(available) <= 0 && 'error') || (Number(available) <= 10 && 'warning') || 'success'
                           }
                         >
-                          {(Number(quantity) >= 10 && sentenceCase('In Stock')) ||
-                            (Number(quantity) <= 10 && sentenceCase('Low In Stock')) ||
-                            (Number(quantity) <= 0 && sentenceCase('Out of Stock'))}
+                          {(Number(available) >= 10 && sentenceCase('In Stock')) ||
+                            (Number(available) <= 10 && sentenceCase('Low In Stock')) ||
+                            (Number(available) <= 0 && sentenceCase('Out of Stock'))}
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>

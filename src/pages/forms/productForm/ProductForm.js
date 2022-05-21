@@ -30,6 +30,8 @@ export default function ProductForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
   const { products } = useSelector((state) => state.product);
+  const { token } = useSelector((state) => state.auth);
+
   const isEdit = pathname.includes('edit');
   const currentProduct = products.data.find((product) => paramCase(product._id) === _id);
   console.log(currentProduct);
@@ -60,7 +62,8 @@ export default function ProductForm() {
       product: {
         ...product,
         subCategories: []
-      }
+      },
+      accessToken: token
     };
 
     product.subCategories.map((res) => reqObject.product.subCategories.push(res._id));

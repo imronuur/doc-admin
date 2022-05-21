@@ -209,17 +209,9 @@ export function getProducts({ page, accessToken }) {
     }
   };
 }
-export const getAllProducts = async ({ accessToken }) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: accessToken
-  };
-  try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`, { headers });
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
+export const getAllProducts = async () => {
+  const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`);
+  return response;
 };
 
 // ----------------------------------------------------------------------

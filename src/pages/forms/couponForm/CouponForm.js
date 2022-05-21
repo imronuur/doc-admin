@@ -29,8 +29,9 @@ export default function EcommerceCouponCreate() {
 
   const { _id } = useParams();
 
-  const { coupon } = useSelector((state) => state);
+  const { coupon, auth } = useSelector((state) => state);
   const { codes } = coupon;
+  const { token } = auth;
 
   const isEdit = pathname.includes('edit');
   const currentCoupons = codes.data.find((code) => paramCase(code._id) === _id);
@@ -44,7 +45,8 @@ export default function EcommerceCouponCreate() {
   const handleCouponCreate = async (codes) => {
     setLoading(true);
     const reqObject = {
-      codes
+      codes,
+      accessToken: token
     };
     const reduxRes = await dispatch(createCoupon(reqObject));
     if (reduxRes.type === 'coupon/create/rejected') {
@@ -66,7 +68,6 @@ export default function EcommerceCouponCreate() {
           </MIconButton>
         )
       });
-      window.location.reload();
       setLoading(false);
       navigate(`${PATH_ADMIN.directories.couponCode}`);
     }
