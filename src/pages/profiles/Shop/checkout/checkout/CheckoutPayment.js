@@ -90,7 +90,8 @@ export default function CheckoutPayment({ billing, handleCreate, loading, cart }
         {
           _id: productInCart._id,
           count: productInCart.quantity,
-          size: productInCart.size
+          size: productInCart.size,
+          name: productInCart.name
         }
       ],
       orderInfo: {

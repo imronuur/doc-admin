@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Fragment } from 'react';
 import { Page, View, Text, Font, Image, Document, StyleSheet } from '@react-pdf/renderer';
 // utils
 import { fCurrency } from '../../../../../../utils/formatNumber';
@@ -66,13 +67,13 @@ const styles = StyleSheet.create({
 // ----------------------------------------------------------------------
 
 InvoicePDF.propTypes = {
-  invoice: PropTypes.object.isRequired,
+  invoice: PropTypes.array.isRequired,
   clients: PropTypes.array,
   user: PropTypes.object
 };
 
-export default function InvoicePDF({ invoice: order, user, clients }) {
-  const orderedId = String(order.map((order) => order.orderTo));
+export default function InvoicePDF({ invoice, user, clients }) {
+  const orderedId = String(invoice?.orderTo);
   const current = clients.find((client) => client._id);
 
   // const clientMatches = String(current._id) === orderedId;
@@ -129,30 +130,29 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
             </View>
           </View>
           <View style={styles.tableBody}>
-            {order.length > 0 &&
-              order.map((item, index) => (
-                <View style={styles.tableRow} key={index}>
-                  <View style={styles.tableCell_1}>
-                    <Text>{index + 1}</Text>
-                  </View>
+            <View style={styles.tableRow} key={invoice}>
+              <View style={styles.tableCell_1}>
+                <Text>#</Text>
+              </View>
+              {invoice?.products?.map((product, i) => (
+                <Fragment key={i}>
                   <View style={styles.tableCell_2}>
-                    <Text style={styles.subtitle2}>{item.products.title}</Text>
-                    <Text>{item.products.description || 'Samsung A71'}</Text>
+                    <Text style={styles.subtitle2}>{product.name}</Text>
+                    <Text>{product.size}</Text>
                   </View>
-                  {item &&
-                    item.products.map((product, i) => (
-                      <View style={styles.tableCell_3} key={i}>
-                        <Text>{product.count}</Text>
-                      </View>
-                    ))}
                   <View style={styles.tableCell_3}>
-                    <Text>{item.orderInfo.amount}</Text>
+                    <Text>{product.count}</Text>
                   </View>
-                  <View style={[styles.tableCell_3, styles.alignRight]}>
-                    <Text>{fCurrency(item.orderInfo.amount)}</Text>
+                  <View style={styles.tableCell_3}>
+                    <Text>{product.count}</Text>
                   </View>
-                </View>
+                </Fragment>
               ))}
+              <View style={[styles.tableCell_3, styles.alignRight]}>
+                <Text>{fCurrency(invoice?.orderInfo?.amount)}</Text>
+              </View>
+            </View>
+
             {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />
@@ -187,7 +187,6 @@ export default function InvoicePDF({ invoice: order, user, clients }) {
                 <Text>{fCurrency(taxes)}</Text>
               </View>
             </View> */}
-
             {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />

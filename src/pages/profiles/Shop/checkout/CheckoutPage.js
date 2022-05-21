@@ -82,6 +82,7 @@ export default function EcommerceCheckout() {
   const [loading, setLoading] = useState(false);
   const { user, token } = useSelector((state) => state.auth);
   const isComplete = activeStep === STEPS.length;
+  const [dataToPrint, setDataToPrint] = useState(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   // const navigate = useNavigate();
   // useEffect(() => {
@@ -97,6 +98,7 @@ export default function EcommerceCheckout() {
   }, [dispatch, activeStep]);
 
   const handleCreate = async (order) => {
+    setDataToPrint(order);
     setLoading(true);
 
     const reqObject = {
@@ -174,7 +176,12 @@ export default function EcommerceCheckout() {
             )}
           </>
         ) : (
-          <> {billing && cart && <CheckoutOrderComplete billing={billing} open={isComplete} user={user} />}</>
+          <>
+            {' '}
+            {billing && cart && (
+              <CheckoutOrderComplete dataToPrint={dataToPrint} billing={billing} open={isComplete} user={user} />
+            )}
+          </>
         )}
       </Container>
     </Page>

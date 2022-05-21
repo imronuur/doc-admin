@@ -112,6 +112,15 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
                         alignItems="center"
                         divider={<Divider orientation="vertical" sx={{ height: 14, alignSelf: 'center' }} />}
                       >
+                        {/* {size.isArray &&
+                          size.map((size) => (
+                            <Typography variant="body2">
+                              <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+                                size:&nbsp;
+                              </Typography>
+                              {size}
+                            </Typography>
+                          ))} */}
                         <Typography variant="body2">
                           <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
                             size:&nbsp;

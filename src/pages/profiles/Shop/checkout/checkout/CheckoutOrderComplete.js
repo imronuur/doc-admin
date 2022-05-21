@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,8 @@ import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import closeFill from '@iconify/icons-eva/close-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
 // redux
+import ReactToPrint from 'react-to-print';
+
 import { useDispatch, useSelector } from '../../../../../redux/store';
 import { resetCart } from '../../../../../redux/slices/products';
 // routes
@@ -38,10 +40,10 @@ CheckoutOrderComplete.propTypes = {
   user: PropTypes.object
 };
 
-export default function CheckoutOrderComplete({ user, ...other }) {
+export default function CheckoutOrderComplete({ user, dataToPrint, ...other }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { orders } = useSelector((state) => state.order);
+  // const { orders } = useSelector((state) => state.order);
   const { clients } = useSelector((state) => state.client);
   const [openPDF, setOpenPDF] = useState(false);
 
@@ -81,19 +83,16 @@ export default function CheckoutOrderComplete({ user, ...other }) {
 
         <Divider sx={{ my: 3 }} />
 
-        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} justifyContent="space-between" spacing={2}>
-          <LoadingButton size="small" variant="contained" color="success" endIcon={<Icon icon={downloadFill} />}>
-            Print
-          </LoadingButton>
-
+        <Stack spacing={2}>
           <PDFDownloadLink
-            document={<InvoicePDF key={user._id} invoice={orders.data} user={user} clients={clients.data} />}
-            fileName={`INVOICE-${orders.data[0]?.orderInfo.orderId}` || 'INVOICE-789'}
+            document={<InvoicePDF key={user._id} invoice={dataToPrint} user={user} clients={clients.data} />}
+            fileName="INVOICE - IDAN"
             style={{ textDecoration: 'none' }}
           >
             {({ loading }) => (
               <LoadingButton
-                size="small"
+                size="large"
+                fullWidth
                 loading={loading}
                 variant="contained"
                 loadingPosition="end"
@@ -104,29 +103,6 @@ export default function CheckoutOrderComplete({ user, ...other }) {
             )}
           </PDFDownloadLink>
         </Stack>
-
-        <DialogAnimate fullScreen open={openPDF}>
-          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <DialogActions
-              sx={{
-                zIndex: 9,
-                padding: '12px !important',
-                boxShadow: (theme) => theme.customShadows.z8
-              }}
-            >
-              <Tooltip title="Close">
-                <IconButton color="inherit" onClick={handleClosePreview}>
-                  <Icon icon={closeFill} />
-                </IconButton>
-              </Tooltip>
-            </DialogActions>
-            <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden' }}>
-              <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
-                <InvoicePDF invoice={orders.data} />
-              </PDFViewer>
-            </Box>
-          </Box>
-        </DialogAnimate>
       </Box>
     </DialogStyle>
   );

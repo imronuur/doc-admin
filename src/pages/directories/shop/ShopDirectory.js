@@ -155,7 +155,7 @@ export default function EcommerceShop() {
   // };
 
   const filteredProducts = applySortFilter(products?.data, getComparator(order, orderBy), filterName);
-  const isProductNotFound = filteredProducts.length === 0;
+  const isProductNotFound = filteredProducts?.length === 0;
 
   return (
     <Page title="Ecommerce: Shop | Minimal-UI">

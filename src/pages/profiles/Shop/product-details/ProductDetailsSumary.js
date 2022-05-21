@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
@@ -12,18 +13,7 @@ import roundAddShoppingCart from '@iconify/icons-ic/round-add-shopping-cart';
 import { useFormik, Form, FormikProvider, useField } from 'formik';
 // material
 import { useTheme, styled } from '@mui/material/styles';
-import {
-  Box,
-  Stack,
-  Button,
-  Rating,
-  Tooltip,
-  Divider,
-  Select,
-  MenuItem,
-  Typography,
-  FormHelperText
-} from '@mui/material';
+import { Box, Stack, Button, Rating, Tooltip, Grid, Divider, Typography, FormHelperText } from '@mui/material';
 
 // redux
 import { useDispatch, useSelector } from '../../../../redux/store';
@@ -125,6 +115,9 @@ export default function ProductDetailsSumary({ currentProduct }) {
   const { checkout } = useSelector((state) => state.product);
   const { _id, name, regularPrice, images, available, salePrice, rating, review, size } = currentProduct;
 
+  const [orderSize, setOrderSize] = useState(size[0].sizeNo);
+  const [orderPrice, setOrderPrice] = useState(salePrice);
+
   const alreadyProduct = checkout.cart.map((item) => [...item._id]).includes(_id);
   const isMaxQuantity = checkout.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
 
@@ -155,7 +148,6 @@ export default function ProductDetailsSumary({ currentProduct }) {
             ...values,
             subtotal: values.price * values.quantity
           });
-          console.log(values);
         }
         setSubmitting(false);
         handleBuyNow();
@@ -166,7 +158,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
     }
   });
 
-  const { values, touched, errors, getFieldProps, handleSubmit } = formik;
+  const { values, touched, errors, getFieldProps, handleSubmit, setFieldValue } = formik;
 
   const handleAddCart = () => {
     onAddCart({
@@ -174,6 +166,12 @@ export default function ProductDetailsSumary({ currentProduct }) {
       ...values,
       subtotal: values.price * values.quantity
     });
+  };
+  const handleSizeChange = (size) => {
+    setOrderPrice(size.sizePrice);
+    setFieldValue('size', size.sizeNo);
+    setFieldValue('price', orderPrice);
+    setOrderSize(size.sizeNo);
   };
 
   return (
@@ -215,13 +213,25 @@ export default function ProductDetailsSumary({ currentProduct }) {
               <Typography variant="subtitle1" sx={{ mt: 0.5 }}>
                 Size
               </Typography>
-              <Select {...getFieldProps('size')}>
-                {size.map((size) => (
-                  <MenuItem key={size} value={size.sizeNo}>
-                    {size.sizeNo}
-                  </MenuItem>
-                ))}
-              </Select>
+              {size.map((item) => (
+                <Grid item xs={3}>
+                  <Box
+                    key={item}
+                    onClick={() => handleSizeChange(item)}
+                    sx={{
+                      width: 1,
+                      borderRadius: 1,
+                      padding: 1,
+                      border: `2px solid ${
+                        orderSize === item.sizeNo ? theme.palette.primary.main : theme.palette.primary.light
+                      }`,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Typography align="center">{item.sizeNo}</Typography>
+                  </Box>
+                </Grid>
+              ))}
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
