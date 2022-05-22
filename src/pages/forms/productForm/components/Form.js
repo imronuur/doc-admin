@@ -50,18 +50,22 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: currentProduct?.name || 'Samsung s21 ultra',
-      description: currentProduct?.description || 'This is the newset Samsung product',
+      name: currentProduct?.name || 'Blue light glasses',
+      description:
+        currentProduct?.description || 'This Blue light glasses protext your eyes from the blue screen light',
       images: currentProduct?.images || [], //
-      regularPrice: currentProduct?.regularPrice || '3000',
-      salePrice: currentProduct?.salePrice || '2500',
-      quantity: currentProduct?.quantity || '30', //
+      regularPrice: currentProduct?.regularPrice || '300',
+      salePrice: currentProduct?.salePrice || '120',
+      available: currentProduct?.available || '15', //
       subCategories: currentProduct?.subCategories.map((res) => res._id) || [],
       inStock: currentProduct?.inStock || true, //
       shipping: currentProduct?.shipping || true, //
-      brand: currentProduct?.brand || 'Samsung', //
-      size: currentProduct?.size || [], //
-      sold: currentProduct?.sold || '2', //
+      brand: currentProduct?.brand || 'Banner', //
+      size: currentProduct?.size || [
+        { sizeNo: '15 Inch', sizePrice: '120' },
+        { sizeNo: '20 Inch', sizePrice: '150' }
+      ], //
+      sold: currentProduct?.sold || '0', //
       category: currentProduct?.category?._id || '',
       slug: currentProduct?.slug || ''
     },
@@ -93,7 +97,7 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
       });
       setFileLoading(false);
     },
-    [setFieldValue]
+    [setFieldValue, values.images]
   );
 
   const handleRemoveAll = async (files) => {
@@ -205,10 +209,18 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                                   <Grid container key={index}>
                                     <TextField
                                       fullWidth
-                                      label="Size"
-                                      {...getFieldProps(`size.${index}`)}
-                                      error={Boolean(touched.size && errors.size)}
-                                      helperText={touched.size && errors.size}
+                                      label="Size Number"
+                                      {...getFieldProps(`size.${index}.sizeNo`)}
+                                      error={Boolean(getIn(errors, `size.${index}.sizeNo`))}
+                                      helperText={getIn(errors, `size.${index}.sizeNo`)}
+                                    />
+                                    <TextField
+                                      fullWidth
+                                      label="Size Price"
+                                      {...getFieldProps(`size.${index}.sizePrice`)}
+                                      error={Boolean(getIn(errors, `size.${index}.sizePrice`))}
+                                      helperText={getIn(errors, `size.${index}.sizePrice`)}
+                                      sx={{ margin: '1%' }}
                                     />
 
                                     <Grid item xs={2} sx={{ marginBottom: '3%' }}>
@@ -246,11 +258,11 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                       <TextField
                         fullWidth
                         placeholder="only numbers"
-                        label="Quantity"
+                        label="Available Quantity"
                         type="number"
-                        {...getFieldProps('quantity')}
-                        error={Boolean(touched.quantity && errors.quantity)}
-                        helperText={touched.quantity && errors.quantity}
+                        {...getFieldProps('available')}
+                        error={Boolean(touched.available && errors.available)}
+                        helperText={touched.available && errors.available}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>

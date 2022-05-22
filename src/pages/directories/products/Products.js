@@ -57,7 +57,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Product', align: 'left' },
   { id: 'category', label: 'Category', align: 'left' },
   { id: 'salePrice', label: 'Sale Price', align: 'left' },
-  { id: 'quantity', label: 'Quantity', align: 'left' },
+  { id: 'available', label: 'Available Quantity', align: 'left' },
   { id: 'inStock', label: 'In Stock', align: 'left' },
   { id: 'brand', label: 'Brand', align: 'left' },
   { id: 'created', label: 'Date created', align: 'left' },
@@ -360,12 +360,14 @@ export default function CategoryList() {
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                           color={
-                            (product.available <= 0 && 'error') || (product.available <= 10 && 'warning') || 'success'
+
+                            (Number(available) <= 0 && 'error') || (Number(available) <= 10 && 'warning') || 'success'
                           }
                         >
-                          {product.available >= 10 && sentenceCase('In Stock')}
-                          {product.available < 10 && product.available > 0 && sentenceCase('Low In Stock')}
-                          {product.available <= 0 && sentenceCase('Out of Stock')}
+                          {(Number(available) >= 10 && sentenceCase('In Stock')) ||
+                            (Number(available) <= 10 && sentenceCase('Low In Stock')) ||
+                            (Number(available) <= 0 && sentenceCase('Out of Stock'))}
+
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>

@@ -31,6 +31,7 @@ export default function ClientsForm() {
   const { _id } = useParams();
 
   const { offers } = useSelector((state) => state.offer);
+  const { token } = useSelector((state) => state.auth);
 
   const isEdit = pathname.includes('edit');
   const currentOffer = offers?.data.find((off) => paramCase(off._id) === _id);
@@ -61,7 +62,8 @@ export default function ClientsForm() {
     setLoading(true);
 
     const reqObject = {
-      offer
+      offer,
+      accessToken: token
     };
 
     const reduxRes = await dispatch(createOffer(reqObject));

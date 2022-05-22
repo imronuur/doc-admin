@@ -224,6 +224,7 @@ export const getAllProducts = async ({ accessToken }) => {
   } catch (error) {
     return error.message;
   }
+
 };
 
 // ----------------------------------------------------------------------

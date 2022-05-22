@@ -31,6 +31,7 @@ export default function ProductForm() {
   const { _id } = useParams();
   const { products } = useSelector((state) => state.product);
   const { token } = useSelector((state) => state.auth);
+
   const isEdit = pathname.includes('edit');
   const currentProduct = products.data.find((product) => paramCase(product._id) === _id);
   const [loading, setLoading] = useState(false);

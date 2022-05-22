@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createSubCategory = createAsyncThunk('subCategory/create', async ({ sub }) => {
+export const createSubCategory = createAsyncThunk('subCategory/create', async ({ sub, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/sub-category`,
