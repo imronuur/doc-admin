@@ -322,7 +322,7 @@ export default function CategoryList() {
               />
               <TableBody>
                 {filtredProducts.map((row) => {
-                  const { _id, name, slug, category, salePrice, quantity, brand, images, createdAt } = row;
+                  const { _id, name, slug, category, salePrice, available, brand, images, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -354,18 +354,18 @@ export default function CategoryList() {
                       </TableCell>
                       <TableCell>{category?.name}</TableCell>
                       <TableCell>{fCurrency(salePrice)}</TableCell>
-                      <TableCell>{quantity}</TableCell>
+                      <TableCell>{available}</TableCell>
 
                       <TableCell style={{ minWidth: 160 }}>
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                           color={
-                            (product.quantity <= 0 && 'error') || (product.quantity <= 10 && 'warning') || 'success'
+                            (product.available <= 0 && 'error') || (product.available <= 10 && 'warning') || 'success'
                           }
                         >
-                          {product.quantity >= 10 && sentenceCase('In Stock')}
-                          {product.quantity < 10 && product.quantity > 0 && sentenceCase('Low In Stock')}
-                          {product.quantity <= 0 && sentenceCase('Out of Stock')}
+                          {product.available >= 10 && sentenceCase('In Stock')}
+                          {product.available < 10 && product.available > 0 && sentenceCase('Low In Stock')}
+                          {product.available <= 0 && sentenceCase('Out of Stock')}
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>

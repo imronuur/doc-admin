@@ -1,17 +1,15 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Divider, Typography, Stack, Tooltip, IconButton, DialogActions } from '@mui/material';
+import { Box, Link, Divider, Typography, Stack } from '@mui/material';
 // redux
-import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
-import closeFill from '@iconify/icons-eva/close-fill';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import downloadFill from '@iconify/icons-eva/download-fill';
 // redux
-import ReactToPrint from 'react-to-print';
 
 import { useDispatch, useSelector } from '../../../../../redux/store';
 import { resetCart } from '../../../../../redux/slices/products';
