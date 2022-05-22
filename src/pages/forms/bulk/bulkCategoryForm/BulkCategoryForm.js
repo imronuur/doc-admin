@@ -24,6 +24,7 @@ export default function EcommerceProductCreate() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { id } = useParams();
+
   const { bulkCategories } = useSelector((state) => state.bulkCategory);
   const isEdit = pathname.includes('edit');
   const currentCategory = bulkCategories.find((category) => paramCase(category.id) === id);

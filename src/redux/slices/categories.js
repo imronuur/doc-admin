@@ -42,11 +42,15 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getCategories({ page }) {
+export function getCategories({ page, authToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: authToken
+  };
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/categories?page=${page}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/categories?page=${page}`, { headers });
       dispatch(slice.actions.getCategoriesSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

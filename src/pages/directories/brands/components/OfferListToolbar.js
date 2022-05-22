@@ -31,7 +31,7 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-CategoryListToolbar.propTypes = {
+OfferListToolbar.propTypes = {
   selected: PropTypes.array,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
@@ -39,7 +39,7 @@ CategoryListToolbar.propTypes = {
   loading: PropTypes.bool
 };
 
-export default function CategoryListToolbar({ selected, loading, filterName, onFilterName, handleDeleteMany }) {
+export default function OfferListToolbar({ selected, loading, filterName, onFilterName, handleDeleteMany }) {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
 
@@ -60,7 +60,7 @@ export default function CategoryListToolbar({ selected, loading, filterName, onF
         <SearchStyle
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search category..."
+          placeholder="Search Brand..."
           startAdornment={
             <InputAdornment position="start">
               <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />

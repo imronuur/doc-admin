@@ -28,8 +28,10 @@ export default function EcommerceProductCreate() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { _id } = useParams();
-  const { subCategory } = useSelector((state) => state);
+  const { subCategory, auth } = useSelector((state) => state);
   const { subCategories } = subCategory;
+  const { token } = auth;
+
   const isEdit = pathname.includes('edit');
   const currentSubCategory = subCategories.data.find((sub) => paramCase(sub._id) === _id);
 
@@ -50,7 +52,8 @@ export default function EcommerceProductCreate() {
   const handleSubCategoryCreate = async (sub) => {
     setLoading(true);
     const reqObject = {
-      sub
+      sub,
+      accessToken: token
     };
     const reduxRes = await dispatch(createSubCategory(reqObject));
     if (reduxRes.type === 'subCategory/create/rejected') {

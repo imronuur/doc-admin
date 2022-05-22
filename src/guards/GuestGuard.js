@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Navigate } from 'react-router-dom';
+import { useSelector } from '../redux/store';
 // hooks
 import useAuth from '../hooks/useAuth';
 // routes
@@ -12,7 +13,8 @@ GuestGuard.propTypes = {
 };
 
 export default function GuestGuard({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { auth } = useSelector((state) => state);
+  const { isAuthenticated } = auth;
 
   if (isAuthenticated) {
     return <Navigate to={PATH_DASHBOARD.root} />;

@@ -8,8 +8,10 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography } from '@mui/material';
+import { useFirebaseAuth } from '../../contexts/authContext';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
+import { useSelector } from '../../redux/store';
 // hooks
 import useAuth from '../../hooks/useAuth';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
@@ -24,7 +26,7 @@ const MENU_OPTIONS = [
   {
     label: 'Home',
     icon: homeFill,
-    linkTo: '/'
+    linkTo: PATH_DASHBOARD.root
   },
   {
     label: 'Profile',
@@ -45,7 +47,8 @@ export default function AccountPopover() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const isMountedRef = useIsMountedRef();
-  const { user, logout } = useAuth();
+  const { user } = useSelector((state) => state.auth);
+  const { logout } = useFirebaseAuth();
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -59,6 +62,7 @@ export default function AccountPopover() {
     try {
       await logout();
       navigate('/');
+      window.location.reload();
       if (isMountedRef.current) {
         handleClose();
       }
@@ -96,7 +100,7 @@ export default function AccountPopover() {
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {user.displayName}
+            {user.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {user.email}

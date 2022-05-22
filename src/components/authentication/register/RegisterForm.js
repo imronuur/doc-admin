@@ -4,24 +4,29 @@ import { Icon } from '@iconify/react';
 import { useSnackbar } from 'notistack';
 import { useFormik, Form, FormikProvider } from 'formik';
 import eyeFill from '@iconify/icons-eva/eye-fill';
-import closeFill from '@iconify/icons-eva/close-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+import roundClose from '@iconify/icons-ic/round-close';
 // material
-import { Stack, TextField, IconButton, InputAdornment, Alert } from '@mui/material';
+import { Stack, TextField, IconButton, InputAdornment, Alert, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
+import { createOrUpdateUser } from '../../../redux/thunk/authThunk';
+import { useDispatch } from '../../../redux/store';
 import useAuth from '../../../hooks/useAuth';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 //
 import { MIconButton } from '../../@material-extend';
+import { useFirebaseAuth } from '../../../contexts/authContext';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
-  const { register } = useAuth();
+  const { register } = useFirebaseAuth();
   const isMountedRef = useIsMountedRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('First name required'),
@@ -40,24 +45,37 @@ export default function RegisterForm() {
     validationSchema: RegisterSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       try {
-        await register(values.email, values.password, values.firstName, values.lastName);
-        enqueueSnackbar('Register success', {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
-        if (isMountedRef.current) {
-          setSubmitting(false);
+        const name = values.firstName.concat(values.lastName);
+        const { accessToken } = await register(values.email, values.password);
+
+        const reqObject = {
+          accessToken,
+          name
+        };
+
+        const reduxRes = await dispatch(createOrUpdateUser(reqObject));
+
+        if (reduxRes.type === 'auth/createOrUpdateuser/fulfilled') {
+          enqueueSnackbar(`Registred Successfuly!`, {
+            variant: 'success',
+            action: (key) => (
+              <Button size="small" onClick={() => closeSnackbar(key)}>
+                <Icon icon={roundClose} />
+              </Button>
+            )
+          });
+          setLoading(false);
         }
       } catch (error) {
-        console.error(error);
-        if (isMountedRef.current) {
-          setErrors({ afterSubmit: error.message });
-          setSubmitting(false);
-        }
+        enqueueSnackbar(`${error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <Button size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={roundClose} />
+            </Button>
+          )
+        });
+        setLoading(false);
       }
     }
   });

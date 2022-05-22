@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createCategory = createAsyncThunk('category/create', async ({ name }) => {
+export const createCategory = createAsyncThunk('category/create', async ({ name, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/category`,
@@ -15,9 +16,10 @@ export const createCategory = createAsyncThunk('category/create', async ({ name 
   return res;
 });
 
-export const createBulkCategory = createAsyncThunk('category/create-bulk', async ({ names }) => {
+export const createBulkCategory = createAsyncThunk('category/create-bulk', async ({ names, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/bulk-category`,

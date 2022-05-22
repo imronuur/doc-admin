@@ -7,11 +7,11 @@ export const Validations = yup.object().shape({
   regularPrice: yup.string().required('Price is required'),
   salePrice: yup.string(),
   subCategories: yup.array().required('Sub Categories are required'),
-  quantity: yup.number().required('Quantity is required'),
+  available: yup.number().required('Available Quantity is required'),
   inStock: yup.bool(),
   shipping: yup.bool(),
   brand: yup.string().required('Brand is required'),
-  size: yup.string().required('Size is required'),
+  size: yup.array().required('Size is required'),
   sold: yup.string(),
   category: yup.string().required('Category is required')
 });

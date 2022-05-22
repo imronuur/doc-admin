@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createProduct = createAsyncThunk('product/create', async ({ product }) => {
+export const createProduct = createAsyncThunk('product/create', async ({ product, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/product`,
@@ -15,9 +16,10 @@ export const createProduct = createAsyncThunk('product/create', async ({ product
   return res;
 });
 
-export const createBulkProduct = createAsyncThunk('product/create-bulk', async ({ products }) => {
+export const createBulkProduct = createAsyncThunk('product/create-bulk', async ({ products, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/bulk-product`,
@@ -29,9 +31,10 @@ export const createBulkProduct = createAsyncThunk('product/create-bulk', async (
   return res;
 });
 
-export const deleteProduct = createAsyncThunk('product/delete', async ({ slug }) => {
+export const deleteProduct = createAsyncThunk('product/delete', async ({ slug, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/product/${slug}`, {
     headers
@@ -39,9 +42,10 @@ export const deleteProduct = createAsyncThunk('product/delete', async ({ slug })
   return res;
 });
 
-export const deleteManyProducts = createAsyncThunk('product/delete-many', async ({ ids }) => {
+export const deleteManyProducts = createAsyncThunk('product/delete-many', async ({ ids, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/product-delete-many`,

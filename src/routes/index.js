@@ -7,7 +7,7 @@ import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
 // guards
 import GuestGuard from '../guards/GuestGuard';
 import AuthGuard from '../guards/AuthGuard';
-// import RoleBasedGuard from '../guards/RoleBasedGuard';
+import RoleBasedGuard from '../guards/RoleBasedGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 import { PATH_ADMIN } from './paths';
@@ -71,7 +71,9 @@ export default function Router() {
       path: 'admin',
       element: (
         <AuthGuard>
-          <DashboardLayout />
+          <RoleBasedGuard accessibleRoles={['admin', 'brandManager', 'superAdmin']}>
+            <DashboardLayout />
+          </RoleBasedGuard>
         </AuthGuard>
       ),
       children: [
@@ -80,11 +82,33 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.overview}`, element: <GeneralApp /> },
         { path: `${PATH_ADMIN.directories.products}`, element: <ProductList /> },
         { path: `${PATH_ADMIN.directories.categories}`, element: <CategoryList /> },
-        { path: `${PATH_ADMIN.directories.users}`, element: <>users</> },
-        { path: `${PATH_ADMIN.directories.invoices}`, element: <>invocies</> },
-        { path: `${PATH_ADMIN.directories.orders}`, element: <>orders</> },
-        { path: `${PATH_ADMIN.directories.couponCode}`, element: <CouponCodeList /> },
+        { path: `${PATH_ADMIN.directories.shop}`, element: <Shop /> },
+        { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
+        { path: `${PATH_ADMIN.directories.invoices}`, element: <Invoices /> },
+        { path: `${PATH_ADMIN.directories.offers}`, element: <SpecialOffers /> },
+        {
+          path: `${PATH_ADMIN.directories.brands}`,
+          element: <Brands />
+        },
+        {
+          path: `${PATH_ADMIN.directories.roles}`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin']}>
+              <Roles />
+            </RoleBasedGuard>
+          )
+        },
+        {
+          path: `${PATH_ADMIN.directories.users}`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin', 'admin']}>
+              <Users />
+            </RoleBasedGuard>
+          )
+        },
 
+        { path: `${PATH_ADMIN.directories.orders}`, element: <Orders /> },
+        { path: `${PATH_ADMIN.directories.couponCode}`, element: <CouponCodeList /> },
         // Forms
         { path: `${PATH_ADMIN.forms.newCategory}`, element: <CategoryForm /> },
         { path: `${PATH_ADMIN.forms.editCategory}/:_id`, element: <CategoryForm /> },
@@ -96,8 +120,60 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.newProduct}`, element: <ProductForm /> },
         { path: `${PATH_ADMIN.forms.editProduct}/:_id`, element: <ProductForm /> },
 
-        { path: `${PATH_ADMIN.forms.newCoupon}`, element: <div> Coupon From</div> },
-        { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <div> Coupon From</div> }
+        // profiles
+        { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.orderProfile}/:_id`, element: <OrderProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.shopProductProfile}/:name`, element: <ShopProductProfile /> },
+        { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.productProfile}/:_id`, element: <ProductProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.roleProfile}/:_id`, element: <RoleProfile /> },
+        { path: `${PATH_ADMIN.profiles.userprofile}/:_id`, element: <UsersProfile /> },
+
+        // checkout
+        { path: `${PATH_ADMIN.profiles.checkout}/:name`, element: <CheckoutPage /> },
+
+        { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
+        { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
+        { path: `${PATH_ADMIN.forms.newClients}`, element: <NewClientsForm /> },
+        { path: `${PATH_ADMIN.forms.editClients}/:_id`, element: <NewClientsForm /> },
+        { path: `${PATH_ADMIN.forms.newInvoice}`, element: <NewInvoiceForm /> },
+        { path: `${PATH_ADMIN.forms.editInvoice}/:_id`, element: <NewInvoiceForm /> },
+        { path: `${PATH_ADMIN.forms.newOffer}`, element: <SpecialOffersForm /> },
+        { path: `${PATH_ADMIN.forms.editOffer}/:_id`, element: <SpecialOffersForm /> },
+        { path: `${PATH_ADMIN.forms.newBrand}`, element: <BrandsForm /> },
+        { path: `${PATH_ADMIN.forms.editBrand}/:_id`, element: <BrandsForm /> },
+        {
+          path: `${PATH_ADMIN.forms.newRole}`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin']}>
+              <RolesForm />
+            </RoleBasedGuard>
+          )
+        },
+        {
+          path: `${PATH_ADMIN.forms.editRole}/:_id`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin']}>
+              <RolesForm />
+            </RoleBasedGuard>
+          )
+        },
+        {
+          path: `${PATH_ADMIN.forms.newUser}`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin']}>
+              <UserForm />
+            </RoleBasedGuard>
+          )
+        },
+        {
+          path: `${PATH_ADMIN.forms.editUser}/:_id`,
+          element: (
+            <RoleBasedGuard accessibleRoles={['superAdmin']}>
+              <UserForm />
+            </RoleBasedGuard>
+          )
+        }
       ]
     },
 
@@ -267,14 +343,40 @@ const VerifyCode = Loadable(lazy(() => import('../pages/authentication/VerifyCod
 const ProductList = Loadable(lazy(() => import('../pages/directories/products/Products')));
 const CategoryList = Loadable(lazy(() => import('../pages/directories/categories/Categories')));
 const CouponCodeList = Loadable(lazy(() => import('../pages/directories/coupon/CouponCode')));
+const Clients = Loadable(lazy(() => import('../pages/directories/clients/Clients')));
+const Invoices = Loadable(lazy(() => import('../pages/directories/invoice/Invoices')));
+const Orders = Loadable(lazy(() => import('../pages/directories/Orders/Orders')));
+const Shop = Loadable(lazy(() => import('../pages/directories/shop/ShopDirectory')));
+const SpecialOffers = Loadable(lazy(() => import('../pages/directories/specialOffers/SpecialOffers')));
+const Brands = Loadable(lazy(() => import('../pages/directories/brands/Brands')));
+const Roles = Loadable(lazy(() => import('../pages/directories/role/Role')));
+const Users = Loadable(lazy(() => import('../pages/directories/users/Users')));
 
 // Form
 
 const CategoryForm = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
 const CategoryBulkEdit = Loadable(lazy(() => import('../pages/forms/bulk/bulkCategoryForm/BulkCategoryForm')));
 const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryForm/SubCategoryForm')));
-
+const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/CouponForm')));
 const ProductForm = Loadable(lazy(() => import('../pages/forms/productForm/ProductForm')));
+const NewClientsForm = Loadable(lazy(() => import('../pages/forms/clientsForm/clientsForm')));
+const NewInvoiceForm = Loadable(lazy(() => import('../pages/forms/invoice/InvoiceForm')));
+const SpecialOffersForm = Loadable(lazy(() => import('../pages/forms/specialOffers/OffersForm')));
+const BrandsForm = Loadable(lazy(() => import('../pages/forms/brandsForm/BrandsForm')));
+const RolesForm = Loadable(lazy(() => import('../pages/forms/roleForm/RoleForm')));
+const UserForm = Loadable(lazy(() => import('../pages/forms/userForm/UserForm')));
+
+// profiles
+const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
+const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
+const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
+const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/ShopProductProfile')));
+const ProductProfilePage = Loadable(lazy(() => import('../pages/profiles/productProfile/ProductProfilePage')));
+const RoleProfile = Loadable(lazy(() => import('../pages/profiles/RoleProfile/RoleProfile')));
+const UsersProfile = Loadable(lazy(() => import('../pages/profiles/UserProfile/UserProfile')));
+
+// checkout
+const CheckoutPage = Loadable(lazy(() => import('../pages/profiles/Shop/checkout/CheckoutPage')));
 
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));

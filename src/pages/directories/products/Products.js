@@ -58,7 +58,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Product', align: 'left' },
   { id: 'category', label: 'Category', align: 'left' },
   { id: 'salePrice', label: 'Sale Price', align: 'left' },
-  { id: 'quantity', label: 'Quantity', align: 'left' },
+  { id: 'available', label: 'Available Quantity', align: 'left' },
   { id: 'inStock', label: 'In Stock', align: 'left' },
   { id: 'brand', label: 'Brand', align: 'left' },
   { id: 'created', label: 'Date created', align: 'left' },
@@ -117,9 +117,10 @@ export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { product, bulkProduct } = useSelector((state) => state);
+  const { product, bulkProduct, auth } = useSelector((state) => state);
   const { bulkProducts } = bulkProduct;
   const { products } = product;
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -140,7 +141,8 @@ export default function CategoryList() {
 
   const handleDeleteProduct = async (slug) => {
     const reqObject = {
-      slug
+      slug,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteProduct(reqObject));
     if (reduxRes.type === 'product/delete/rejected') {
@@ -167,10 +169,11 @@ export default function CategoryList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getProducts(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   // BULK Category creation
   const handleBulkAdd = async (e) => {
@@ -198,7 +201,8 @@ export default function CategoryList() {
   const handleBulkProductUpload = async (products) => {
     setLoading(true);
     const reqObject = {
-      products
+      products,
+      accessToken: token
     };
     const reduxRes = await dispatch(createBulkProduct(reqObject));
     if (reduxRes.type === 'product/create-bulk/rejected') {
@@ -229,7 +233,8 @@ export default function CategoryList() {
   const handleDeleteMany = async (ids) => {
     setLoading(true);
     const reqObject = {
-      ids
+      ids,
+      accessToken: token
     };
     const reduxRes = await dispatch(deleteManyProducts(reqObject));
     if (reduxRes.type === 'product/delete-many/rejected') {
@@ -318,7 +323,7 @@ export default function CategoryList() {
               />
               <TableBody>
                 {filtredProducts.map((row) => {
-                  const { _id, name, slug, category, salePrice, quantity, brand, images, createdAt } = row;
+                  const { _id, name, slug, category, salePrice, available, brand, images, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -350,17 +355,18 @@ export default function CategoryList() {
                       </TableCell>
                       <TableCell>{category?.name}</TableCell>
                       <TableCell>{fCurrency(salePrice)}</TableCell>
-                      <TableCell>{quantity}</TableCell>
+                      <TableCell>{available}</TableCell>
 
                       <TableCell style={{ minWidth: 160 }}>
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                          color={(quantity <= 0 && 'error') || (quantity <= 10 && 'warning') || 'success'}
+                          color={
+                            (Number(available) <= 0 && 'error') || (Number(available) <= 10 && 'warning') || 'success'
+                          }
                         >
-                          {(quantity >= 10 && sentenceCase('In Stock')) ||
-                            (quantity <= 10 && sentenceCase('Low In Stock')) ||
-                            (quantity <= 0 && sentenceCase('Out of Stock')) ||
-                            ''}
+                          {(Number(available) >= 10 && sentenceCase('In Stock')) ||
+                            (Number(available) <= 10 && sentenceCase('Low In Stock')) ||
+                            (Number(available) <= 0 && sentenceCase('Out of Stock'))}
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>

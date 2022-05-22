@@ -39,10 +39,15 @@ export const PATH_ADMIN = {
     overview: path(ROOTS_ADMIN, '/overview'),
     products: path(ROOTS_ADMIN, '/product-directory'),
     categories: path(ROOTS_ADMIN, '/categories-directory'),
-    users: path(ROOTS_ADMIN, '/users-directory'),
+    clients: path(ROOTS_ADMIN, '/clients-directory'),
     invoices: path(ROOTS_ADMIN, '/invoice-directory'),
     orders: path(ROOTS_ADMIN, '/order-directory'),
-    couponCode: path(ROOTS_ADMIN, '/coupon-code-directory')
+    couponCode: path(ROOTS_ADMIN, '/coupon-code-directory'),
+    shop: path(ROOTS_ADMIN, '/shop-directory'),
+    offers: path(ROOTS_ADMIN, '/offers-directory'),
+    brands: path(ROOTS_ADMIN, '/brands-directory'),
+    roles: path(ROOTS_ADMIN, '/roles-directory'),
+    users: path(ROOTS_ADMIN, '/users-directory')
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
@@ -54,7 +59,29 @@ export const PATH_ADMIN = {
     editProduct: path(ROOTS_ADMIN, '/edit-product'),
     editBulkProduct: path(ROOTS_ADMIN, '/edit-bulk-product/'),
     newCoupon: path(ROOTS_ADMIN, '/new-coupon'),
-    editCoupon: path(ROOTS_ADMIN, '/edit-coupon')
+    editCoupon: path(ROOTS_ADMIN, '/edit-coupon'),
+    newClients: path(ROOTS_ADMIN, '/new-clients'),
+    editClients: path(ROOTS_ADMIN, '/edit-clients'),
+    newInvoice: path(ROOTS_ADMIN, '/new-invoice'),
+    editInvoice: path(ROOTS_ADMIN, '/edit-invoice'),
+    newOffer: path(ROOTS_ADMIN, '/new-offer'),
+    editOffer: path(ROOTS_ADMIN, '/edit-offer'),
+    newBrand: path(ROOTS_ADMIN, '/new-brand'),
+    editBrand: path(ROOTS_ADMIN, '/edit-brand'),
+    newRole: path(ROOTS_ADMIN, '/new-role'),
+    editRole: path(ROOTS_ADMIN, '/edit-role'),
+    newUser: path(ROOTS_ADMIN, '/new-user'),
+    editUser: path(ROOTS_ADMIN, '/edit-user')
+  },
+  profiles: {
+    clientProfile: path(ROOTS_ADMIN, '/client-profile'),
+    orderProfile: path(ROOTS_ADMIN, '/order-profile'),
+    shopProductProfile: path(ROOTS_ADMIN, '/shop-product-profile'),
+    checkout: path(ROOTS_ADMIN, '/shop-product-profile/checkout'),
+    invoiceProfile: path(ROOTS_ADMIN, '/invoice-profile'),
+    productProfile: path(ROOTS_ADMIN, '/product-profile'),
+    roleProfile: path(ROOTS_ADMIN, '/role-profile'),
+    userprofile: path(ROOTS_ADMIN, '/user-profile')
   }
 };
 

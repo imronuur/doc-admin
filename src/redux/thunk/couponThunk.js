@@ -1,13 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const createCoupon = createAsyncThunk('coupon/create', async ({ coupon }) => {
+export const createCoupon = createAsyncThunk('coupon/create', async ({ codes, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
     `${process.env.REACT_APP_BACKEND_API}/coupon-code`,
-    { coupon },
+    { codes },
     {
       headers
     }
@@ -15,22 +16,24 @@ export const createCoupon = createAsyncThunk('coupon/create', async ({ coupon })
   return res;
 });
 
-export const deleteSubCategory = createAsyncThunk('subCategory/delete', async ({ slug }) => {
+export const deleteCoupon = createAsyncThunk('coupon/delete', async ({ _id, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
-  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/sub-category/${slug}`, {
+  const res = await axios.delete(`${process.env.REACT_APP_BACKEND_API}/coupon-code/${_id}`, {
     headers
   });
   return res;
 });
 
-export const deleteManySubCategories = createAsyncThunk('subCategory/delete-many', async ({ ids }) => {
+export const deleteManyCoupons = createAsyncThunk('coupon/delete-many', async ({ ids, accessToken }) => {
   const headers = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: accessToken
   };
   const res = await axios.post(
-    `${process.env.REACT_APP_BACKEND_API}/sub-category-delete-many`,
+    `${process.env.REACT_APP_BACKEND_API}/coupon-code-delete-many`,
     { ids },
     {
       headers

@@ -51,7 +51,7 @@ export default function UserProfile() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const { myProfile, posts, followers, friends, gallery } = useSelector((state) => state.user);
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const [currentTab, setCurrentTab] = useState('profile');
   const [findFriends, setFindFriends] = useState('');
 
@@ -110,7 +110,7 @@ export default function UserProfile() {
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             { name: 'User', href: PATH_DASHBOARD.user.root },
-            { name: user.displayName }
+            { name: user.name }
           ]}
         />
         <Card

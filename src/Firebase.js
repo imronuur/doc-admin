@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/storage';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getStorage, deleteObject, ref } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB6PASOGMim3n-dEW1pfMGqAacpSZCDZoA',
@@ -12,7 +12,10 @@ const firebaseConfig = {
   measurementId: 'G-Q7X5H5QZ2Q'
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-export const authFirbase = app.auth();
-export const storage = app.storage();
-export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+export const authFirbase = getAuth(app);
+export const storage = getStorage(app);
+export const deleteFirebaseObject = deleteObject;
+export const refFirebase = ref;
+
+// export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();

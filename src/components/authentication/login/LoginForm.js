@@ -1,19 +1,34 @@
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
 import closeFill from '@iconify/icons-eva/close-fill';
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill';
+import roundClose from '@iconify/icons-ic/round-close';
+
 // material
-import { Link, Stack, Alert, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
+import {
+  Link,
+  Stack,
+  Alert,
+  Checkbox,
+  TextField,
+  IconButton,
+  Button,
+  InputAdornment,
+  FormControlLabel
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // routes
+import { useDispatch } from '../../../redux/store';
+import { getUser } from '../../../redux/thunk/authThunk';
 import { PATH_AUTH } from '../../../routes/paths';
 // hooks
 import useAuth from '../../../hooks/useAuth';
+import { useFirebaseAuth } from '../../../contexts/authContext';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 //
 import { MIconButton } from '../../@material-extend';
@@ -21,11 +36,12 @@ import { MIconButton } from '../../@material-extend';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login } = useFirebaseAuth();
   const isMountedRef = useIsMountedRef();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState(false);
 
+  const dispatch = useDispatch();
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
@@ -40,25 +56,45 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (values, { setErrors, setSubmitting, resetForm }) => {
       try {
-        await login(values.email, values.password);
-        enqueueSnackbar('Login success', {
-          variant: 'success',
-          action: (key) => (
-            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </MIconButton>
-          )
-        });
+        const { accessToken } = await login(values.email, values.password);
+
+        const reduxRes = await dispatch(getUser(accessToken));
+        if (reduxRes.type === 'auth/getUser/fulfilled') {
+          enqueueSnackbar('Login success', {
+            variant: 'success',
+            action: (key) => (
+              <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+                <Icon icon={closeFill} />
+              </MIconButton>
+            )
+          });
+        } else if (reduxRes.type === 'auth/getUser/rejected') {
+          enqueueSnackbar('Error!, Incorrect Email or Password', {
+            variant: 'error',
+            action: (key) => (
+              <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+                <Icon icon={closeFill} />
+              </MIconButton>
+            )
+          });
+        }
         if (isMountedRef.current) {
           setSubmitting(false);
         }
       } catch (error) {
-        console.error(error);
         resetForm();
         if (isMountedRef.current) {
           setSubmitting(false);
           setErrors({ afterSubmit: error.message });
         }
+        enqueueSnackbar(`${error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <Button size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={roundClose} />
+            </Button>
+          )
+        });
       }
     }
   });

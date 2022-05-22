@@ -28,6 +28,7 @@ export default function EcommerceProductCreate() {
   const { pathname } = useLocation();
   const { _id } = useParams();
   const { categories } = useSelector((state) => state.category);
+  const { token } = useSelector((state) => state.auth);
   const isEdit = pathname.includes('edit');
   const currentCategory = categories.data.find((category) => paramCase(category._id) === _id);
 
@@ -39,7 +40,8 @@ export default function EcommerceProductCreate() {
   const handleCategoryCreate = async (name) => {
     setLoading(true);
     const reqObject = {
-      name
+      name,
+      accessToken: token
     };
     const reduxRes = await dispatch(createCategory(reqObject));
     if (reduxRes.type === 'category/create/rejected') {

@@ -23,21 +23,21 @@ const IconStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 ColorPreview.propTypes = {
-  colors: PropTypes.array.isRequired,
+  colors: PropTypes.array,
   limit: PropTypes.number
 };
 
 export default function ColorPreview({ colors, limit = 3, ...other }) {
-  const showColor = colors.slice(0, limit);
-  const moreColor = colors.length - limit;
+  const showColor = colors?.slice(0, limit);
+  const moreColor = colors?.length - limit;
 
   return (
     <RootStyle component="span" {...other}>
-      {showColor.map((color, index) => (
+      {showColor?.map((color, index) => (
         <IconStyle key={color + index} sx={{ bgcolor: color }} />
       ))}
 
-      {colors.length > limit && <Typography variant="subtitle2">{`+${moreColor}`}</Typography>}
+      {colors?.length > limit && <Typography variant="subtitle2">{`+${moreColor}`}</Typography>}
     </RootStyle>
   );
 }

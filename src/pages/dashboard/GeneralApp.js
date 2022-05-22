@@ -1,7 +1,7 @@
 // material
 import { Container, Grid, Stack } from '@mui/material';
 // hooks
-import useAuth from '../../hooks/useAuth';
+import { useSelector } from 'react-redux';
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
@@ -25,14 +25,14 @@ import {
 
 export default function GeneralApp() {
   const { themeStretch } = useSettings();
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <Page title="General: App | Minimal-UI">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
-            <AppWelcome displayName={user.displayName} />
+            <AppWelcome displayName={user.name} />
           </Grid>
 
           <Grid item xs={12} md={4}>

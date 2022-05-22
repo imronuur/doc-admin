@@ -2,8 +2,7 @@ import { filter } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
+
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
@@ -38,17 +37,16 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
-
-import { CategoryListHead, CategoryListToolbar, CategoryMoreMenu } from './components';
-import { BulkCategoryAdd } from '../../bulk/BulkCategoryAdd';
+import { deleteCoupon, deleteManyCoupons } from '../../../redux/thunk/couponThunk';
+import { CouponsListHead, CouponsListToolbar, CouponsMoreMenu } from './components';
 
 // ----------------------------------------------------------------------
 
 let content = null;
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Category Name', align: 'left' },
-  { id: 'expirayDate', label: 'Expiray Date', align: 'left' },
+  { id: 'name', label: 'Coupon Code Name', align: 'left' },
+  { id: 'expiryDate', label: 'Expiry Date', align: 'left' },
   { id: 'discount', label: 'Discount Amount', align: 'left' },
   { id: '' }
 ];
@@ -91,8 +89,9 @@ function applySortFilter(array, comparator, query) {
 export default function CategoryList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const { coupon } = useSelector((state) => state);
+  const { coupon, auth } = useSelector((state) => state);
   const { codes } = coupon;
+  const { token } = auth;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -113,7 +112,8 @@ export default function CategoryList() {
 
   useEffect(() => {
     const reqObject = {
-      page
+      page,
+      accessToken: token
     };
     dispatch(getCoupon(reqObject));
   }, [dispatch, page]);
@@ -134,7 +134,66 @@ export default function CategoryList() {
       setSelected([]);
     };
 
+    const handleDeleteOne = async (_id) => {
+      const reqObject = {
+        _id,
+        accessToken: token
+      };
+      const reduxRes = await dispatch(deleteCoupon(reqObject));
+      if (reduxRes.type === 'coupon/delete/rejected') {
+        enqueueSnackbar(`${reduxRes.error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+      } else if (reduxRes.type === 'coupon/delete/fulfilled') {
+        enqueueSnackbar(`Coupon Deleted!`, {
+          variant: 'success',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        dispatch(getCoupon({ page }));
+      }
+    };
+
+    const handleDeleteMany = async (ids) => {
+      setLoading(true);
+      const reqObject = {
+        ids,
+        accessToken: token
+      };
+      const reduxRes = await dispatch(deleteManyCoupons(reqObject));
+      if (reduxRes.type === 'coupons/delete-many/rejected') {
+        enqueueSnackbar(`${reduxRes.error.message}`, {
+          variant: 'error',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        setLoading(false);
+      } else if (reduxRes.type === 'coupons/delete-many/fulfilled') {
+        enqueueSnackbar(`Coupons Deleted!`, {
+          variant: 'success',
+          action: (key) => (
+            <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+              <Icon icon={closeFill} />
+            </MIconButton>
+          )
+        });
+        window.location.reload();
+      }
+    };
+
     const handleClick = (event, name) => {
+      console.log(event, name);
       const selectedIndex = selected.indexOf(name);
       let newSelected = [];
       if (selectedIndex === -1) {
@@ -153,14 +212,14 @@ export default function CategoryList() {
       setFilterName(event.target.value);
     };
 
-    const filtredCategories = applySortFilter(codes.data, getComparator(order, orderBy), filterName);
+    const filteredCoupons = applySortFilter(codes.data, getComparator(order, orderBy), filterName);
 
-    const isCategoryNotFound = filtredCategories.length === 0;
+    const Coupon = filteredCoupons.length === 0;
 
     content = (
       <Card>
-        <CategoryListToolbar
-          handleDeleteMany="handleDeleteMany"
+        <CouponsListToolbar
+          handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
           filterName={filterName}
@@ -170,7 +229,7 @@ export default function CategoryList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <CategoryListHead
+              <CouponsListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
@@ -180,9 +239,9 @@ export default function CategoryList() {
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
-                {filtredCategories.map((row) => {
-                  const { _id, name, expirayDate, discount } = row;
-
+                {filteredCoupons.map((row) => {
+                  const { _id, name, expiryDate, discount } = row;
+                  console.log(row);
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
                   return (
@@ -210,17 +269,17 @@ export default function CategoryList() {
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>{expirayDate}</TableCell>
+                      <TableCell>{expiryDate}</TableCell>
                       <TableCell>{discount}</TableCell>
 
                       <TableCell align="right">
-                        <CategoryMoreMenu onDelete={() => console.log('Delete')} _id={_id} />
+                        <CouponsMoreMenu onDelete={() => handleDeleteOne(_id)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
-              {isCategoryNotFound && (
+              {Coupon && (
                 <TableBody>
                   <TableRow>
                     <TableCell align="center" colSpan={6}>
@@ -249,7 +308,7 @@ export default function CategoryList() {
               <Button
                 key={pageIndex}
                 onClick={() => setPage(pageIndex)}
-                color={pageIndex === page ? 'warning' : 'success'}
+                color={pageIndex === page - 1 ? 'warning' : 'success'}
               >
                 {pageIndex + 1}
               </Button>
@@ -268,7 +327,9 @@ export default function CategoryList() {
   } else {
     content = (
       <Card>
-        <Typography>Error</Typography>
+        <Typography px={20} py={4}>
+          No Coupons Code Found
+        </Typography>
       </Card>
     );
   }
@@ -286,7 +347,7 @@ export default function CategoryList() {
               to={PATH_ADMIN.forms.newCoupon}
               startIcon={<Icon icon={plusFill} />}
             >
-              New Category
+              New Coupon
             </Button>
           }
         />

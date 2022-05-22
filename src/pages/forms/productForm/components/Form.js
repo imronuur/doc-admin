@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik } from 'formik';
+import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
@@ -12,9 +12,9 @@ import {
   Switch,
   Select,
   TextField,
-  InputLabel,
+  Button,
   Typography,
-  FormControl,
+  CardHeader,
   Autocomplete,
   InputAdornment,
   FormHelperText,
@@ -22,13 +22,11 @@ import {
   MenuItem,
   FormLabel
 } from '@mui/material';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { QuillEditor } from '../../../../components/editor';
 import { UploadMultiFile } from '../../../../components/upload';
-import { loadSubCategory } from '../../../../redux/slices/subCategories';
-import { storage } from '../../../../Firebase';
-
+import { storage, deleteFirebaseObject, refFirebase } from '../../../../Firebase';
 import { Validations } from './Validations';
-
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -54,18 +52,22 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: currentProduct?.name || 'Samsung s21 ultra',
-      description: currentProduct?.description || 'This is the newset Samsung product',
+      name: currentProduct?.name || 'Blue light glasses',
+      description:
+        currentProduct?.description || 'This Blue light glasses protext your eyes from the blue screen light',
       images: currentProduct?.images || [], //
-      regularPrice: currentProduct?.regularPrice || '3000',
-      salePrice: currentProduct?.salePrice || '2500',
-      quantity: currentProduct?.quantity || '30', //
+      regularPrice: currentProduct?.regularPrice || '300',
+      salePrice: currentProduct?.salePrice || '120',
+      available: currentProduct?.available || '15', //
       subCategories: currentProduct?.subCategories.map((res) => res._id) || [],
       inStock: currentProduct?.inStock || true, //
       shipping: currentProduct?.shipping || true, //
-      brand: currentProduct?.brand || 'Samsung', //
-      size: currentProduct?.size || '200ml', //
-      sold: currentProduct?.sold || '2', //
+      brand: currentProduct?.brand || 'Banner', //
+      size: currentProduct?.size || [
+        { sizeNo: '15 Inch', sizePrice: '120' },
+        { sizeNo: '20 Inch', sizePrice: '150' }
+      ], //
+      sold: currentProduct?.sold || '0', //
       category: currentProduct?.category?._id || '',
       slug: currentProduct?.slug || ''
     },
@@ -81,35 +83,39 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
     }
   });
 
-  const { errors, values, touched, handleSubmit, isSubmitting, setFieldValue, getFieldProps } = formik;
+  const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
       setFileLoading(true);
       const newImages = [...values.images];
       acceptedFiles.map(async (file) => {
-        const storageRef = storage.ref();
-        const fileRef = storageRef.child(file.name);
-        await fileRef.put(file);
-        const fileUrl = await fileRef.getDownloadURL();
+        // const storageRef = ;
+        const fileRef = ref(storage, file.name);
+        await uploadBytes(fileRef, file);
+        const fileUrl = await getDownloadURL(fileRef);
         newImages.push(fileUrl);
         setFieldValue('images', newImages);
       });
       setFileLoading(false);
     },
-    [setFieldValue]
+    [setFieldValue, values.images]
   );
 
   const handleRemoveAll = (files) => {
     setFileLoading(true);
-    files.map(async (file) => storage.refFromURL(file).delete());
+    files.map(async (file) => {
+      const delRef = await refFirebase(storage, file);
+      deleteFirebaseObject(delRef);
+    });
     setFieldValue('images', []);
     setFileLoading(false);
   };
 
   const handleRemove = async (file) => {
     setFileLoading(true);
-    await storage.refFromURL(file).delete();
+    const delRef = await refFirebase(storage, file);
+    await deleteFirebaseObject(delRef);
     const filteredItems = values.images.filter((_file) => _file !== file);
     setFieldValue('images', filteredItems);
     setFileLoading(false);
@@ -195,23 +201,70 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <TextField
-                        fullWidth
-                        label="Size"
-                        {...getFieldProps('size')}
-                        error={Boolean(touched.size && errors.size)}
-                        helperText={touched.size && errors.size}
+                      <FieldArray
+                        name="size"
+                        render={(arrayHelpers) => (
+                          <>
+                            {arrayHelpers.form.values.size && arrayHelpers.form.values.size.length >= 0 ? (
+                              <>
+                                {arrayHelpers.form.values.size.map((res, index) => (
+                                  <Grid container key={index}>
+                                    <TextField
+                                      fullWidth
+                                      label="Size Number"
+                                      {...getFieldProps(`size.${index}.sizeNo`)}
+                                      error={Boolean(getIn(errors, `size.${index}.sizeNo`))}
+                                      helperText={getIn(errors, `size.${index}.sizeNo`)}
+                                    />
+                                    <TextField
+                                      fullWidth
+                                      label="Size Price"
+                                      {...getFieldProps(`size.${index}.sizePrice`)}
+                                      error={Boolean(getIn(errors, `size.${index}.sizePrice`))}
+                                      helperText={getIn(errors, `size.${index}.sizePrice`)}
+                                      sx={{ margin: '1%' }}
+                                    />
+
+                                    <Grid item xs={2} sx={{ marginBottom: '3%' }}>
+                                      <Button
+                                        variant="contained"
+                                        disabled={arrayHelpers.form.values.size.length === 1}
+                                        color="secondary"
+                                        onClick={() => arrayHelpers.remove(index)}
+                                        sx={{ mt: 3, ml: 1 }}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </Grid>
+                                  </Grid>
+                                ))}
+                                <Grid item xs={12}>
+                                  <Button
+                                    type="button"
+                                    variant="text"
+                                    onClick={() => arrayHelpers.push()}
+                                    sx={{ mt: 3, ml: 1 }}
+                                  >
+                                    + Add Size
+                                  </Button>
+                                </Grid>
+                              </>
+                            ) : (
+                              <Typography> Nothing</Typography>
+                            )}
+                          </>
+                        )}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <TextField
                         fullWidth
                         placeholder="only numbers"
-                        label="Quantity"
+                        label="Available Quantity"
                         type="number"
-                        {...getFieldProps('quantity')}
-                        error={Boolean(touched.quantity && errors.quantity)}
-                        helperText={touched.quantity && errors.quantity}
+                        {...getFieldProps('available')}
+                        error={Boolean(touched.available && errors.available)}
+                        helperText={touched.available && errors.available}
                       />
                     </Grid>
                     <Grid item xs={12} md={4}>
