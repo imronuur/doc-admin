@@ -1,15 +1,10 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { sentenceCase } from 'change-case';
-import { useTheme, styled } from '@mui/material/styles';
 
 import {
   Box,
@@ -39,14 +34,11 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
-import Label from '../../../components/Label';
 
 import { getClients } from '../../../redux/slices/clients';
 import { deleteClient, deleteManyClients } from '../../../redux/thunk/clientsThunk';
-import ClientListToolbar from './components/ClientsListToolbar';
-import ClientListHead from './components/ClientsListHead';
-import ClientMoreMenu from './components/ClientsMoreMenu';
-import { ClientAvatar } from './components';
+
+import { ClientAvatar, ClientListHead, ClientMoreMenu, ClientListToolbar } from './components';
 
 // ----------------------------------------------------------------------
 
@@ -100,7 +92,6 @@ function applySortFilter(array, comparator, query) {
 export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
   const { client, auth } = useSelector((state) => state);
   const { clients } = client;
   const { token } = auth;
@@ -157,7 +148,7 @@ export default function ClientList() {
       accessToken: token
     };
     dispatch(getClients(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);
@@ -269,7 +260,7 @@ export default function ClientList() {
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, _id)} />
                       </TableCell>
                       <TableCell>
-                        <ClientAvatar name={name} />
+                        <ClientAvatar client={row} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Box

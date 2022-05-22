@@ -16,8 +16,9 @@ import { Validations } from './Validations';
 CouponNewForm.propTypes = {
   isEdit: PropTypes.bool,
   currentCategory: PropTypes.object,
-  handleSubCategoryCreate: PropTypes.func,
-  loading: PropTypes.bool
+  handleCouponCreate: PropTypes.func,
+  loading: PropTypes.bool,
+  currentCoupons: PropTypes.object
 };
 
 export default function CouponNewForm({ isEdit, currentCoupons, handleCouponCreate, loading }) {
@@ -41,7 +42,7 @@ export default function CouponNewForm({ isEdit, currentCoupons, handleCouponCrea
     }
   });
 
-  const { errors, touched, handleSubmit, getFieldProps, values } = formik;
+  const { errors, touched, handleSubmit, getFieldProps } = formik;
 
   return (
     <FormikProvider value={formik}>

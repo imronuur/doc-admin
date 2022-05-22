@@ -23,7 +23,6 @@ import { fCurrency } from '../../../../../utils/formatNumber';
 
 CheckoutSummary.propTypes = {
   total: PropTypes.number,
-  discount: PropTypes.number,
   subtotal: PropTypes.number,
   shipping: PropTypes.number,
   onEdit: PropTypes.func,
@@ -34,7 +33,6 @@ CheckoutSummary.propTypes = {
 export default function CheckoutSummary({
   total,
   onEdit,
-
   subtotal,
   shipping = null,
   onApplyDiscount,

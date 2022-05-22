@@ -1,13 +1,17 @@
 import { useState } from 'react';
-// hooks
-//
+import PropTypes from 'prop-types';
+// hooks//
 import { MAvatar } from '../../../../components/@material-extend';
 import createAvatar from '../../../../utils/createAvatar';
 
 // ----------------------------------------------------------------------
 
+ClientAvatar.propTypes = {
+  client: PropTypes.object
+};
+
 export default function ClientAvatar({ client, ...other }) {
-  const [avatar, setAvatar] = useState([client]);
+  const [avatar] = useState([client]);
 
   return (
     <>

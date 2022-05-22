@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from 'axios';
-import { func } from 'prop-types';
 
 // ----------------------------------------------------------------------
 

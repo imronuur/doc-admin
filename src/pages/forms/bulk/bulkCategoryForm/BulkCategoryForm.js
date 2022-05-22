@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 // material
@@ -8,7 +7,7 @@ import { Container } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../../../redux/store';
 // routes
-import { PATH_DASHBOARD, PATH_ADMIN } from '../../../../routes/paths';
+import { PATH_ADMIN } from '../../../../routes/paths';
 // hooks
 import useSettings from '../../../../hooks/useSettings';
 // components

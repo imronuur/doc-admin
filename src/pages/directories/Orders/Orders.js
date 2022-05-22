@@ -1,15 +1,8 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { sentenceCase } from 'change-case';
-import { useTheme, styled } from '@mui/material/styles';
 
 import {
   Box,
@@ -20,15 +13,11 @@ import {
   Checkbox,
   TableBody,
   TableCell,
-  TextField,
   Container,
   Typography,
   TableContainer,
   Grid,
-  Modal,
-  Select,
-  MenuItem,
-  FormLabel
+  Chip
 } from '@mui/material';
 import LoadingScreen from '../../../components/LoadingScreen';
 // redux
@@ -44,7 +33,6 @@ import Scrollbar from '../../../components/Scrollbar';
 import SearchNotFound from '../../../components/SearchNotFound';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import { MIconButton } from '../../../components/@material-extend';
-import Label from '../../../components/Label';
 
 import { getOrders } from '../../../redux/slices/orderSlice';
 import { deleteOrder, deleteManyOrders, updateOrderStatus } from '../../../redux/thunk/orderThunk';
@@ -101,12 +89,11 @@ function applySortFilter(array, comparator, query) {
 export default function OrdersList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
   const { order, auth } = useSelector((state) => state);
   const { orders } = order;
   const { token } = auth;
   const [page, setPage] = useState(0);
-  const [orderAsc, setOrderAsc] = useState('asc');
+  const [setOrderAsc] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [orderBy, setOrderBy] = useState('createdAt');
@@ -115,11 +102,10 @@ export default function OrdersList() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
-  const [state, setState] = useState('');
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleOpenModal = async (status) => {
+  const handleOpenModal = async () => {
     handleOpen();
   };
   const handleUpdateOrder = async (status) => {
@@ -196,7 +182,7 @@ export default function OrdersList() {
       accessToken: token
     };
     dispatch(getOrders(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);
@@ -321,15 +307,27 @@ export default function OrdersList() {
                       </TableCell>
 
                       <TableCell>
-                        <Label>{orderStatus}</Label>
+                        <Chip
+                          // variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
+                          color={
+                            (orderStatus === 'Cancelled' && 'error') ||
+                            (orderStatus === 'Dispatched' && 'warning') ||
+                            (orderStatus === 'Completed' && 'success') ||
+                            (orderStatus === 'Not Processed' && 'default') ||
+                            (orderStatus === 'processing' && 'primary') ||
+                            (orderStatus === 'Cash On Delivery' && 'secondary')
+                          }
+                          label={orderStatus}
+                        />
                       </TableCell>
+
                       <TableCell>{createdAt}</TableCell>
 
                       <TableCell>{fCurrency(orderInfo?.amount)}</TableCell>
 
                       <TableCell align="right">
                         <OrdersMoreMenu
-                          onOpen={() => handleOpenModal(row)}
+                          onOpen={() => handleOpenModal()}
                           onDelete={() => handleDeleteOrder(_id)}
                           _id={_id}
                         />

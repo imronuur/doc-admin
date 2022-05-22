@@ -18,7 +18,6 @@ import {
   TableContainer
 } from '@mui/material';
 // utils
-import getColorName from '../../../../../utils/getColorName';
 import { fCurrency } from '../../../../../utils/formatNumber';
 //
 import { MIconButton } from '../../../../../components/@material-extend';
@@ -96,9 +95,9 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
 
         <TableBody>
           {products.map((product) => {
-            const { id, name, size, salePrice, images, quantity, available } = product;
+            const { _id, name, size, salePrice, images, quantity, available } = product;
             return (
-              <TableRow key={id}>
+              <TableRow key={_id}>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <ThumbImgStyle alt="product image" src={images[0]} />
@@ -113,6 +112,15 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
                         alignItems="center"
                         divider={<Divider orientation="vertical" sx={{ height: 14, alignSelf: 'center' }} />}
                       >
+                        {/* {size.isArray &&
+                          size.map((size) => (
+                            <Typography variant="body2">
+                              <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+                                size:&nbsp;
+                              </Typography>
+                              {size}
+                            </Typography>
+                          ))} */}
                         <Typography variant="body2">
                           <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
                             size:&nbsp;
@@ -130,8 +138,8 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
                   <Incrementer
                     quantity={quantity}
                     available={available}
-                    onDecrease={() => onDecreaseQuantity(id)}
-                    onIncrease={() => onIncreaseQuantity(id)}
+                    onDecrease={() => onDecreaseQuantity(_id)}
+                    onIncrease={() => onIncreaseQuantity(_id)}
                   />
                 </TableCell>
 
@@ -140,7 +148,7 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
                 </TableCell>
 
                 <TableCell align="right">
-                  <MIconButton onClick={() => onDelete(id)}>
+                  <MIconButton onClick={() => onDelete(_id)}>
                     <Icon icon={trash2Fill} width={20} height={20} />
                   </MIconButton>
                 </TableCell>

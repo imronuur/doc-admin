@@ -1,15 +1,10 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { sentenceCase } from 'change-case';
-import { useTheme, styled } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -94,7 +89,6 @@ function applySortFilter(array, comparator, query) {
 export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
   const { offer, auth } = useSelector((state) => state);
   const { offers } = offer;
   const { token } = auth;
@@ -151,7 +145,7 @@ export default function ClientList() {
       accessToken: token
     };
     dispatch(getOffers(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);
@@ -246,7 +240,7 @@ export default function ClientList() {
               />
               <TableBody>
                 {filteredOffers.map((row) => {
-                  const { _id, product, name, title, price, createdAt } = row;
+                  const { _id, product, title, price, createdAt } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 

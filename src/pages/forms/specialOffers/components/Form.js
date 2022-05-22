@@ -1,10 +1,8 @@
-import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
-import { styled } from '@mui/material/styles';
 import { LoadingButton } from '@mui/lab';
-import { Card, Autocomplete, Grid, Stack, TextField, Select, MenuItem, FormLabel, FormHelperText } from '@mui/material';
+import { Card, Autocomplete, Grid, Stack, TextField, FormLabel } from '@mui/material';
 
 import { Validations } from './Validations';
 
@@ -16,7 +14,8 @@ OffersForm.propTypes = {
   isEdit: PropTypes.bool,
   currentOffer: PropTypes.object,
   handleCreate: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  products: PropTypes.array
 };
 
 export default function OffersForm({ isEdit, currentOffer, products, handleCreate, loading }) {
@@ -42,8 +41,8 @@ export default function OffersForm({ isEdit, currentOffer, products, handleCreat
     }
   });
 
-  const { errors, values, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
-  console.log(values);
+  const { errors, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
+
   const product = products?.data?.map((product) => product);
 
   return (

@@ -13,7 +13,6 @@ import { useFirebaseAuth } from '../../contexts/authContext';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import { useSelector } from '../../redux/store';
 // hooks
-import useAuth from '../../hooks/useAuth';
 import useIsMountedRef from '../../hooks/useIsMountedRef';
 // components
 import { MIconButton } from '../../components/@material-extend';

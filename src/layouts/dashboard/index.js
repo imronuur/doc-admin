@@ -11,6 +11,9 @@ import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import { useFirebaseAuth } from '../../contexts/authContext';
 import { tokenCheck } from '../../redux/thunk/authThunk';
+import { getProducts } from '../../redux/slices/products';
+import { getCoupon } from '../../redux/slices/couponSlice';
+import { getClients } from '../../redux/slices/clients';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -45,8 +48,14 @@ export default function DashboardLayout() {
   const dispatch = useDispatch();
   const { logout } = useFirebaseAuth();
   const { token } = useSelector((state) => state.auth);
+  const [page] = useState(0);
 
   useEffect(() => {
+    const reqObject = {
+      page,
+      accessToken: token
+    };
+
     const handleExpiredToken = async () => {
       await logout();
       window.location.reload();
@@ -61,8 +70,15 @@ export default function DashboardLayout() {
       }
     };
 
+    const loadClients = (req) => dispatch(getClients(req));
+    const loadProducts = (req) => dispatch(getProducts(req));
+    const loadCoupon = (req) => dispatch(getCoupon(req));
+
     checkToken(token);
-  }, [dispatch, logout, navigate, token]);
+    loadClients(reqObject);
+    loadProducts(reqObject);
+    loadCoupon(reqObject);
+  }, [dispatch, logout, navigate, token, page]);
 
   return (
     <RootStyle>

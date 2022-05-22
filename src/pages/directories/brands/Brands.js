@@ -1,15 +1,11 @@
 import { filter } from 'lodash';
-import slugify from 'react-slugify';
 import { useSnackbar } from 'notistack';
 import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
-import { parse as csvparse } from 'papaparse';
-import { v4 as uuidv4 } from 'uuid';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { sentenceCase } from 'change-case';
-import { useTheme, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import {
   Box,
   Card,
@@ -41,8 +37,7 @@ import { MIconButton } from '../../../components/@material-extend';
 
 import { getBrands } from '../../../redux/slices/brandsSlice';
 import { deleteBrand, deleteManyBrands } from '../../../redux/thunk/brandsThunk';
-import { OfferListHead, OfferListToolbar, OfferMoreMenu } from './components';
-import { fCurrency } from '../../../utils/formatNumber';
+import { BrandListHead, BrandListToolbar, BrandMoreMenu } from './components';
 
 // ----------------------------------------------------------------------
 
@@ -100,7 +95,6 @@ function applySortFilter(array, comparator, query) {
 export default function ClientList() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const theme = useTheme();
   const { brand, auth } = useSelector((state) => state);
   const { brands } = brand;
   const { token } = auth;
@@ -123,7 +117,7 @@ export default function ClientList() {
     setPage(Math.min(brands.numberOfPages - 1, page + 1));
   };
 
-  const handleDeleteOffer = async (_id) => {
+  const handleDeleteBrand = async (_id) => {
     const reqObject = {
       _id,
       accessToken: token
@@ -158,7 +152,7 @@ export default function ClientList() {
       accessToken: token
     };
     dispatch(getBrands(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);
@@ -231,7 +225,7 @@ export default function ClientList() {
 
     content = (
       <Card>
-        <OfferListToolbar
+        <BrandListToolbar
           handleDeleteMany={handleDeleteMany}
           loading={loading}
           selected={selected}
@@ -242,7 +236,7 @@ export default function ClientList() {
         <Scrollbar>
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
-              <OfferListHead
+              <BrandListHead
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
@@ -291,7 +285,7 @@ export default function ClientList() {
                       <TableCell>{createdAt}</TableCell>
 
                       <TableCell align="right">
-                        <OfferMoreMenu onDelete={() => handleDeleteOffer(_id)} _id={_id} />
+                        <BrandMoreMenu onDelete={() => handleDeleteBrand(_id)} _id={_id} />
                       </TableCell>
                     </TableRow>
                   );

@@ -3,8 +3,6 @@ import { Navigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from '../redux/store';
 // hooks
-import useAuth from '../hooks/useAuth';
-import { useFirebaseAuth } from '../contexts/authContext';
 
 // pages
 import Login from '../pages/authentication/Login';

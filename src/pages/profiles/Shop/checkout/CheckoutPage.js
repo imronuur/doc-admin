@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router';
 import { Icon } from '@iconify/react';
 import checkmarkFill from '@iconify/icons-eva/checkmark-fill';
 import { useSnackbar } from 'notistack';
@@ -14,16 +13,14 @@ import closeFill from '@iconify/icons-eva/close-fill';
 import { PATH_ADMIN } from '../../../../routes/paths';
 // hooks
 import { useDispatch, useSelector } from '../../../../redux/store';
-import useIsMountedRef from '../../../../hooks/useIsMountedRef';
 import useSettings from '../../../../hooks/useSettings';
-import { getCart, createBilling } from '../../../../redux/slices/products';
+import { createBilling } from '../../../../redux/slices/products';
 // components
 import Page from '../../../../components/Page';
 import HeaderBreadcrumbs from '../../../../components/HeaderBreadcrumbs';
 import { CheckoutCart, CheckoutPayment, CheckoutOrderComplete, CheckoutBillingAddress } from './checkout/index';
 import { createOrder } from '../../../../redux/thunk/orderThunk';
 import { MIconButton } from '../../../../components/@material-extend';
-import useAuth from '../../../../hooks/useAuth';
 // ----------------------------------------------------------------------
 
 const STEPS = ['Cart', 'Billing & address', 'Payment'];
@@ -80,12 +77,12 @@ function QontoStepIcon({ active, completed }) {
 export default function EcommerceCheckout() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
-  const isMountedRef = useIsMountedRef();
   const { checkout } = useSelector((state) => state.product);
   const { cart, billing, activeStep } = checkout;
   const [loading, setLoading] = useState(false);
-  const { user } = useSelector((state) => state.auth);
+  const { user, token } = useSelector((state) => state.auth);
   const isComplete = activeStep === STEPS.length;
+  const [dataToPrint, setDataToPrint] = useState(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   // const navigate = useNavigate();
   // useEffect(() => {
@@ -101,10 +98,12 @@ export default function EcommerceCheckout() {
   }, [dispatch, activeStep]);
 
   const handleCreate = async (order) => {
+    setDataToPrint(order);
     setLoading(true);
 
     const reqObject = {
-      order
+      order,
+      accessToken: token
     };
 
     const reduxRes = await dispatch(createOrder(reqObject));
@@ -172,14 +171,17 @@ export default function EcommerceCheckout() {
           <>
             {activeStep === 0 && <CheckoutCart />}
             {activeStep === 1 && <CheckoutBillingAddress />}
-            {activeStep === 2 &&
-              billing &&
-              cart.map((c, i) => (
-                <CheckoutPayment loading={loading} handleCreate={handleCreate} key={i} cart={c} billing={billing} />
-              ))}
+            {activeStep === 2 && billing && cart && (
+              <CheckoutPayment loading={loading} handleCreate={handleCreate} cart={cart} billing={billing} />
+            )}
           </>
         ) : (
-          <CheckoutOrderComplete open={isComplete} user={user} />
+          <>
+            {' '}
+            {billing && cart && (
+              <CheckoutOrderComplete dataToPrint={dataToPrint} billing={billing} open={isComplete} user={user} />
+            )}
+          </>
         )}
       </Container>
     </Page>

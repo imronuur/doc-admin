@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useNavigate } from 'react-router-dom';
@@ -11,18 +13,7 @@ import roundAddShoppingCart from '@iconify/icons-ic/round-add-shopping-cart';
 import { useFormik, Form, FormikProvider, useField } from 'formik';
 // material
 import { useTheme, styled } from '@mui/material/styles';
-import {
-  Box,
-  Link,
-  Stack,
-  Button,
-  Rating,
-  Tooltip,
-  Divider,
-  TextField,
-  Typography,
-  FormHelperText
-} from '@mui/material';
+import { Box, Stack, Button, Rating, Tooltip, Grid, Divider, Typography, FormHelperText } from '@mui/material';
 
 // redux
 import { useDispatch, useSelector } from '../../../../redux/store';
@@ -34,7 +25,6 @@ import { fShortenNumber, fCurrency } from '../../../../utils/formatNumber';
 //
 import MIconButton from '../../../../components/@material-extend/MIconButton';
 import Label from '../../../../components/Label';
-import ColorSinglePicker from '../../../../components/ColorSinglePicker';
 
 // ----------------------------------------------------------------------
 
@@ -114,12 +104,19 @@ const Incrementer = (props) => {
   );
 };
 
+ProductDetailsSumary.propTypes = {
+  currentProduct: PropTypes.object.isRequired
+};
+
 export default function ProductDetailsSumary({ currentProduct }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { checkout } = useSelector((state) => state.product);
-  const { _id, name, regularPrice, images, available, salePrice, rating, review, quantity, size } = currentProduct;
+  const { _id, name, regularPrice, images, available, salePrice, rating, review, size } = currentProduct;
+
+  const [orderSize, setOrderSize] = useState(size[0].sizeNo);
+  const [orderPrice, setOrderPrice] = useState(salePrice);
 
   const alreadyProduct = checkout.cart.map((item) => [...item._id]).includes(_id);
   const isMaxQuantity = checkout.cart.filter((item) => item.id === _id).map((item) => item.quantity)[0] >= available;
@@ -161,7 +158,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
     }
   });
 
-  const { values, touched, errors, getFieldProps, handleSubmit } = formik;
+  const { values, touched, errors, getFieldProps, handleSubmit, setFieldValue } = formik;
 
   const handleAddCart = () => {
     onAddCart({
@@ -170,6 +167,12 @@ export default function ProductDetailsSumary({ currentProduct }) {
       subtotal: values.price * values.quantity
     });
   };
+  const handleSizeChange = (size) => {
+    setOrderPrice(size.sizePrice);
+    setFieldValue('size', size.sizeNo);
+    setFieldValue('price', orderPrice);
+    setOrderSize(size.sizeNo);
+  };
 
   return (
     <RootStyle>
@@ -177,11 +180,11 @@ export default function ProductDetailsSumary({ currentProduct }) {
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
           <Label
             variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-            color={(quantity <= 0 && 'error') || (quantity <= 10 && 'warning') || 'success'}
+            color={(available <= 0 && 'error') || (available <= 10 && 'warning') || 'success'}
           >
-            {(quantity >= 10 && sentenceCase('In Stock')) ||
-              (quantity <= 10 && sentenceCase('Low In Stock')) ||
-              (quantity <= 0 && sentenceCase('Out of Stock')) ||
+            {(available >= 10 && sentenceCase('In Stock')) ||
+              (available <= 10 && sentenceCase('Low In Stock')) ||
+              (available <= 0 && sentenceCase('Out of Stock')) ||
               ''}
           </Label>
           <Typography variant="h5" paragraph>
@@ -210,30 +213,25 @@ export default function ProductDetailsSumary({ currentProduct }) {
               <Typography variant="subtitle1" sx={{ mt: 0.5 }}>
                 Size
               </Typography>
-              <TextField
-                select
-                size="small"
-                {...getFieldProps('size')}
-                SelectProps={{ native: true }}
-                FormHelperTextProps={{
-                  sx: {
-                    textAlign: 'right',
-                    margin: 0,
-                    mt: 1
-                  }
-                }}
-                helperText={
-                  <Link href="#" underline="always" color="text.primary">
-                    Size Chart
-                  </Link>
-                }
-              >
-                {size.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </TextField>
+              {size.map((item) => (
+                <Grid item xs={3}>
+                  <Box
+                    key={item}
+                    onClick={() => handleSizeChange(item)}
+                    sx={{
+                      width: 1,
+                      borderRadius: 1,
+                      padding: 1,
+                      border: `2px solid ${
+                        orderSize === item.sizeNo ? theme.palette.primary.main : theme.palette.primary.light
+                      }`,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Typography align="center">{item.sizeNo}</Typography>
+                  </Box>
+                </Grid>
+              ))}
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">
@@ -254,7 +252,7 @@ export default function ProductDetailsSumary({ currentProduct }) {
                   Available: {available}
                 </Typography>
 
-                <FormHelperText error>{touched.quantity && errors.quantity}</FormHelperText>
+                <FormHelperText error>{touched.available && errors.available}</FormHelperText>
               </div>
             </Stack>
           </Stack>

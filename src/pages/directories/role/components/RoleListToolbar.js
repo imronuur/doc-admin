@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
-import trash2Fill from '@iconify/icons-eva/trash-2-fill';
-import roundFilterList from '@iconify/icons-ic/round-filter-list';
+
 // material
 import { useTheme, styled } from '@mui/material/styles';
-import { Box, Toolbar, Tooltip, IconButton, Typography, OutlinedInput, InputAdornment } from '@mui/material';
+import { Box, Toolbar, Typography, OutlinedInput, InputAdornment } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -34,11 +33,10 @@ const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
 RolesListToolbar.propTypes = {
   selected: PropTypes.array,
   filterName: PropTypes.string,
-  onFilterName: PropTypes.func,
-  handleDeleteMany: PropTypes.func
+  onFilterName: PropTypes.func
 };
 
-export default function RolesListToolbar({ selected, filterName, onFilterName, handleDeleteMany }) {
+export default function RolesListToolbar({ selected, filterName, onFilterName }) {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
 

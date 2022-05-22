@@ -1,3 +1,3 @@
-export { default as OfferListHead } from './OfferListHead';
-export { default as OfferListToolbar } from './OfferListToolbar';
-export { default as OfferMoreMenu } from './OfferMoreMenu';
+export { default as BrandListHead } from './BrandListHead';
+export { default as BrandListToolbar } from './BrandListToolbar';
+export { default as BrandMoreMenu } from './BrandMoreMenu';

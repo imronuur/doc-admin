@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -11,7 +11,6 @@ import { MIconButton } from '../../../components/@material-extend';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { createBrand } from '../../../redux/thunk/brandsThunk';
-import { getAllProducts } from '../../../redux/slices/products';
 
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
@@ -37,8 +36,6 @@ export default function ClientsForm() {
   const currentBrand = brands?.data.find((off) => paramCase(off._id) === _id);
 
   const [loading, setLoading] = useState(false);
-
-  const [products, setProducts] = useState([]);
 
   // useEffect(() => {
   //   let isSubscribed = true;

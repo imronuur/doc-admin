@@ -18,7 +18,8 @@ SubCategoryNewForm.propTypes = {
   currentCategory: PropTypes.object,
   handleSubCategoryCreate: PropTypes.func,
   loading: PropTypes.bool,
-  categories: PropTypes.array
+  categories: PropTypes.array,
+  currentSubCategory: PropTypes.object
 };
 
 export default function SubCategoryNewForm({

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -32,7 +32,6 @@ export default function EcommerceCouponCreate() {
   const { coupon, auth } = useSelector((state) => state);
   const { codes } = coupon;
   const { token } = auth;
-
   const isEdit = pathname.includes('edit');
   const currentCoupons = codes.data.find((code) => paramCase(code._id) === _id);
 

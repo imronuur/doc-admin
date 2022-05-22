@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
-import { Fragment } from 'react';
 import { Page, View, Text, Font, Image, Document, StyleSheet } from '@react-pdf/renderer';
 // utils
-import { fCurrency } from '../../../../../../utils/formatNumber';
+import { fCurrency } from '../../../../utils/formatNumber';
 // ----------------------------------------------------------------------
 
 Font.register({
@@ -67,15 +66,12 @@ const styles = StyleSheet.create({
 // ----------------------------------------------------------------------
 
 InvoicePDF.propTypes = {
-  invoice: PropTypes.array.isRequired,
-  clients: PropTypes.array,
+  invoice: PropTypes.object.isRequired,
+  clients: PropTypes.object,
   user: PropTypes.object
 };
 
 export default function InvoicePDF({ invoice, user, clients }) {
-  const orderedId = String(invoice?.orderTo);
-  const current = clients.find((client) => client._id);
-
   // const clientMatches = String(current._id) === orderedId;
   // console.log(clientMatches);
   // console.log(orderedId);
@@ -87,7 +83,7 @@ export default function InvoicePDF({ invoice, user, clients }) {
           <Image source="/static/brand/logo_full.jpg" style={{ height: 32 }} />
           <View style={{ alignItems: 'right', flexDirection: 'column' }}>
             <Text style={styles.h3}>Not Processed</Text>
-            <Text>INV-{orderedId}</Text>
+            <Text>INV-{invoice._id}</Text>
           </View>
         </View>
 
@@ -101,9 +97,9 @@ export default function InvoicePDF({ invoice, user, clients }) {
           <View style={styles.col6}>
             <Text style={[styles.overline, styles.mb8]}>Invoice To</Text>
 
-            <Text style={styles.body1}>{current.name}</Text>
-            <Text style={styles.body1}>{current.state}</Text>
-            <Text style={styles.body1}>{current.phone}</Text>
+            <Text style={styles.body1}>{clients?.name}</Text>
+            <Text style={styles.body1}>{clients?.state}</Text>
+            <Text style={styles.body1}>{clients?.phone}</Text>
           </View>
         </View>
 
@@ -132,24 +128,25 @@ export default function InvoicePDF({ invoice, user, clients }) {
           <View style={styles.tableBody}>
             <View style={styles.tableRow} key={invoice}>
               <View style={styles.tableCell_1}>
-                <Text>#</Text>
+                <Text>{invoice.length + 1}</Text>
               </View>
-              {invoice?.products?.map((product, i) => (
-                <Fragment key={i}>
+              {invoice.items.map((product) => (
+                <>
+                  {' '}
                   <View style={styles.tableCell_2}>
                     <Text style={styles.subtitle2}>{product.name}</Text>
-                    <Text>{product.size}</Text>
+                    <Text>{product.name}</Text>
                   </View>
                   <View style={styles.tableCell_3}>
-                    <Text>{product.count}</Text>
+                    <Text>{product.quantity}</Text>
                   </View>
                   <View style={styles.tableCell_3}>
-                    <Text>{product.count}</Text>
+                    <Text>{product.unitPrice}</Text>
                   </View>
-                </Fragment>
+                </>
               ))}
               <View style={[styles.tableCell_3, styles.alignRight]}>
-                <Text>{fCurrency(invoice?.orderInfo?.amount)}</Text>
+                <Text>{fCurrency(invoice.total)}</Text>
               </View>
             </View>
 

@@ -11,7 +11,7 @@ import { MIconButton } from '../../../components/@material-extend';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { createProduct } from '../../../redux/thunk/productThunk';
-import { getAllCategories, getAllSubCategories, loadSubCategory } from '../../../redux/slices/subCategories';
+import { getAllCategories, getAllSubCategories } from '../../../redux/slices/subCategories';
 
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
@@ -34,7 +34,6 @@ export default function ProductForm() {
 
   const isEdit = pathname.includes('edit');
   const currentProduct = products.data.find((product) => paramCase(product._id) === _id);
-  console.log(currentProduct);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);

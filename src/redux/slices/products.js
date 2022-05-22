@@ -1,4 +1,4 @@
-import { sum, map, filter, uniqBy, reject } from 'lodash';
+import { sum, map, filter, uniqBy } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 // utils
 import axios from 'axios';
@@ -89,22 +89,26 @@ const slice = createSlice({
       if (isEmptyCart) {
         state.checkout.cart = [...state.checkout.cart, product];
       } else {
-        state.checkout.cart = map(state.checkout.cart, (_product) => {
-          const isExisted = _product._id === product._id;
-          if (isExisted) {
-            return {
-              ..._product,
-              quantity: _product.quantity + 1
-            };
-          }
-          return _product;
-        });
+        const objIndex = state.checkout.cart.findIndex((obj) => obj._id === product._id);
+        if (objIndex > -1) {
+          const updatedObj = {
+            ...state.checkout.cart[objIndex],
+            quantity: state.checkout.cart[objIndex].quantity + 1
+          };
+          state.checkout.cart = [
+            ...state.checkout.cart.slice(0, objIndex),
+            updatedObj,
+            ...state.checkout.cart.slice(objIndex + 1)
+          ];
+        } else {
+          state.checkout.cart.push(product);
+        }
       }
-      state.checkout.cart = uniqBy([...state.checkout.cart, product], 'id');
+      state.checkout.cart = uniqBy([...state.checkout.cart], '_id');
     },
 
     deleteCart(state, action) {
-      const updateCart = filter(state.checkout.cart, (item) => item.id !== action.payload);
+      const updateCart = filter(state.checkout.cart, (item) => item._id !== action.payload);
 
       state.checkout.cart = updateCart;
     },
@@ -135,7 +139,7 @@ const slice = createSlice({
     increaseQuantity(state, action) {
       const productId = action.payload;
       const updateCart = map(state.checkout.cart, (product) => {
-        if (product.id === productId) {
+        if (product._id === productId) {
           return {
             ...product,
             quantity: product.quantity + 1
@@ -150,7 +154,7 @@ const slice = createSlice({
     decreaseQuantity(state, action) {
       const productId = action.payload;
       const updateCart = map(state.checkout.cart, (product) => {
-        if (product.id === productId) {
+        if (product._id === productId) {
           return {
             ...product,
             quantity: product.quantity - 1
@@ -209,9 +213,18 @@ export function getProducts({ page, accessToken }) {
     }
   };
 }
-export const getAllProducts = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`);
-  return response;
+export const getAllProducts = async ({ accessToken }) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-products`, { headers });
+    return response;
+  } catch (error) {
+    return error.message;
+  }
+
 };
 
 // ----------------------------------------------------------------------

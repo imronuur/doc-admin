@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
-import { useTheme } from '@mui/material/styles';
 
 import {
   Box,

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from '../redux/store';
 // hooks
-import useAuth from '../hooks/useAuth';
+
 // routes
 import { PATH_DASHBOARD } from '../routes/paths';
 

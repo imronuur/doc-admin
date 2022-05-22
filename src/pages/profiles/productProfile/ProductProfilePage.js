@@ -1,5 +1,5 @@
 // material
-import { Grid, Container } from '@mui/material';
+import { Grid, Container, Card } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -9,7 +9,7 @@ import useSettings from '../../../hooks/useSettings';
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import Page from '../../../components/Page';
 import { PATH_ADMIN } from '../../../routes/paths';
-import { ProductAbout } from './components';
+import { ProductDetailsSumary, ProductDetailsCarousel } from './components/product-details';
 // --------------------------------------------
 
 export default function RouteProfilePage() {
@@ -29,7 +29,7 @@ export default function RouteProfilePage() {
     <Page title="Product |  iDAN">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading={`Product Profile :- ${currentProduct.name}`}
+          heading={`Product Profile :- ${currentProduct?.name}`}
           links={[
             { name: 'Dashboard', href: PATH_ADMIN.root },
             { name: 'Products', href: PATH_ADMIN.directories.products },
@@ -37,10 +37,16 @@ export default function RouteProfilePage() {
           ]}
         />
 
-        <ProductAbout
-          product={currentProduct}
-          // order={currentOrder}
-        />
+        <Card>
+          <Grid container>
+            <Grid item xs={12} md={6} lg={7}>
+              <ProductDetailsCarousel currentProduct={currentProduct} />
+            </Grid>
+            <Grid item xs={12} md={6} lg={5}>
+              <ProductDetailsSumary currentProduct={currentProduct} />
+            </Grid>
+          </Grid>
+        </Card>
       </Container>
     </Page>
   );

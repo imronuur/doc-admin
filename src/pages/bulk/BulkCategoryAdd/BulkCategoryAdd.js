@@ -15,8 +15,8 @@ BulkCategoryAdd.propTypes = {
   categories: PropTypes.array,
   handleBulkAdd: PropTypes.func,
   setBulkCategories: PropTypes.func,
-  handleBulkUserUpload: PropTypes.func,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  handleBulkCategoryUpload: PropTypes.func
 };
 
 export default function BulkCategoryAdd({

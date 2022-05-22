@@ -18,8 +18,7 @@ import {
   TableCell,
   Container,
   Typography,
-  TableContainer,
-  Grid
+  TableContainer
 } from '@mui/material';
 import LoadingScreen from '../../../../components/LoadingScreen';
 // redux
@@ -139,7 +138,7 @@ export default function CategoryList() {
       authToken: token
     };
     dispatch(getSubCategories(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   const handleDeleteMany = async (ids) => {
     setLoading(true);

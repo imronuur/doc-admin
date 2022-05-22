@@ -147,7 +147,7 @@ export default function CategoryList() {
       authToken: token
     };
     dispatch(getCategories(reqObject));
-  }, [dispatch, page]);
+  }, [dispatch, page, token]);
 
   // BULK Category creation
   const handleBulkAdd = async (e) => {
