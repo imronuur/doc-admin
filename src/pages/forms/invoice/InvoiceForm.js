@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { paramCase } from 'change-case';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { Icon } from '@iconify/react';
 import { Container } from '@mui/material';
 import closeFill from '@iconify/icons-eva/close-fill';
 import { MIconButton } from '../../../components/@material-extend';
-
+import { getAllClients } from '../../../redux/slices/clients';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { createInvoice } from '../../../redux/thunk/invoiceThunk';
@@ -29,22 +29,28 @@ export default function ClientsForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
 
-  const { invoice } = useSelector((state) => state);
+  const { invoice, auth } = useSelector((state) => state);
   const { invoices } = invoice;
-  const { client } = useSelector((state) => state);
-  const { clients } = client;
+  const { token } = auth;
+  // const { clients } = client;
+  const [allClients, setAllClients] = useState([]);
   const isEdit = pathname.includes('edit');
   const currentInvoice = invoices?.data.find((cli) => paramCase(cli._id) === _id);
 
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const loadClients = async () => {
-  //     const res = await getClients();
-  //     setClient(res.data);
-  //   };
-  //   loadClients();
-  // }, []);
+  useEffect(() => {
+    let isSubscribed = true;
+
+    if (isSubscribed) {
+      const loadClients = async () => {
+        const res = await getAllClients();
+        setAllClients(res.data);
+      };
+      loadClients();
+    }
+    return () => (isSubscribed = false);
+  }, []);
 
   const navigate = useNavigate();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -53,7 +59,8 @@ export default function ClientsForm() {
     setLoading(true);
 
     const reqObject = {
-      invoice
+      invoice,
+      accessToken: token
     };
 
     const reduxRes = await dispatch(createInvoice(reqObject));
@@ -101,7 +108,7 @@ export default function ClientsForm() {
           currentInvoice={currentInvoice}
           handleCreateInvoice={handleCreateInvoice}
           loading={loading}
-          clients={clients.data}
+          clients={allClients}
         />
       </Container>
     </Page>

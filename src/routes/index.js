@@ -82,7 +82,6 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.overview}`, element: <GeneralApp /> },
         { path: `${PATH_ADMIN.directories.products}`, element: <ProductList /> },
         { path: `${PATH_ADMIN.directories.categories}`, element: <CategoryList /> },
-        { path: `${PATH_ADMIN.directories.shop}`, element: <Shop /> },
         { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
         { path: `${PATH_ADMIN.directories.invoices}`, element: <Invoices /> },
         { path: `${PATH_ADMIN.directories.offers}`, element: <SpecialOffers /> },
@@ -123,14 +122,12 @@ export default function Router() {
         // profiles
         { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> },
         { path: `${PATH_ADMIN.profiles.orderProfile}/:_id`, element: <OrderProfilePage /> },
-        { path: `${PATH_ADMIN.profiles.shopProductProfile}/:name`, element: <ShopProductProfile /> },
         { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceProfilePage /> },
         { path: `${PATH_ADMIN.profiles.productProfile}/:_id`, element: <ProductProfilePage /> },
         { path: `${PATH_ADMIN.profiles.roleProfile}/:_id`, element: <RoleProfile /> },
         { path: `${PATH_ADMIN.profiles.userprofile}/:_id`, element: <UsersProfile /> },
 
         // checkout
-        { path: `${PATH_ADMIN.profiles.checkout}/:name`, element: <CheckoutPage /> },
 
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
         { path: `${PATH_ADMIN.forms.editCoupon}/:_id`, element: <NewCouponForm /> },
@@ -346,7 +343,6 @@ const CouponCodeList = Loadable(lazy(() => import('../pages/directories/coupon/C
 const Clients = Loadable(lazy(() => import('../pages/directories/clients/Clients')));
 const Invoices = Loadable(lazy(() => import('../pages/directories/invoice/Invoices')));
 const Orders = Loadable(lazy(() => import('../pages/directories/Orders/Orders')));
-const Shop = Loadable(lazy(() => import('../pages/directories/shop/ShopDirectory')));
 const SpecialOffers = Loadable(lazy(() => import('../pages/directories/specialOffers/SpecialOffers')));
 const Brands = Loadable(lazy(() => import('../pages/directories/brands/Brands')));
 const Roles = Loadable(lazy(() => import('../pages/directories/role/Role')));
@@ -370,13 +366,11 @@ const UserForm = Loadable(lazy(() => import('../pages/forms/userForm/UserForm'))
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
 const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
-const ShopProductProfile = Loadable(lazy(() => import('../pages/profiles/Shop/ShopProductProfile')));
 const ProductProfilePage = Loadable(lazy(() => import('../pages/profiles/productProfile/ProductProfilePage')));
 const RoleProfile = Loadable(lazy(() => import('../pages/profiles/RoleProfile/RoleProfile')));
 const UsersProfile = Loadable(lazy(() => import('../pages/profiles/UserProfile/UserProfile')));
 
 // checkout
-const CheckoutPage = Loadable(lazy(() => import('../pages/profiles/Shop/checkout/CheckoutPage')));
 
 // Dashboard
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));

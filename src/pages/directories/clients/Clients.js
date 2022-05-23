@@ -49,7 +49,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
   { id: 'email', label: 'Email Address', align: 'left' },
   { id: 'phone', label: 'Phone Number', align: 'left' },
-  { id: 'state', label: 'State', align: 'left' },
+  { id: 'address', label: 'Address', align: 'left' },
   { id: 'company', label: 'Company', align: 'left' },
   { id: '' }
 ];
@@ -138,7 +138,7 @@ export default function ClientList() {
         )
       });
 
-      dispatch(getClients({ page }));
+      dispatch(getClients({ page, token }));
     }
   };
 
@@ -243,7 +243,7 @@ export default function ClientList() {
               />
               <TableBody>
                 {filteredCleints.map((row) => {
-                  const { _id, name, email, phone, state, company } = row;
+                  const { _id, name, email, phone, address, company } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -279,7 +279,7 @@ export default function ClientList() {
                       <TableCell>{email}</TableCell>
                       <TableCell>{phone}</TableCell>
 
-                      <TableCell>{state}</TableCell>
+                      <TableCell>{address}</TableCell>
                       <TableCell>{company}</TableCell>
 
                       <TableCell align="right">

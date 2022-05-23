@@ -41,34 +41,46 @@ CategoryNewForm.propTypes = {
   handleCreate: PropTypes.func,
   loading: PropTypes.bool,
   categories: PropTypes.array,
-  subCategories: PropTypes.array
+  subCategories: PropTypes.array,
+  brands: PropTypes.array
 };
 
-export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, loading, categories, subCategories }) {
+export default function CategoryNewForm({
+  isEdit,
+  currentProduct,
+  brands,
+  handleCreate,
+  loading,
+  categories,
+  subCategories
+}) {
   const [fileLoading, setFileLoading] = useState(false);
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: {
-      name: currentProduct?.name || 'Blue light glasses',
-      description:
-        currentProduct?.description || 'This Blue light glasses protext your eyes from the blue screen light',
-      images: currentProduct?.images || [], //
-      regularPrice: currentProduct?.regularPrice || '300',
-      salePrice: currentProduct?.salePrice || '120',
-      available: currentProduct?.available || '15', //
-      subCategories: currentProduct?.subCategories.map((res) => res._id) || [],
-      inStock: currentProduct?.inStock || true, //
-      shipping: currentProduct?.shipping || true, //
-      brand: currentProduct?.brand || 'Banner', //
-      size: currentProduct?.size || [
-        { sizeNo: '15 Inch', sizePrice: '120' },
-        { sizeNo: '20 Inch', sizePrice: '150' }
-      ], //
-      sold: currentProduct?.sold || '0', //
-      category: currentProduct?.category?._id || '',
-      slug: currentProduct?.slug || ''
-    },
+    // eslint-disable-next-line no-unneeded-ternary
+    initialValues: currentProduct
+      ? currentProduct
+      : {
+          name: currentProduct?.name || 'Blue light glasses',
+          description:
+            currentProduct?.description || 'This Blue light glasses protext your eyes from the blue screen light',
+          images: currentProduct?.images || [], //
+          regularPrice: currentProduct?.regularPrice || '300',
+          salePrice: currentProduct?.salePrice || '120',
+          available: currentProduct?.available || '15', //
+          subCategories: currentProduct?.subCategories.map((res) => res._id) || [],
+          inStock: currentProduct?.inStock || true, //
+          shipping: currentProduct?.shipping || true, //
+          brand: currentProduct?.brand || '', //
+          size: currentProduct?.size || [
+            { sizeNo: '15 Inch', sizePrice: '120' },
+            { sizeNo: '20 Inch', sizePrice: '150' }
+          ], //
+          sold: currentProduct?.sold || '0', //
+          category: currentProduct?.category?._id || '',
+          slug: currentProduct?.slug || ''
+        },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
@@ -190,13 +202,24 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                 <Stack spacing={3}>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                      <TextField
+                      {/* <TextField
                         fullWidth
                         label="Brand"
                         {...getFieldProps('brand')}
                         error={Boolean(touched.brand && errors.brand)}
                         helperText={touched.brand && errors.brand}
-                      />
+                      /> */}
+                      <FormLabel>Select A Brand</FormLabel>
+                      <Select fullWidth {...getFieldProps('brand')}>
+                        {brands.map((option) => (
+                          <MenuItem key={option._id} value={option._id}>
+                            {option.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <FormHelperText error sx={{ m: '1%' }}>
+                        {touched.brand && errors.brand}
+                      </FormHelperText>
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <FieldArray
@@ -211,15 +234,15 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                                       fullWidth
                                       label="Size Number"
                                       {...getFieldProps(`size.${index}.sizeNo`)}
-                                      error={Boolean(getIn(errors, `size.${index}.sizeNo`))}
-                                      helperText={getIn(errors, `size.${index}.sizeNo`)}
+                                      error={Boolean((errors, `size.${index}.sizeNo`))}
+                                      helperText={(errors, `size.${index}.sizeNo`)}
                                     />
                                     <TextField
                                       fullWidth
                                       label="Size Price"
                                       {...getFieldProps(`size.${index}.sizePrice`)}
-                                      error={Boolean(getIn(errors, `size.${index}.sizePrice`))}
-                                      helperText={getIn(errors, `size.${index}.sizePrice`)}
+                                      error={Boolean((errors, `size.${index}.sizePrice`))}
+                                      helperText={(errors, `size.${index}.sizePrice`)}
                                       sx={{ margin: '1%' }}
                                     />
 
@@ -278,9 +301,9 @@ export default function CategoryNewForm({ isEdit, currentProduct, handleCreate, 
                     </Grid>
                     <Grid item xs={12}>
                       <FormLabel>Select A Parent Category</FormLabel>
-                      <Select fullWidth {...getFieldProps('category')}>
+                      <Select fullWidth {...getFieldProps('category')} defaultValue={values.category}>
                         {categories.map((option) => (
-                          <MenuItem key={option._id} value={option._id}>
+                          <MenuItem selected={values.category} key={option._id} value={option._id}>
                             {option.name}
                           </MenuItem>
                         ))}

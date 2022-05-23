@@ -29,8 +29,9 @@ export default function ClientsForm() {
   const { pathname } = useLocation();
   const { _id } = useParams();
 
-  const { client } = useSelector((state) => state);
+  const { client, auth } = useSelector((state) => state);
   const { clients } = client;
+  const { token } = auth;
   const isEdit = pathname.includes('edit');
   const currentClient = clients?.data.find((cli) => paramCase(cli._id) === _id);
 
@@ -53,7 +54,8 @@ export default function ClientsForm() {
     setLoading(true);
 
     const reqObject = {
-      client
+      client,
+      accessToken: token
     };
 
     const reduxRes = await dispatch(createClient(reqObject));

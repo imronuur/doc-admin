@@ -12,7 +12,7 @@ import { MIconButton } from '../../../components/@material-extend';
 import { useDispatch, useSelector } from '../../../redux/store';
 import { createProduct } from '../../../redux/thunk/productThunk';
 import { getAllCategories, getAllSubCategories } from '../../../redux/slices/subCategories';
-
+import { getAllBrands } from '../../../redux/slices/brandsSlice';
 // routes
 import { PATH_DASHBOARD, PATH_ADMIN } from '../../../routes/paths';
 // hooks
@@ -31,7 +31,7 @@ export default function ProductForm() {
   const { _id } = useParams();
   const { products } = useSelector((state) => state.product);
   const { token } = useSelector((state) => state.auth);
-
+  const [brands, setBrands] = useState([]);
   const isEdit = pathname.includes('edit');
   const currentProduct = products.data.find((product) => paramCase(product._id) === _id);
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,12 @@ export default function ProductForm() {
       const res = await getAllSubCategories();
       setSubCategories(res.data);
     };
+    const loadBrands = async () => {
+      const res = await getAllBrands();
+      setBrands(res.data);
+    };
     loadCategories();
+    loadBrands();
     loadSubCategories();
   }, []);
 
@@ -114,6 +119,7 @@ export default function ProductForm() {
           currentProduct={currentProduct}
           handleCreate={handleCreate}
           loading={loading}
+          brands={brands}
         />
       </Container>
     </Page>

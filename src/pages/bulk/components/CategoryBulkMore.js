@@ -20,7 +20,7 @@ CategoryMoreMenu.propTypes = {
 export default function CategoryMoreMenu({ onDelete, id }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(id);
+
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>

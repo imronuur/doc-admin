@@ -367,7 +367,7 @@ export default function CategoryList() {
                             (Number(available) <= 0 && sentenceCase('Out of Stock'))}
                         </Label>
                       </TableCell>
-                      <TableCell>{brand}</TableCell>
+                      <TableCell>{brand?.name}</TableCell>
                       <TableCell>{createdAt.split('T')[0]}</TableCell>
 
                       <TableCell align="right">

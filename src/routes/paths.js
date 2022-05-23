@@ -43,7 +43,6 @@ export const PATH_ADMIN = {
     invoices: path(ROOTS_ADMIN, '/invoice-directory'),
     orders: path(ROOTS_ADMIN, '/order-directory'),
     couponCode: path(ROOTS_ADMIN, '/coupon-code-directory'),
-    shop: path(ROOTS_ADMIN, '/shop-directory'),
     offers: path(ROOTS_ADMIN, '/offers-directory'),
     brands: path(ROOTS_ADMIN, '/brands-directory'),
     roles: path(ROOTS_ADMIN, '/roles-directory'),
@@ -76,8 +75,6 @@ export const PATH_ADMIN = {
   profiles: {
     clientProfile: path(ROOTS_ADMIN, '/client-profile'),
     orderProfile: path(ROOTS_ADMIN, '/order-profile'),
-    shopProductProfile: path(ROOTS_ADMIN, '/shop-product-profile'),
-    checkout: path(ROOTS_ADMIN, '/shop-product-profile/checkout'),
     invoiceProfile: path(ROOTS_ADMIN, '/invoice-profile'),
     productProfile: path(ROOTS_ADMIN, '/product-profile'),
     roleProfile: path(ROOTS_ADMIN, '/role-profile'),
