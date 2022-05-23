@@ -359,15 +359,11 @@ export default function CategoryList() {
                       <TableCell style={{ minWidth: 160 }}>
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-                          color={
-
-                            (Number(available) <= 0 && 'error') || (Number(available) <= 10 && 'warning') || 'success'
-                          }
+                          color={(available <= 0 && 'error') || (available <= 10 && 'warning') || 'success'}
                         >
-                          {(Number(available) >= 10 && sentenceCase('In Stock')) ||
-                            (Number(available) <= 10 && sentenceCase('Low In Stock')) ||
-                            (Number(available) <= 0 && sentenceCase('Out of Stock'))}
-
+                          {(available >= 10 && sentenceCase('In Stock')) ||
+                            (available <= 10 && available > 0 && sentenceCase('Low In Stock')) ||
+                            (available <= 0 && sentenceCase('Out of Stock'))}
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>

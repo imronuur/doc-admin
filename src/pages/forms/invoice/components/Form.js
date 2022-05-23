@@ -19,6 +19,7 @@ import {
   Typography,
   MenuItem,
   FormLabel,
+  FormHelperText,
   CardHeader,
   Button,
   Box,
@@ -73,6 +74,12 @@ const stackStyle = {
 export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading, clients }) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const { user } = useSelector((state) => state.auth);
+  const [toClient, setToClient] = useState(null);
+
   const formik = useFormik({
     enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
@@ -82,6 +89,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
           refTo: {},
           invoiceNumber: '',
           dateCreated: '',
+          type: '',
+          status: '',
           dueDate: '',
           total: 0,
           items: [
@@ -117,12 +126,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   });
 
   const { errors, values, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [toClient, setToClient] = useState(null);
 
-  const { user } = useSelector((state) => state.auth);
   const getClient = (client) => {
     setToClient(client);
     setFieldValue('refTo', client);
@@ -143,7 +147,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
 
   useEffect(() => {
     setFieldValue('total', Number(total));
-  }, [values.items, setFieldValue, total]);
+  }, [values.items]);
 
   // console.log(totalInvoice);
 
@@ -229,28 +233,29 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                   </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Status</FormLabel>
-                    <Select fullWidth {...getFieldProps('status')}>
+                    <Select fullWidth {...getFieldProps('status')} error={Boolean(touched.status && errors.status)}>
                       {statuses.map((option, index) => (
                         <MenuItem key={index} value={option.value}>
                           {option.value}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText error sx={{ m: '1%' }}>
+                      {touched.status && errors.status}
+                    </FormHelperText>
                   </Grid>
                   <Grid item xs={12}>
                     <FormLabel>Select Type</FormLabel>
-                    <Select
-                      fullWidth
-                      {...getFieldProps('type')}
-                      error={Boolean(touched.type && errors.type)}
-                      helperText={touched.type && errors.type}
-                    >
+                    <Select fullWidth {...getFieldProps('type')} error={Boolean(touched.type && errors.type)}>
                       {types.map((option, index) => (
                         <MenuItem key={index} value={option.value}>
                           {option.value}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText error sx={{ m: '1%' }}>
+                      {touched.type && errors.type}
+                    </FormHelperText>
                   </Grid>
 
                   <Grid item xs={12}>

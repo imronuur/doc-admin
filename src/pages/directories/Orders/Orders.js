@@ -45,7 +45,7 @@ let content = null;
 const TABLE_HEAD = [
   { id: 'orderNum', label: 'Order #', align: 'left' },
   { id: 'status', label: 'Status', align: 'left' },
-  { id: 'datePurchased', label: 'Date Purchased', align: 'left' },
+  { id: 'createdAt', label: 'Date Purchased', align: 'left' },
   { id: 'total', label: 'Total', align: 'left' },
 
   { id: '' }
@@ -78,7 +78,7 @@ function applySortFilter(array, comparator, query) {
   });
 
   if (query) {
-    return filter(array, (_product) => _product.name?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_product) => _product.orderStatus?.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
 
   return stabilizedThis.map((el) => el[0]);
@@ -93,7 +93,7 @@ export default function OrdersList() {
   const { orders } = order;
   const { token } = auth;
   const [page, setPage] = useState(0);
-  const [setOrderAsc] = useState('asc');
+  const [orderAsc, setOrderAsc] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [filterName, setFilterName] = useState('');
   const [orderBy, setOrderBy] = useState('createdAt');
@@ -267,7 +267,7 @@ export default function OrdersList() {
           <TableContainer sx={{ minWidth: 800 }}>
             <Table>
               <OrdersListHead
-                order={order}
+                order={orderAsc}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
                 rowCount={orders.data.length}
@@ -277,7 +277,8 @@ export default function OrdersList() {
               />
               <TableBody>
                 {filteredOrder.map((row) => {
-                  const { _id, orderTo, createdAt, orderInfo, orderStatus } = row;
+                  const { _id, address, createdAt, orderInfo, orderStatus } = row;
+
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
                   return (
@@ -301,7 +302,7 @@ export default function OrdersList() {
                           }}
                         >
                           <Typography variant="subtitle2" noWrap>
-                            {orderTo}
+                            {address[0].fullAddress}
                           </Typography>
                         </Box>
                       </TableCell>
@@ -323,7 +324,7 @@ export default function OrdersList() {
 
                       <TableCell>{createdAt}</TableCell>
 
-                      <TableCell>{fCurrency(orderInfo?.amount)}</TableCell>
+                      <TableCell>{fCurrency(orderInfo?.total)}</TableCell>
 
                       <TableCell align="right">
                         <OrdersMoreMenu

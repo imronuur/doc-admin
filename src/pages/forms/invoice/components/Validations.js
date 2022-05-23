@@ -4,8 +4,18 @@ export const Validations = yup.object().shape({
   // discount: yup.string().required('discount is required'),
   dueDate: yup.date().required('Date is required'),
   type: yup.mixed().required('Type is required'),
-  dateCreated: yup.date().required('Created Date is required')
-  // refTo: yup.mixed().required('RefTo is required')
+  status: yup.mixed().required('Status is required'),
+  dateCreated: yup.date().required('Created Date is required'),
+  items: yup.array().of(
+    yup.object().shape({
+      unitPrice: yup.number().required('Unit Price is required'),
+      itemName: yup.string().required('Item Name is required'),
+      quantity: yup.number().required('Quantity is required'),
+      discount: yup.number().required('Discount is required')
+    })
+  ),
+
+  refTo: yup.mixed().required('RefTo is required')
   // unitPrice: yup.string().required('Unit Price is required'),
   // invoiceNumber: yup.string()
 });

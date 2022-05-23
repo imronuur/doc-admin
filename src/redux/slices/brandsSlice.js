@@ -54,3 +54,16 @@ export function getBrands({ page, accessToken }) {
     }
   };
 }
+
+export const getAllBrands = async () => {
+  // const headers = {
+  //   'Content-Type': 'application/json',
+  //   Authorization: accessToken
+  // };
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/brands-all`);
+    return response;
+  } catch (error) {
+    return error.message;
+  }
+};
