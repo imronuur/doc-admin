@@ -15,7 +15,6 @@ import {
   Card,
   Table,
   Button,
-  Stack,
   TableRow,
   Checkbox,
   TableBody,
@@ -360,14 +359,12 @@ export default function CategoryList() {
                         <Label
                           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
                           color={
-
                             (Number(available) <= 0 && 'error') || (Number(available) <= 10 && 'warning') || 'success'
                           }
                         >
                           {(Number(available) >= 10 && sentenceCase('In Stock')) ||
                             (Number(available) <= 10 && sentenceCase('Low In Stock')) ||
                             (Number(available) <= 0 && sentenceCase('Out of Stock'))}
-
                         </Label>
                       </TableCell>
                       <TableCell>{brand}</TableCell>
