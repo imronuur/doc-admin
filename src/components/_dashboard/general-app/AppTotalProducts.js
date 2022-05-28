@@ -23,15 +23,15 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-const PERCENT = -0.06;
-const TOTAL_DOWNLOAD = 678;
-const CHART_DATA = [{ data: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31] }];
+const PERCENT = 2.6;
+const CHART_DATA = [{ data: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26] }];
 
-export default function AppTotalDownloads() {
+export default function AppTotalProducts({ totalProducts }) {
   const theme = useTheme();
+  const TOTAL_PRODUCTS = totalProducts && totalProducts.length;
 
   const chartOptions = {
-    colors: [theme.palette.chart.red[0]],
+    colors: [theme.palette.primary.main],
     chart: { sparkline: { enabled: true } },
     plotOptions: { bar: { columnWidth: '68%', borderRadius: 2 } },
     labels: ['1', '2', '3', '4', '5', '6', '7', '8'],
@@ -50,8 +50,7 @@ export default function AppTotalDownloads() {
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', p: 3 }}>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle2">Total Downloads</Typography>
-
+        <Typography variant="subtitle2">Total Products</Typography>
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
           <IconWrapperStyle
             sx={{
@@ -69,7 +68,7 @@ export default function AppTotalDownloads() {
           </Typography>
         </Stack>
 
-        <Typography variant="h3">{fNumber(TOTAL_DOWNLOAD)}</Typography>
+        <Typography variant="h3">{fNumber(TOTAL_PRODUCTS)}</Typography>
       </Box>
 
       <ReactApexChart type="bar" series={CHART_DATA} options={chartOptions} width={60} height={36} />

@@ -54,3 +54,16 @@ export function getUsers({ page, authToken }) {
     }
   };
 }
+
+export async function getAllUsers({ accessToken }) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_BACKEND_API}/get-all-users`, { headers });
+    return res.data;
+  } catch (error) {
+    return error.message;
+  }
+}

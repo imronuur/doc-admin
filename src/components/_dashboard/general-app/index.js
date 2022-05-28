@@ -5,9 +5,15 @@ export { default as AppNewInvoice } from './AppNewInvoice';
 export { default as AppTopAuthors } from './AppTopAuthors';
 export { default as AppTopInstalledCountries } from './AppTopInstalledCountries';
 export { default as AppTopRelated } from './AppTopRelated';
-export { default as AppTotalActiveUsers } from './AppTotalActiveUsers';
-export { default as AppTotalDownloads } from './AppTotalDownloads';
-export { default as AppTotalInstalled } from './AppTotalInstalled';
+export { default as AppTotalProducts } from './AppTotalProducts';
+export { default as AppTotalCategoriesAndSubCategories } from './AppTotalCategoriesAndSubCategories';
+export { default as AppTotalUsers } from './AppTotalUsers';
 export { default as AppWelcome } from './AppWelcome';
 export { default as AppWidgets1 } from './AppWidgets1';
 export { default as AppWidgets2 } from './AppWidgets2';
+
+export { default as EcommerceYearlySales } from './EcommerceYearlySales';
+export { default as EcommerceSalesProfit } from './EcommerceSalesProfit';
+export { default as EcommerceSaleByGender } from './EcommerceSaleByGender';
+export { default as EcommerceProductSold } from './EcommerceProductSold';
+export { default as AnalyticsCurrentVisits } from './AnalyticsCurrentVisits';

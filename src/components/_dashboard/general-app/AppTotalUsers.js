@@ -24,11 +24,11 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 const PERCENT = 0.15;
-const TOTAL_INSTALLED = 4876;
 const CHART_DATA = [{ data: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20] }];
 
-export default function AppTotalInstalled() {
+export default function AppTotalUsers({ totalUsers }) {
   const theme = useTheme();
+  const TOTAL_USERS = totalUsers && totalUsers.length;
 
   const chartOptions = {
     colors: [theme.palette.chart.blue[0]],
@@ -50,7 +50,7 @@ export default function AppTotalInstalled() {
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', p: 3 }}>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle2">Total Installed</Typography>
+        <Typography variant="subtitle2">Total Users</Typography>
 
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, mb: 1 }}>
           <IconWrapperStyle
@@ -69,7 +69,7 @@ export default function AppTotalInstalled() {
           </Typography>
         </Stack>
 
-        <Typography variant="h3">{fNumber(TOTAL_INSTALLED)}</Typography>
+        <Typography variant="h3">{fNumber(TOTAL_USERS)}</Typography>
       </Box>
 
       <ReactApexChart type="bar" series={CHART_DATA} options={chartOptions} width={60} height={36} />

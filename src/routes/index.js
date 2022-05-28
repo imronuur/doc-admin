@@ -10,7 +10,7 @@ import AuthGuard from '../guards/AuthGuard';
 import RoleBasedGuard from '../guards/RoleBasedGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
-import { PATH_ADMIN } from './paths';
+import { PATH_ADMIN, PATH_DASHBOARD } from './paths';
 // ----------------------------------------------------------------------
 
 const Loadable = (Component) => (props) => {
@@ -78,6 +78,7 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={`${PATH_ADMIN.directories.overview}`} replace /> },
+        { path: `${PATH_ADMIN.profiles.adminProfile}`, element: <UserProfile /> },
         // Directories
         { path: `${PATH_ADMIN.directories.overview}`, element: <GeneralApp /> },
         { path: `${PATH_ADMIN.directories.products}`, element: <ProductList /> },
@@ -122,7 +123,7 @@ export default function Router() {
         // profiles
         { path: `${PATH_ADMIN.profiles.clientProfile}/:_id`, element: <ClientProfilePage /> },
         { path: `${PATH_ADMIN.profiles.orderProfile}/:_id`, element: <OrderProfilePage /> },
-        { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceProfilePage /> },
+        { path: `${PATH_ADMIN.profiles.invoiceProfile}/:_id`, element: <InvoiceDetails /> },
         { path: `${PATH_ADMIN.profiles.productProfile}/:_id`, element: <ProductProfilePage /> },
         { path: `${PATH_ADMIN.profiles.roleProfile}/:_id`, element: <RoleProfile /> },
         { path: `${PATH_ADMIN.profiles.userprofile}/:_id`, element: <UsersProfile /> },
@@ -204,7 +205,7 @@ export default function Router() {
         {
           path: 'user',
           children: [
-            { element: <Navigate to="/dashboard/user/profile" replace /> },
+            { element: <Navigate to="/dashboard/user" replace /> },
             { path: 'profile', element: <UserProfile /> },
             { path: 'cards', element: <UserCards /> },
             { path: 'list', element: <UserList /> },
@@ -365,6 +366,7 @@ const UserForm = Loadable(lazy(() => import('../pages/forms/userForm/UserForm'))
 // profiles
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
+const InvoiceDetails = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceDetails')));
 const OrderProfilePage = Loadable(lazy(() => import('../pages/profiles/OrdersProfile/OrderProfilePage')));
 const ProductProfilePage = Loadable(lazy(() => import('../pages/profiles/productProfile/ProductProfilePage')));
 const RoleProfile = Loadable(lazy(() => import('../pages/profiles/RoleProfile/RoleProfile')));

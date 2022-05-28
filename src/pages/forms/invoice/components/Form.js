@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import closeFill from '@iconify/icons-eva/close-fill';
@@ -29,7 +29,7 @@ import {
 import { fCurrency } from '../../../../utils/formatNumber';
 import { Validations } from './Validations';
 import { PATH_ADMIN } from '../../../../routes/paths';
-
+// import { getTotals } from '../../../../redux/slices/invoiceSlice';
 import { MIconButton } from '../../../../components/@material-extend';
 // ----------------------------------------------------------------------
 import InvoicePDF from '../invoice-to-pdf/InvoicePDF';
@@ -74,39 +74,36 @@ const stackStyle = {
 export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoice, loading, clients }) {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const { user } = useSelector((state) => state.auth);
-  const [toClient, setToClient] = useState(null);
+  const [total, setTotal] = useState(0);
 
   const formik = useFormik({
-    enableReinitialize: true,
+    // enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
-    initialValues: currentInvoice
-      ? currentInvoice
-      : {
-          refTo: {},
-          invoiceNumber: '',
-          dateCreated: '',
-          type: '',
-          status: '',
-          dueDate: '',
-          total: 0,
-          items: [
-            {
-              itemName: '',
-              unitPrice: '',
-              quantity: '',
-              discount: ''
-            }
-          ]
-        },
+    initialValues: {
+      refTo: currentInvoice?.refTo._id || '',
+      invoiceNumber: '',
+      dateCreated: currentInvoice?.dateCreated || '',
+      type: currentInvoice?.type || '',
+      status: currentInvoice?.status || '',
+      dueDate: currentInvoice?.dueDate || '',
+      total: total || '',
+      items: currentInvoice?.items || [
+        {
+          unitPrice: '',
+          quantity: '',
+
+          itemName: ''
+        }
+      ]
+    },
     validationSchema: Validations,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       if (new Date(values.dueDate) >= new Date(values.dateCreated)) {
         try {
-          handleCreateInvoice(values);
+          const newValues = { ...values, total };
+          handleCreateInvoice(newValues);
+
           setSubmitting(false);
         } catch (error) {
           setSubmitting(false);
@@ -126,37 +123,49 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   });
 
   const { errors, values, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
-
-  const getClient = (client) => {
-    setToClient(client);
-    setFieldValue('refTo', client);
-
-    handleClose();
-  };
+  // const dispatch = useDispatch();
 
   // useEffect(() => {}, [values.items, dispatch]);
   // const totalInvoice = () => {
   // };
 
-  const total = values.items.map((item) => {
-    const { quantity, unitPrice, discount } = item;
-    const totalPrice = Number(quantity) * Number(unitPrice);
-    const price = totalPrice - totalPrice * (discount / 100);
-    return price;
-  });
+  // const total = values.items.map((item) => {
+  //   const { quantity, unitPrice, discount } = item;
+  //   const totalPrice = Number(quantity) * Number(unitPrice);
+  //   const price = totalPrice - totalPrice * (discount / 100);
+  //   return price;
+  // });
 
+  // useEffect(() => {
+  //   // setFieldValue('total', Number(total));
+  //   dispatch(getTotals());
+  // }, [values.items]);
+  // // console.log(totalInvoice);
+  // console.log(values);
   useEffect(() => {
-    setFieldValue('total', Number(total));
-  }, [values.items]);
+    let subTotal = 0;
 
-  // console.log(totalInvoice);
+    values.items.forEach((item) => {
+      const quantityNumber = parseFloat(item.quantity);
+      const unitPrice = parseFloat(item.unitPrice);
+      const discount = parseFloat(item.discount);
+      const amount = unitPrice && quantityNumber ? quantityNumber * unitPrice : 0;
+      const totalPrice = amount - amount * (discount / 100);
+
+      subTotal += amount;
+      subTotal = totalPrice;
+    });
+
+    setTotal(subTotal);
+    setFieldValue('total', total);
+  }, [values.items]);
 
   return (
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Card>
-          <Grid item sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: 3 }}>
-            <Stack>
+          <Grid container sx={{ p: 4 }}>
+            <Grid item xs={12} md={6}>
               <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
                 From:
               </Typography>
@@ -164,63 +173,30 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
               <Typography variant="p">
                 {user.email} <br /> Role: {user.role}
               </Typography>
-            </Stack>
-            <Grid>
-              <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h5" sx={{ mb: 3, color: 'text.disabled' }}>
+                Select A Reference Client
+              </Typography>
+              <Select fullWidth {...getFieldProps('refTo')}>
+                {clients.map((client) => (
+                  <MenuItem key={client._id} value={client._id}>
+                    {client.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText error sx={{ m: '1%' }}>
+                {touched.refTo && errors.refTo}
+              </FormHelperText>
+
+              {/* <Typography variant="h5" sx={{ color: 'text.disabled', mb: 2 }}>
                 To:
               </Typography>
-              {toClient && (
-                <>
-                  <Typography fontWeight="600">{toClient.name}</Typography>
-                  <Typography variant="p">
-                    {toClient.email} <br /> {toClient.phone}
-                  </Typography>
-                </>
-              )}
 
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={style}>
-                  <Stack
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row'
-                    }}
-                    gap={3}
-                    mb={3}
-                  >
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                      Select Client
-                    </Typography>
-                    <Button variant="outlined" component={RouterLink} to={PATH_ADMIN.forms.newClients}>
-                      + Add New
-                    </Button>
-                  </Stack>
-                  {clients.length > 0
-                    ? clients.map((client) => (
-                        <Stack
-                          sx={stackStyle}
-                          key={client._id}
-                          id="modal-modal-description"
-                          onClick={() => getClient(client)}
-                        >
-                          <Typography sx={{ cursor: 'pointer', paddingLeft: '4px' }}>{client.name}</Typography>
-                          <Typography color="primary" sx={{ cursor: 'pointer', paddingLeft: '4px' }}>
-                            {client.email}
-                          </Typography>
-                          <Typography sx={{ cursor: 'pointer', paddingLeft: '4px' }}>{client.phone}</Typography>
-                        </Stack>
-                      ))
-                    : 'No Clients Found'}
-                </Box>
-              </Modal>
-            </Grid>
-            <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <Button onClick={handleOpen}>+ Add to</Button>
+              <Typography fontWeight="600">{toClient?.name}</Typography>
+              <Typography variant="p">
+                {toClient?.email} <br /> {toClient?.phone}
+              </Typography> */}
             </Grid>
           </Grid>
           <Grid container spacing={3}>
@@ -279,6 +255,10 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                       helperText={touched.dueDate && errors.dueDate}
                       type="date"
                     />
+                    <FormHelperText error sx={{ m: '1%' }}>
+                      {new Date(values.dateCreated) >= new Date(values.deuDate) &&
+                        'Date Create must be less than Date Due'}
+                    </FormHelperText>
                   </Grid>
                 </Stack>
                 <Stack sx={{ display: 'flex', flexDirection: 'row' }} gap={3} mt={3}>
@@ -336,9 +316,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                           disabled
                                           label="Total"
                                           defaultValue={total}
-                                          {...getFieldProps(`items.${index}.total`)}
-                                          error={Boolean(getIn(errors, `items.${index}.total`))}
-                                          helperText={getIn(errors, `items.${index}.total`)}
+                                          {...getFieldProps(`total`)}
                                         /> */}
                                         <Typography
                                           disabled
@@ -350,7 +328,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                             color: 'text.disabled'
                                           }}
                                         >
-                                          {fCurrency(Number(values.total))}
+                                          {fCurrency(total)}
                                         </Typography>
                                       </Grid>
                                     </Stack>
@@ -369,22 +347,33 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                   </Grid>
                                 </>
                               ))}
-                              <Grid item xs={12}>
-                                <Button
-                                  type="button"
-                                  variant="text"
-                                  onClick={() =>
-                                    arrayHelpers.push({
-                                      itemName: '',
-                                      unitPrice: '',
-                                      quantity: '',
-                                      discount: ''
-                                    })
-                                  }
-                                  sx={{ mt: 3, ml: 1 }}
-                                >
-                                  + Add Item
-                                </Button>
+                              <Grid container spacing={3}>
+                                <Grid item xs={12} md={6}>
+                                  <Button
+                                    type="button"
+                                    variant="text"
+                                    onClick={() =>
+                                      arrayHelpers.push({
+                                        itemName: '',
+                                        unitPrice: '',
+                                        quantity: '',
+                                        discount: ''
+                                      })
+                                    }
+                                    sx={{ mt: 3, ml: 1 }}
+                                  >
+                                    + Add Item
+                                  </Button>
+                                </Grid>
+                                <Grid item xs={12} md={6} mt={2}>
+                                  <TextField
+                                    fullWidth
+                                    label="Discount"
+                                    {...getFieldProps('discount')}
+                                    error={Boolean(touched.discount && errors.discount)}
+                                    helperText={touched.discount && errors.discount}
+                                  />
+                                </Grid>
                               </Grid>
                             </>
                           ) : (
@@ -399,25 +388,6 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                   <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={loading}>
                     {!isEdit ? 'Create Invoice' : 'Save Changes'}
                   </LoadingButton>
-                  {!isEdit && (
-                    <PDFDownloadLink
-                      document={<InvoicePDF key={user._id} invoice={values} user={user} clients={values.refTo} />}
-                      fileName="IDAN | INVOICE"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {() => (
-                        <LoadingButton
-                          size="large"
-                          // loading={loading}
-                          variant="contained"
-                          loadingPosition="end"
-                          endIcon={<Icon icon={downloadFill} />}
-                        >
-                          Download
-                        </LoadingButton>
-                      )}
-                    </PDFDownloadLink>
-                  )}
                 </Grid>
               </Card>
             </Grid>

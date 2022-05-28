@@ -273,7 +273,7 @@ export default function ClientList() {
 
                       <TableCell>{title}</TableCell>
 
-                      <TableCell>{fCurrency(price)}</TableCell>
+                      <TableCell>{fCurrency(product.salePrice)}</TableCell>
                       <TableCell>{createdAt}</TableCell>
 
                       <TableCell align="right">

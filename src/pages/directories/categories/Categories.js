@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { useState, useEffect } from 'react';
 import { parse as csvparse } from 'papaparse';
 import { v4 as uuidv4 } from 'uuid';
+import { styled } from '@mui/material/styles';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import closeFill from '@iconify/icons-eva/close-fill';
@@ -49,6 +50,7 @@ import SubCategory from './subCategory/SubCategory';
 let content = null;
 
 const TABLE_HEAD = [
+  { id: 'image', label: 'Image', align: 'left' },
   { id: 'name', label: 'Category Name', align: 'left' },
   { id: 'dateCreated', label: 'Date Created', align: 'left' },
   { id: '' }
@@ -87,6 +89,13 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const ThumbImgStyle = styled('img')(({ theme }) => ({
+  width: 64,
+  height: 64,
+  objectFit: 'cover',
+  margin: theme.spacing(0, 2),
+  borderRadius: theme.shape.borderRadiusSm
+}));
 // ----------------------------------------------------------------------
 
 export default function CategoryList() {
@@ -295,7 +304,7 @@ export default function CategoryList() {
               />
               <TableBody>
                 {filtredCategories.map((row) => {
-                  const { _id, name, slug, createdAt } = row;
+                  const { _id, name, slug, createdAt, image } = row;
 
                   const isItemSelected = selected.indexOf(_id) !== -1;
 
@@ -310,6 +319,9 @@ export default function CategoryList() {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, _id)} />
+                      </TableCell>
+                      <TableCell>
+                        <ThumbImgStyle alt={name} src={image} />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         <Box

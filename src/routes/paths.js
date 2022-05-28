@@ -78,7 +78,8 @@ export const PATH_ADMIN = {
     invoiceProfile: path(ROOTS_ADMIN, '/invoice-profile'),
     productProfile: path(ROOTS_ADMIN, '/product-profile'),
     roleProfile: path(ROOTS_ADMIN, '/role-profile'),
-    userprofile: path(ROOTS_ADMIN, '/user-profile')
+    userprofile: path(ROOTS_ADMIN, '/user-profile'),
+    adminProfile: path(ROOTS_ADMIN, '/profile')
   }
 };
 

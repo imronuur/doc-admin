@@ -52,7 +52,7 @@ ProductDetailsSumary.propTypes = {
 
 export default function ProductDetailsSumary({ currentProduct }) {
   const theme = useTheme();
-  const { name, regularPrice, description, salePrice, rating, review, available, size } = currentProduct;
+  const { name, regularPrice, description, salePrice, review, available, size } = currentProduct;
 
   return (
     <RootStyle>
@@ -69,11 +69,16 @@ export default function ProductDetailsSumary({ currentProduct }) {
         {name}
       </Typography>
       <Stack spacing={0.5} direction="row" alignItems="center" sx={{ mb: 2 }}>
-        <Rating value={rating} precision={0.1} readOnly />
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          ({fShortenNumber(review)}
-          reviews)
-        </Typography>
+        {review &&
+          review.map((r, i) => (
+            <>
+              <Rating value={r.rating} precision={0.1} readOnly />
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                ({fShortenNumber(r.rating)}
+                reviews)
+              </Typography>
+            </>
+          ))}
       </Stack>
       <Stack direction="row" justifyContent="space-between" sx={{ mt: 4.5 }}>
         <Typography variant="subtitle1" sx={{ mt: 0.5 }}>

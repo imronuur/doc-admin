@@ -43,12 +43,22 @@ const slice = createSlice({
 
       state.invoices.data.map((item) => (item.total = total));
     }
+    // getTotals(state) {
+    //   let total = 0;
+    //   let subtotal = 0;
+    //   state.invoices.data.forEach((item) => {
+    //     subtotal += item.items.unitPrice * item.items.quantity;
+    //     total = subtotal - (subtotal * state.checkout.discount) / 100;
+    //   });
+    //   state.invoices.data.total = total;
+    //   state.invoices.data.subTotal = subtotal;
+    // }
   }
 });
 
 // Reducer
 export default slice.reducer;
-export const { getInvoiceTotal } = slice.actions;
+export const { getInvoiceTotal, getTotals } = slice.actions;
 
 // ----------------------------------------------------------------------
 

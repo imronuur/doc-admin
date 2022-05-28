@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
 import { LoadingButton } from '@mui/lab';
-import { Card, Autocomplete, Grid, Stack, TextField, FormLabel } from '@mui/material';
+import { Card, Autocomplete, Grid, Stack, TextField, FormHelperText } from '@mui/material';
 
 import { Validations } from './Validations';
 
@@ -25,8 +25,6 @@ export default function OffersForm({ isEdit, currentOffer, products, handleCreat
       title: currentOffer?.title || '',
       subTitle: currentOffer?.subTitle || '',
       product: currentOffer?.product,
-      expiryDate: currentOffer?.expiryDate || '',
-      price: currentOffer?.price || 0,
       _id: currentOffer?._id
     },
     validationSchema: Validations,
@@ -41,7 +39,7 @@ export default function OffersForm({ isEdit, currentOffer, products, handleCreat
     }
   });
 
-  const { errors, touched, handleSubmit, setFieldValue, getFieldProps } = formik;
+  const { errors, touched, handleSubmit, setFieldValue, getFieldProps, values } = formik;
 
   const product = products?.data?.map((product) => product);
 
@@ -60,7 +58,14 @@ export default function OffersForm({ isEdit, currentOffer, products, handleCreat
                     }}
                     options={product}
                     getOptionLabel={(option) => option.name}
-                    renderInput={(params) => <TextField {...params} label="Product" />}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        error={Boolean(touched.product && errors.product)}
+                        helperText={touched.product && errors.product}
+                        label="Product"
+                      />
+                    )}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -79,26 +84,6 @@ export default function OffersForm({ isEdit, currentOffer, products, handleCreat
                     {...getFieldProps('subTitle')}
                     error={Boolean(touched.subTitle && errors.subTitle)}
                     helperText={touched.subTitle && errors.subTitle}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Price"
-                    {...getFieldProps('price')}
-                    error={Boolean(touched.price && errors.price)}
-                    helperText={touched.price && errors.price}
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <FormLabel>Expiry Date</FormLabel>
-                  <TextField
-                    fullWidth
-                    {...getFieldProps('expiryDate')}
-                    error={Boolean(touched.expiryDate && errors.expiryDate)}
-                    helperText={touched.expiryDate && errors.expiryDate}
-                    type="date"
                   />
                 </Grid>
               </Stack>

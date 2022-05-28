@@ -10,7 +10,7 @@ import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography } from '@mui/material';
 import { useFirebaseAuth } from '../../contexts/authContext';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { PATH_DASHBOARD, PATH_ADMIN } from '../../routes/paths';
 import { useSelector } from '../../redux/store';
 // hooks
 import useIsMountedRef from '../../hooks/useIsMountedRef';
@@ -30,7 +30,7 @@ const MENU_OPTIONS = [
   {
     label: 'Profile',
     icon: personFill,
-    linkTo: PATH_DASHBOARD.user.profile
+    linkTo: PATH_ADMIN.profiles.adminProfile
   },
   {
     label: 'Settings',

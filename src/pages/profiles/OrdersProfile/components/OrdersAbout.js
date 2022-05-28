@@ -123,7 +123,7 @@ export default function RouteAbout({ currentOrder, accessToken }) {
               {' '}
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography>Order Amount</Typography>
-                <Typography variant="">{fCurrency(currentOrder?.orderInfo.amount)}</Typography>
+                <Typography variant="">{fCurrency(currentOrder?.orderInfo.total)}</Typography>
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography>Order Status</Typography>
@@ -142,13 +142,7 @@ export default function RouteAbout({ currentOrder, accessToken }) {
                 ))}
               </Select>
               <Typography>Total</Typography>
-              <TextField
-                variant="outlined"
-                size="large"
-                type="number"
-                disabled
-                {...getFieldProps('orderInfo.amount')}
-              />
+              <TextField variant="outlined" size="large" type="number" disabled {...getFieldProps('orderInfo.total')} />
               <Grid>
                 <Typography>Shipping Address</Typography>
                 <Stack>

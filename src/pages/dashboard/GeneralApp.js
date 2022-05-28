@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 // material
 import { Container, Grid, Stack } from '@mui/material';
 // hooks
@@ -5,20 +6,21 @@ import { useSelector } from 'react-redux';
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
+import { getAllProducts } from '../../redux/slices/products';
+import { getAllUsers } from '../../redux/slices/usersSlice';
+import { getAllCategories, getAllSubCategories } from '../../redux/slices/subCategories';
+
 import {
   AppWelcome,
-  AppWidgets1,
-  AppWidgets2,
   AppFeatured,
-  AppNewInvoice,
-  AppTopAuthors,
-  AppTopRelated,
-  AppAreaInstalled,
-  AppTotalDownloads,
-  AppTotalInstalled,
-  AppCurrentDownload,
-  AppTotalActiveUsers,
-  AppTopInstalledCountries
+  AppTotalCategoriesAndSubCategories,
+  AppTotalUsers,
+  AppTotalProducts,
+  EcommerceYearlySales,
+  EcommerceSalesProfit,
+  EcommerceSaleByGender,
+  EcommerceProductSold,
+  AnalyticsCurrentVisits
 } from '../../components/_dashboard/general-app';
 
 // ----------------------------------------------------------------------
@@ -26,6 +28,44 @@ import {
 export default function GeneralApp() {
   const { themeStretch } = useSettings();
   const { user } = useSelector((state) => state.auth);
+  const [totalProducts, setTotalProducts] = useState([]);
+  const [totalUsers, setTotalUsers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  // useEffect api request that fetchs all products from the database
+  useEffect(() => {
+    let isSubscribed = true;
+
+    if (isSubscribed) {
+      const loadAllProducts = async () => {
+        const reqObject = {
+          accessToken: user.token
+        };
+        const res = await getAllProducts(reqObject);
+        setTotalProducts(res.data);
+      };
+      const loadAllUsers = async () => {
+        const reqObject = {
+          accessToken: user.token
+        };
+        const userRes = await getAllUsers(reqObject);
+        setTotalUsers(userRes.data);
+      };
+      const loadCategories = async () => {
+        const res = await getAllCategories();
+        setCategories(res.data);
+      };
+      const loadSubCategories = async () => {
+        const res = await getAllSubCategories();
+        setSubCategories(res.data);
+      };
+      loadAllProducts();
+      loadAllUsers();
+      loadCategories();
+      loadSubCategories();
+    }
+    return () => (isSubscribed = false);
+  }, [user.token]);
 
   return (
     <Page title="General: App | Minimal-UI">
@@ -40,46 +80,35 @@ export default function GeneralApp() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalActiveUsers />
+            <AppTotalProducts totalProducts={totalProducts.data} />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalInstalled />
+            <AppTotalUsers totalUsers={totalUsers} />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalDownloads />
+            <AppTotalCategoriesAndSubCategories totalCategories={categories} totalSubCategories={subCategories} />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentDownload />
+          <Grid item xs={12} md={6} lg={6}>
+            <EcommerceProductSold />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
-            <AppAreaInstalled />
+          <Grid item xs={12} md={6} lg={6}>
+            <EcommerceSalesProfit />
           </Grid>
 
-          <Grid item xs={12} lg={8}>
-            <AppNewInvoice />
+          <Grid item xs={12} lg={6}>
+            <EcommerceSaleByGender />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopRelated />
+          <Grid item xs={12} md={6} lg={6}>
+            <AnalyticsCurrentVisits />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopInstalledCountries />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppTopAuthors />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <Stack spacing={3}>
-              <AppWidgets1 />
-              <AppWidgets2 />
-            </Stack>
+          <Grid item xs={12} md={6} lg={12}>
+            <EcommerceYearlySales />
           </Grid>
         </Grid>
       </Container>

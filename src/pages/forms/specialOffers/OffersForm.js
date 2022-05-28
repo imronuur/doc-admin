@@ -45,7 +45,10 @@ export default function ClientsForm() {
 
     if (isSubscribed) {
       const loadProducts = async () => {
-        const res = await getAllProducts();
+        const reqObject = {
+          accessToken: token
+        };
+        const res = await getAllProducts(reqObject);
         setProducts(res.data);
       };
 
