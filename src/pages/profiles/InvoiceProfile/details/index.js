@@ -46,23 +46,13 @@ export default function InvoiceDetails({ invoice, invoiceFrom }) {
     return null;
   }
 
-  const {
-    items,
-    taxes,
-    status,
-    dueDate,
-    discount,
-    _id,
-    refTo,
-    createDate,
-    total,
+  const { items, status, dueDate, _id, refTo, dateCreated, total } = invoice;
 
-    subTotalPrice
-  } = invoice;
+  let discount = null;
 
   return (
     <>
-      <InvoiceToolbar invoice={invoice} />
+      <InvoiceToolbar invoice={invoice} invoiceFrom={invoiceFrom} />
 
       <Card sx={{ pt: 5, px: 5 }}>
         <Grid container>
@@ -115,14 +105,14 @@ export default function InvoiceDetails({ invoice, invoiceFrom }) {
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               date create
             </Typography>
-            {/* <Typography variant="body2">{fDate(createDate || '')}</Typography> */}
+            <Typography variant="body2">{fDate(dateCreated || '')}</Typography>
           </Grid>
 
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
             <Typography paragraph variant="overline" sx={{ color: 'text.disabled' }}>
               Due date
             </Typography>
-            {/* <Typography variant="body2">{fDate(dueDate || '')}</Typography> */}
+            <Typography variant="body2">{fDate(dueDate || '')}</Typography>
           </Grid>
         </Grid>
 
@@ -145,27 +135,30 @@ export default function InvoiceDetails({ invoice, invoiceFrom }) {
               </TableHead>
 
               <TableBody>
-                {items.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      borderBottom: (theme) => `solid 1px ${theme.palette.divider}`
-                    }}
-                  >
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell align="left">
-                      <Box sx={{ maxWidth: 560 }}>
-                        <Typography variant="subtitle2">{row.itemName}</Typography>
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                          {row.description}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="left">{row.quantity}</TableCell>
-                    <TableCell align="right">{fCurrency(row.unitPrice)}</TableCell>
-                    <TableCell align="right">{fCurrency(row.unitPrice * row.quantity)}</TableCell>
-                  </TableRow>
-                ))}
+                {items.map((row, index) => {
+                  discount = row.discount;
+                  return (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        borderBottom: (theme) => `solid 1px ${theme.palette.divider}`
+                      }}
+                    >
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell align="left">
+                        <Box sx={{ maxWidth: 560 }}>
+                          <Typography variant="subtitle2">{row.itemName}</Typography>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                            {row.description}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="left">{row.quantity}</TableCell>
+                      <TableCell align="right">{fCurrency(row.unitPrice)}</TableCell>
+                      <TableCell align="right">{fCurrency(row.unitPrice * row.quantity)}</TableCell>
+                    </TableRow>
+                  );
+                })}
 
                 <RowResultStyle>
                   <TableCell colSpan={3} />
@@ -174,16 +167,6 @@ export default function InvoiceDetails({ invoice, invoiceFrom }) {
                   </TableCell>
                   <TableCell align="right" width={120}>
                     <Typography sx={{ color: 'error.main' }}>{discount && fCurrency(-discount)}</Typography>
-                  </TableCell>
-                </RowResultStyle>
-
-                <RowResultStyle>
-                  <TableCell colSpan={3} />
-                  <TableCell align="right">
-                    <Typography>Taxes</Typography>
-                  </TableCell>
-                  <TableCell align="right" width={120}>
-                    <Typography>{taxes && fCurrency(taxes)}</Typography>
                   </TableCell>
                 </RowResultStyle>
 

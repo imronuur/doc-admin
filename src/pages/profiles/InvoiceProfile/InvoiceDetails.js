@@ -36,7 +36,7 @@ export default function InvoiceDetails() {
               name: 'Invoices',
               href: PATH_ADMIN.directories.invoices
             },
-            { name: invoice?.invoiceNumber || '' }
+            { name: currentInvoice?._id || '' }
           ]}
         />
 

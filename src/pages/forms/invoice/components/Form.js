@@ -8,13 +8,13 @@ import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { Link as RouterLink } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import downloadFill from '@iconify/icons-eva/download-fill';
+
 import {
   Card,
   Grid,
   Stack,
   Select,
+  InputAdornment,
   TextField,
   Typography,
   MenuItem,
@@ -76,6 +76,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
 
   const { user } = useSelector((state) => state.auth);
   const [total, setTotal] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
+  const [invoices, setInvoices] = useState([]);
 
   const formik = useFormik({
     // enableReinitialize: true,
@@ -92,8 +94,8 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
         {
           unitPrice: '',
           quantity: '',
-
-          itemName: ''
+          itemName: '',
+          discount: ''
         }
       ]
     },
@@ -142,24 +144,65 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   // }, [values.items]);
   // // console.log(totalInvoice);
   // console.log(values);
-  useEffect(() => {
-    let subTotal = 0;
+  // useEffect(() => {
+  //   let subTotal = 0;
 
-    values.items.forEach((item) => {
-      const quantityNumber = parseFloat(item.quantity);
-      const unitPrice = parseFloat(item.unitPrice);
-      const discount = parseFloat(item.discount);
-      const amount = unitPrice && quantityNumber ? quantityNumber * unitPrice : 0;
-      const totalPrice = amount - amount * (discount / 100);
+  //   values.items.forEach((item) => {
+  //     const quantityNumber = parseFloat(item.quantity);
+  //     const unitPrice = parseFloat(item.unitPrice);
+  //     const discount = parseFloat(item.discount);
+  //     const amount = unitPrice && quantityNumber ? quantityNumber * unitPrice : 0;
+  //     const totalPrice = amount - amount * (discount / 100);
 
-      subTotal += amount;
-      subTotal = totalPrice;
+  //     subTotal += amount;
+  //     subTotal = totalPrice;
+  //   });
+
+  //   setTotal(subTotal);
+  //   setFieldValue('total', total);
+  // }, [values.items]);
+
+  const handleChange = (index, e) => {
+    console.log(e.target.value);
+    const values = [...values.items];
+    values[index][e.target.name] = e.target.value;
+    setInvoices({ ...values, items: values });
+  };
+
+  // useEffect(() => {
+  //   // Get the subtotal
+  //   const subTotal = () => {
+  //     const arr = document.getElementsByName('amount');
+
+  //     let subtotal = 0;
+  //     for (let i = 0; i < arr.length; i += 1) {
+  //       if (arr[i].value) {
+  //         subtotal += +arr[i].value;
+  //       }
+  //       setSubTotal(subtotal);
+  //     }
+  //   };
+
+  //   subTotal();
+  // }, [invoices]);
+
+  // useEffect(() => {
+  //   const total = () => {
+  //     const overallSum = subTotal;
+
+  //     setTotal(overallSum);
+  //   };
+  //   total();
+  // }, [invoices, subTotal]);
+  const sumValues = () => {
+    values.items.map((item) => {
+      const { quantity, unitPrice, discount } = item;
+      const totalPrice = Number(quantity) * Number(unitPrice);
+      const price = totalPrice - totalPrice * (discount / 100);
+      return price;
     });
-
-    setTotal(subTotal);
-    setFieldValue('total', total);
-  }, [values.items]);
-
+  };
+  console.log(sumValues());
   return (
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
@@ -179,11 +222,12 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                 Select A Reference Client
               </Typography>
               <Select fullWidth {...getFieldProps('refTo')}>
-                {clients.map((client) => (
-                  <MenuItem key={client._id} value={client._id}>
-                    {client.name}
-                  </MenuItem>
-                ))}
+                {clients &&
+                  clients.map((client) => (
+                    <MenuItem key={client._id} value={client._id}>
+                      {client.name}
+                    </MenuItem>
+                  ))}
               </Select>
               <FormHelperText error sx={{ m: '1%' }}>
                 {touched.refTo && errors.refTo}
@@ -311,15 +355,20 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                         />
                                       </Grid>
                                       <Grid item xs={2}>
-                                        {/* <TextField
+                                        <TextField
+                                          onChange={(e) => handleChange(index, e)}
+                                          value={sumValues}
                                           fullWidth
-                                          disabled
                                           label="Total"
-                                          defaultValue={total}
-                                          {...getFieldProps(`total`)}
-                                        /> */}
-                                        <Typography
+                                          name="amount"
+                                          InputProps={{
+                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                          }}
+                                        />
+
+                                        {/* <Typography
                                           disabled
+                                          name="total"
                                           sx={{
                                             border: 1,
                                             padding: 2,
@@ -327,9 +376,9 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                             borderColor: '#f1f1f1',
                                             color: 'text.disabled'
                                           }}
-                                        >
-                                          {fCurrency(total)}
-                                        </Typography>
+                                        > */}
+                                        {/* {fCurrency(total)} */}
+                                        {/* </Typography> */}
                                       </Grid>
                                     </Stack>
                                   </Stack>
@@ -364,15 +413,6 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                   >
                                     + Add Item
                                   </Button>
-                                </Grid>
-                                <Grid item xs={12} md={6} mt={2}>
-                                  <TextField
-                                    fullWidth
-                                    label="Discount"
-                                    {...getFieldProps('discount')}
-                                    error={Boolean(touched.discount && errors.discount)}
-                                    helperText={touched.discount && errors.discount}
-                                  />
                                 </Grid>
                               </Grid>
                             </>

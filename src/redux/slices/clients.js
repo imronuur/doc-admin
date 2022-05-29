@@ -55,13 +55,13 @@ export function getClients({ page, accessToken }) {
   };
 }
 
-export async function getAllClients() {
-  // const headers = {
-  //   'Content-Type': 'application/json',
-  //   Authorization: accessToken
-  // };
+export async function getAllClients(accessToken) {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: accessToken
+  };
   try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/clients-all`);
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/clients-all`, { headers });
     return response;
   } catch (error) {
     return error.message;

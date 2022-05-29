@@ -44,7 +44,8 @@ export default function ClientsForm() {
 
     if (isSubscribed) {
       const loadClients = async () => {
-        const res = await getAllClients();
+        const res = await getAllClients(token);
+
         setAllClients(res.data);
       };
       loadClients();

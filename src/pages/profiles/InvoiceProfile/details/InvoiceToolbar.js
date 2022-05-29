@@ -6,7 +6,7 @@ import { Box, Stack, Button, Dialog, Tooltip, IconButton, DialogActions, Circula
 // hooks
 import useToggle from '../../../../hooks/useToggle';
 // routes
-import { PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_ADMIN } from '../../../../routes/paths';
 // components
 import Iconify from '../../../../components/Iconify';
 //
@@ -18,13 +18,13 @@ InvoiceToolbar.propTypes = {
   invoice: PropTypes.object.isRequired
 };
 
-export default function InvoiceToolbar({ invoice }) {
+export default function InvoiceToolbar({ invoice, invoiceFrom }) {
   const navigate = useNavigate();
 
   const { toggle: open, onOpen, onClose } = useToggle();
 
   const handleEdit = () => {
-    navigate(PATH_DASHBOARD.invoice.edit(invoice.id));
+    navigate(`${PATH_ADMIN.forms.editInvoice}/${invoice._id}`);
   };
 
   return (
@@ -36,7 +36,7 @@ export default function InvoiceToolbar({ invoice }) {
         alignItems={{ sm: 'center' }}
         sx={{ mb: 5 }}
       >
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={3}>
           <Tooltip title="Edit">
             <IconButton onClick={handleEdit}>
               <Iconify icon="eva:edit-fill" />
@@ -50,7 +50,7 @@ export default function InvoiceToolbar({ invoice }) {
           </Tooltip>
 
           <PDFDownloadLink
-            document={<InvoicePDF invoice={invoice} />}
+            document={<InvoicePDF invoice={invoice} invoiceFrom={invoiceFrom} />}
             fileName={invoice.invoiceNumber}
             style={{ textDecoration: 'none' }}
           >
@@ -62,24 +62,6 @@ export default function InvoiceToolbar({ invoice }) {
               </Tooltip>
             )}
           </PDFDownloadLink>
-
-          <Tooltip title="Print">
-            <IconButton>
-              <Iconify icon="eva:printer-fill" />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Send">
-            <IconButton>
-              <Iconify icon="ic:round-send" />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Share">
-            <IconButton>
-              <Iconify icon="eva:share-fill" />
-            </IconButton>
-          </Tooltip>
         </Stack>
 
         <Button
@@ -109,7 +91,7 @@ export default function InvoiceToolbar({ invoice }) {
           </DialogActions>
           <Box sx={{ flexGrow: 1, height: '100%', overflow: 'hidden' }}>
             <PDFViewer width="100%" height="100%" style={{ border: 'none' }}>
-              <InvoicePDF invoice={invoice} />
+              <InvoicePDF invoice={invoice} invoiceFrom={invoiceFrom} />
             </PDFViewer>
           </Box>
         </Box>
