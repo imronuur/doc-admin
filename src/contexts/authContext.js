@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import { createContext, useContext } from 'react';
-import { signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
+} from 'firebase/auth';
 import { authFirbase } from '../Firebase';
 
 const login = async (email, password) => {
@@ -17,7 +22,10 @@ const register = async (email, password) => {
   const { user } = response;
   return user;
 };
-
+const resetPassword = async (email) => {
+  const response = await sendPasswordResetEmail(authFirbase, email);
+  return response;
+};
 const logout = async () => {
   localStorage.removeItem('redux-root');
   await signOut(authFirbase);
@@ -25,7 +33,8 @@ const logout = async () => {
 
 const AuthContext = createContext({
   login,
-  logout
+  logout,
+  resetPassword
 });
 
 AuthProvider.propTypes = {
@@ -38,7 +47,8 @@ function AuthProvider({ children }) {
       value={{
         login,
         register,
-        logout
+        logout,
+        resetPassword
       }}
     >
       {children}

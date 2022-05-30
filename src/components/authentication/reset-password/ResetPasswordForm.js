@@ -5,7 +5,7 @@ import { Form, FormikProvider, useFormik } from 'formik';
 import { TextField, Alert, Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // hooks
-import useAuth from '../../../hooks/useAuth';
+import { useFirebaseAuth } from '../../../contexts/authContext';
 import useIsMountedRef from '../../../hooks/useIsMountedRef';
 
 // ----------------------------------------------------------------------
@@ -16,7 +16,7 @@ ResetPasswordForm.propTypes = {
 };
 
 export default function ResetPasswordForm({ onSent, onGetEmail }) {
-  const { resetPassword } = useAuth();
+  const { resetPassword } = useFirebaseAuth();
   const isMountedRef = useIsMountedRef();
 
   const ResetPasswordSchema = Yup.object().shape({
@@ -25,7 +25,7 @@ export default function ResetPasswordForm({ onSent, onGetEmail }) {
 
   const formik = useFormik({
     initialValues: {
-      email: 'demo@minimals.cc'
+      email: ''
     },
     validationSchema: ResetPasswordSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
