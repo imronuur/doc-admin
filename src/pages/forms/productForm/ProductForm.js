@@ -103,7 +103,7 @@ export default function ProductForm() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new product' : 'Edit product'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Product List',
               href: PATH_ADMIN.directories.products

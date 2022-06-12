@@ -111,7 +111,7 @@ export default function UploadSingleFile({ error, file, sx, ...other }) {
           <Box
             component="img"
             alt="file preview"
-            src={isString(file) ? file : file.preview}
+            src={isString(file) ? file : ''}
             sx={{
               top: 8,
               borderRadius: 1,

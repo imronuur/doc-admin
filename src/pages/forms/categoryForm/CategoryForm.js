@@ -73,7 +73,7 @@ export default function EcommerceProductCreate() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new category' : 'Edit category'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Categories List',
               href: PATH_ADMIN.directories.categories

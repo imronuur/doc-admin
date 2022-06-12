@@ -26,10 +26,10 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 const PERCENT = -0.06;
 const CHART_DATA = [{ data: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31] }];
 
-export default function AppTotalCategoriesAndSubCategories({ totalCategories, totalSubCategories }) {
+export default function AppTotalCategoriesAndSubCategories() {
   const theme = useTheme();
-  const TOTAL_CATEGORIES = totalCategories && totalCategories.length;
-  const TOTAL_SUBCATEGORIES = totalSubCategories && totalSubCategories.length;
+  const TOTAL_CATEGORIES = 600;
+  const TOTAL_SUBCATEGORIES = 9000;
 
   const chartOptions = {
     colors: [theme.palette.chart.red[0]],

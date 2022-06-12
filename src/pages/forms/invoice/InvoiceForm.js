@@ -95,7 +95,7 @@ export default function ClientsForm() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new Invoice' : 'Edit Invoice'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Invoices List',
               href: PATH_ADMIN.directories.invoices

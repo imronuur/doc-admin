@@ -8,7 +8,6 @@ import { Form, FormikProvider, useFormik, FieldArray, getIn } from 'formik';
 // material
 import { Link as RouterLink } from 'react-router-dom';
 import { LoadingButton } from '@mui/lab';
-
 import {
   Card,
   Grid,
@@ -29,10 +28,10 @@ import {
 import { fCurrency } from '../../../../utils/formatNumber';
 import { Validations } from './Validations';
 import { PATH_ADMIN } from '../../../../routes/paths';
-// import { getTotals } from '../../../../redux/slices/invoiceSlice';
 import { MIconButton } from '../../../../components/@material-extend';
 // ----------------------------------------------------------------------
 import InvoicePDF from '../invoice-to-pdf/InvoicePDF';
+import { getInvoiceTotal } from '../../../../redux/slices/invoiceSlice';
 
 // ----------------------------------------------------------------------
 
@@ -75,10 +74,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const { user } = useSelector((state) => state.auth);
-  const [total, setTotal] = useState(0);
-  const [subTotal, setSubTotal] = useState(0);
-  const [invoices, setInvoices] = useState([]);
-
+  const dispatch = useDispatch();
   const formik = useFormik({
     // enableReinitialize: true,
     // eslint-disable-next-line no-unneeded-ternary
@@ -89,7 +85,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
       type: currentInvoice?.type || '',
       status: currentInvoice?.status || '',
       dueDate: currentInvoice?.dueDate || '',
-      total: total || '',
+      total: currentInvoice?.total || '',
       items: currentInvoice?.items || [
         {
           unitPrice: '',
@@ -131,17 +127,18 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   // const totalInvoice = () => {
   // };
 
-  // const total = values.items.map((item) => {
-  //   const { quantity, unitPrice, discount } = item;
-  //   const totalPrice = Number(quantity) * Number(unitPrice);
-  //   const price = totalPrice - totalPrice * (discount / 100);
-  //   return price;
-  // });
+  let total = 0;
+  total += values.items.map((item) => {
+    const { quantity, unitPrice, discount } = item;
+    const totalPrice = Number(quantity) * Number(unitPrice);
+    const price = totalPrice - totalPrice * (Number(discount) / 100);
+    return Number(price);
+  });
 
-  // useEffect(() => {
-  //   // setFieldValue('total', Number(total));
-  //   dispatch(getTotals());
-  // }, [values.items]);
+  useEffect(() => {
+    setFieldValue('total', total);
+    // dispatch(getInvoiceTotal());
+  }, [values.items]);
   // // console.log(totalInvoice);
   // console.log(values);
   // useEffect(() => {
@@ -161,13 +158,6 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   //   setTotal(subTotal);
   //   setFieldValue('total', total);
   // }, [values.items]);
-
-  const handleChange = (index, e) => {
-    console.log(e.target.value);
-    const values = [...values.items];
-    values[index][e.target.name] = e.target.value;
-    setInvoices({ ...values, items: values });
-  };
 
   // useEffect(() => {
   //   // Get the subtotal
@@ -194,15 +184,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
   //   };
   //   total();
   // }, [invoices, subTotal]);
-  const sumValues = () => {
-    values.items.map((item) => {
-      const { quantity, unitPrice, discount } = item;
-      const totalPrice = Number(quantity) * Number(unitPrice);
-      const price = totalPrice - totalPrice * (discount / 100);
-      return price;
-    });
-  };
-  console.log(sumValues());
+
   return (
     <FormikProvider value={formik}>
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
@@ -355,18 +337,7 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                         />
                                       </Grid>
                                       <Grid item xs={2}>
-                                        <TextField
-                                          onChange={(e) => handleChange(index, e)}
-                                          value={sumValues}
-                                          fullWidth
-                                          label="Total"
-                                          name="amount"
-                                          InputProps={{
-                                            startAdornment: <InputAdornment position="start">$</InputAdornment>
-                                          }}
-                                        />
-
-                                        {/* <Typography
+                                        <Typography
                                           disabled
                                           name="total"
                                           sx={{
@@ -376,9 +347,9 @@ export default function ClientsForm({ isEdit, currentInvoice, handleCreateInvoic
                                             borderColor: '#f1f1f1',
                                             color: 'text.disabled'
                                           }}
-                                        > */}
-                                        {/* {fCurrency(total)} */}
-                                        {/* </Typography> */}
+                                        >
+                                          {fCurrency(total)}
+                                        </Typography>
                                       </Grid>
                                     </Stack>
                                   </Stack>

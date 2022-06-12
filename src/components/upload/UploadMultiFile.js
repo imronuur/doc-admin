@@ -136,7 +136,7 @@ export default function UploadMultiFile({
 
       <List disablePadding sx={{ ...(hasFile && { my: 3 }) }}>
         <AnimatePresence>
-          {files &&
+          {files?.length > 0 &&
             files.map((file) => {
               const { name, size, preview } = file;
               const key = isString(file) ? file : name;

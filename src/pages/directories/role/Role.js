@@ -306,7 +306,7 @@ export default function RolesList() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Roles List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Roles List' }]}
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.root }, { name: 'Roles List' }]}
           action={
             <Button
               variant="contained"

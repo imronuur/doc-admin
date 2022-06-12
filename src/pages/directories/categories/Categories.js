@@ -403,7 +403,7 @@ export default function CategoryList() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Category List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Category List' }]}
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.root }, { name: 'Category List' }]}
           action={
             <Button
               variant="contained"

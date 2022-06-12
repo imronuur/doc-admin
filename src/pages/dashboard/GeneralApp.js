@@ -6,9 +6,9 @@ import { useSelector } from 'react-redux';
 import useSettings from '../../hooks/useSettings';
 // components
 import Page from '../../components/Page';
-import { getAllProducts } from '../../redux/slices/products';
-import { getAllUsers } from '../../redux/slices/usersSlice';
-import { getAllCategories, getAllSubCategories } from '../../redux/slices/subCategories';
+// import { getAllProducts } from '../../redux/slices/products';
+// import { getAllUsers } from '../../redux/slices/usersSlice';
+// import { getAllCategories, getAllSubCategories } from '../../redux/slices/subCategories';
 
 import {
   AppWelcome,
@@ -33,39 +33,6 @@ export default function GeneralApp() {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   // useEffect api request that fetchs all products from the database
-  useEffect(() => {
-    let isSubscribed = true;
-
-    if (isSubscribed) {
-      const loadAllProducts = async () => {
-        const reqObject = {
-          accessToken: user.token
-        };
-        const res = await getAllProducts(reqObject);
-        setTotalProducts(res.data);
-      };
-      const loadAllUsers = async () => {
-        const reqObject = {
-          accessToken: user.token
-        };
-        const userRes = await getAllUsers(reqObject);
-        setTotalUsers(userRes.data);
-      };
-      const loadCategories = async () => {
-        const res = await getAllCategories();
-        setCategories(res.data);
-      };
-      const loadSubCategories = async () => {
-        const res = await getAllSubCategories();
-        setSubCategories(res.data);
-      };
-      loadAllProducts();
-      loadAllUsers();
-      loadCategories();
-      loadSubCategories();
-    }
-    return () => (isSubscribed = false);
-  }, [user.token]);
 
   return (
     <Page title="General: App | Minimal-UI">
@@ -80,15 +47,15 @@ export default function GeneralApp() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalProducts totalProducts={totalProducts.data} />
+            <AppTotalProducts />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalUsers totalUsers={totalUsers} />
+            <AppTotalUsers />
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <AppTotalCategoriesAndSubCategories totalCategories={categories} totalSubCategories={subCategories} />
+            <AppTotalCategoriesAndSubCategories />
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>

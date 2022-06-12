@@ -88,7 +88,8 @@ export default function RouteAbout({ currentOrder, accessToken }) {
       orderBy: currentOrder.orderBy,
       orderTo: currentOrder.orderTo,
       orderInfo: currentOrder.orderInfo,
-      orderStatus: currentOrder?.orderStatus
+      orderStatus: currentOrder?.orderStatus,
+      address: currentOrder?.address
       // amount: order?.orderInfo.amount
       // shippingFee: order?.orderInfo.shippingFee,
       // shippingAddress: order?.orderInfo.shippingAddress,
@@ -146,7 +147,17 @@ export default function RouteAbout({ currentOrder, accessToken }) {
               <Grid>
                 <Typography>Shipping Address</Typography>
                 <Stack>
-                  <TextField size="large" type="text" fullWidth multiline rows={3} maxRows={4} />
+                  {currentOrder?.address.map((address, index) => (
+                    <TextField
+                      size="large"
+                      type="text"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      {...getFieldProps(`address[${index}].fullAddress`)}
+                      maxRows={4}
+                    />
+                  ))}
                 </Stack>
               </Grid>
               <Grid>

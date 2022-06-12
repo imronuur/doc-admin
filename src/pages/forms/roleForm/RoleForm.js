@@ -75,7 +75,7 @@ export default function ProductForm() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new role' : 'Edit role'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Role List',
               href: PATH_ADMIN.directories.roles

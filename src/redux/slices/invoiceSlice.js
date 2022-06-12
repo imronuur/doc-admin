@@ -33,10 +33,8 @@ const slice = createSlice({
     },
     getInvoiceTotal(state) {
       let total = 0;
-
       state.invoices.data.items?.map((item) => {
         const totalPrice = Number(item.quantity) * Number(item.unitPrice);
-
         total += totalPrice - totalPrice * (Number(item.discount) / 100);
         return total;
       });

@@ -46,7 +46,8 @@ export const PATH_ADMIN = {
     offers: path(ROOTS_ADMIN, '/offers-directory'),
     brands: path(ROOTS_ADMIN, '/brands-directory'),
     roles: path(ROOTS_ADMIN, '/roles-directory'),
-    users: path(ROOTS_ADMIN, '/users-directory')
+    users: path(ROOTS_ADMIN, '/users-directory'),
+    blogs: path(ROOTS_ADMIN, '/blogs-directory')
   },
   forms: {
     newCategory: path(ROOTS_ADMIN, '/new-category'),
@@ -70,7 +71,8 @@ export const PATH_ADMIN = {
     newRole: path(ROOTS_ADMIN, '/new-role'),
     editRole: path(ROOTS_ADMIN, '/edit-role'),
     newUser: path(ROOTS_ADMIN, '/new-user'),
-    editUser: path(ROOTS_ADMIN, '/edit-user')
+    editUser: path(ROOTS_ADMIN, '/edit-user'),
+    newBlog: path(ROOTS_ADMIN, '/new-blog')
   },
   profiles: {
     clientProfile: path(ROOTS_ADMIN, '/client-profile'),
@@ -79,7 +81,8 @@ export const PATH_ADMIN = {
     productProfile: path(ROOTS_ADMIN, '/product-profile'),
     roleProfile: path(ROOTS_ADMIN, '/role-profile'),
     userprofile: path(ROOTS_ADMIN, '/user-profile'),
-    adminProfile: path(ROOTS_ADMIN, '/profile')
+    adminProfile: path(ROOTS_ADMIN, '/profile'),
+    blogProfile: path(ROOTS_ADMIN, '/blog-profile')
   }
 };
 

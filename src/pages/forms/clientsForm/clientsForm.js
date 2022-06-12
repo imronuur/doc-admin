@@ -89,7 +89,7 @@ export default function ClientsForm() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new client' : 'Edit Client'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Clients List',
               href: PATH_ADMIN.directories.clients

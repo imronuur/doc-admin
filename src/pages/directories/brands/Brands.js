@@ -51,8 +51,9 @@ const TABLE_HEAD = [
 ];
 
 const ThumbImgStyle = styled('img')(({ theme }) => ({
-  width: 64,
-  height: 64,
+  width: 80,
+  height: 80,
+  maxWidth: 80,
   objectFit: 'cover',
   margin: theme.spacing(0, 2),
   borderRadius: theme.shape.borderRadiusSm

@@ -56,7 +56,6 @@ export default function LoginForm() {
     onSubmit: async (values, { setErrors, setSubmitting, resetForm }) => {
       try {
         const { accessToken } = await login(values.email, values.password);
-
         const reduxRes = await dispatch(getUser(accessToken));
         if (reduxRes.type === 'auth/getUser/fulfilled') {
           enqueueSnackbar('Login success', {
@@ -68,14 +67,17 @@ export default function LoginForm() {
             )
           });
         } else if (reduxRes.type === 'auth/getUser/rejected') {
-          enqueueSnackbar('Error!, Incorrect Email or Password', {
-            variant: 'error',
-            action: (key) => (
-              <MIconButton size="small" onClick={() => closeSnackbar(key)}>
-                <Icon icon={closeFill} />
-              </MIconButton>
-            )
-          });
+          enqueueSnackbar(
+            `${reduxRes.error.message === 'INVALID_PASSWORD' ? 'Password Is Incorrect' : reduxRes.error.message}`,
+            {
+              variant: 'error',
+              action: (key) => (
+                <MIconButton size="small" onClick={() => closeSnackbar(key)}>
+                  <Icon icon={closeFill} />
+                </MIconButton>
+              )
+            }
+          );
         }
         if (isMountedRef.current) {
           setSubmitting(false);
@@ -86,6 +88,7 @@ export default function LoginForm() {
           setSubmitting(false);
           setErrors({ afterSubmit: error.message });
         }
+
         enqueueSnackbar(`${error.message}`, {
           variant: 'error',
           action: (key) => (

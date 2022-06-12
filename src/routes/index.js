@@ -10,7 +10,7 @@ import AuthGuard from '../guards/AuthGuard';
 import RoleBasedGuard from '../guards/RoleBasedGuard';
 // components
 import LoadingScreen from '../components/LoadingScreen';
-import { PATH_ADMIN, PATH_DASHBOARD } from './paths';
+import { PATH_ADMIN } from './paths';
 // ----------------------------------------------------------------------
 
 const Loadable = (Component) => (props) => {
@@ -86,6 +86,8 @@ export default function Router() {
         { path: `${PATH_ADMIN.directories.clients}`, element: <Clients /> },
         { path: `${PATH_ADMIN.directories.invoices}`, element: <Invoices /> },
         { path: `${PATH_ADMIN.directories.offers}`, element: <SpecialOffers /> },
+        { path: `${PATH_ADMIN.directories.blogs}`, element: <BlogPosts /> },
+
         {
           path: `${PATH_ADMIN.directories.brands}`,
           element: <Brands />
@@ -127,7 +129,7 @@ export default function Router() {
         { path: `${PATH_ADMIN.profiles.productProfile}/:_id`, element: <ProductProfilePage /> },
         { path: `${PATH_ADMIN.profiles.roleProfile}/:_id`, element: <RoleProfile /> },
         { path: `${PATH_ADMIN.profiles.userprofile}/:_id`, element: <UsersProfile /> },
-
+        { path: `${PATH_ADMIN.profiles.blogProfile}/:_id`, element: <BlogProfile /> },
         // checkout
 
         { path: `${PATH_ADMIN.forms.newCoupon}`, element: <NewCouponForm /> },
@@ -139,6 +141,8 @@ export default function Router() {
         { path: `${PATH_ADMIN.forms.newOffer}`, element: <SpecialOffersForm /> },
         { path: `${PATH_ADMIN.forms.editOffer}/:_id`, element: <SpecialOffersForm /> },
         { path: `${PATH_ADMIN.forms.newBrand}`, element: <BrandsForm /> },
+        { path: `${PATH_ADMIN.forms.newBlog}`, element: <BlogForm /> },
+
         { path: `${PATH_ADMIN.forms.editBrand}/:_id`, element: <BrandsForm /> },
         {
           path: `${PATH_ADMIN.forms.newRole}`,
@@ -219,7 +223,7 @@ export default function Router() {
           children: [
             { element: <Navigate to="/dashboard/blog/posts" replace /> },
             { path: 'posts', element: <BlogPosts /> },
-            { path: 'post/:title', element: <BlogPost /> },
+            { path: 'post/:_id', element: <BlogPost /> },
             { path: 'new-post', element: <BlogNewPost /> }
           ]
         },
@@ -348,10 +352,11 @@ const SpecialOffers = Loadable(lazy(() => import('../pages/directories/specialOf
 const Brands = Loadable(lazy(() => import('../pages/directories/brands/Brands')));
 const Roles = Loadable(lazy(() => import('../pages/directories/role/Role')));
 const Users = Loadable(lazy(() => import('../pages/directories/users/Users')));
-
+const BlogPosts = Loadable(lazy(() => import('../pages/directories/blogs/BlogPosts')));
 // Form
 
 const CategoryForm = Loadable(lazy(() => import('../pages/forms/categoryForm/CategoryForm')));
+const BlogForm = Loadable(lazy(() => import('../pages/directories/blogs/BlogNewPost')));
 const CategoryBulkEdit = Loadable(lazy(() => import('../pages/forms/bulk/bulkCategoryForm/BulkCategoryForm')));
 const NewSubCategory = Loadable(lazy(() => import('../pages/forms/subCategoryForm/SubCategoryForm')));
 const NewCouponForm = Loadable(lazy(() => import('../pages/forms/couponForm/CouponForm')));
@@ -364,6 +369,7 @@ const RolesForm = Loadable(lazy(() => import('../pages/forms/roleForm/RoleForm')
 const UserForm = Loadable(lazy(() => import('../pages/forms/userForm/UserForm')));
 
 // profiles
+const BlogProfile = Loadable(lazy(() => import('../pages/directories/blogs/BlogPost')));
 const ClientProfilePage = Loadable(lazy(() => import('../pages/profiles/ClientProfile/ClientProfilePage')));
 const InvoiceProfilePage = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceProfilePage')));
 const InvoiceDetails = Loadable(lazy(() => import('../pages/profiles/InvoiceProfile/InvoiceDetails')));
@@ -384,7 +390,7 @@ const EcommerceShop = Loadable(lazy(() => import('../pages/dashboard/EcommerceSh
 const EcommerceProductDetails = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetails')));
 const EcommerceCheckout = Loadable(lazy(() => import('../pages/dashboard/EcommerceCheckout')));
 const EcommerceInvoice = Loadable(lazy(() => import('../pages/dashboard/EcommerceInvoice')));
-const BlogPosts = Loadable(lazy(() => import('../pages/dashboard/BlogPosts')));
+// const BlogPosts = Loadable(lazy(() => import('../pages/dashboard/BlogPosts')));
 const BlogPost = Loadable(lazy(() => import('../pages/dashboard/BlogPost')));
 const BlogNewPost = Loadable(lazy(() => import('../pages/dashboard/BlogNewPost')));
 const UserProfile = Loadable(lazy(() => import('../pages/dashboard/UserProfile')));

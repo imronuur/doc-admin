@@ -338,7 +338,7 @@ export default function CategoryList() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Coupon Code List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Coupon Code List' }]}
+          links={[{ name: 'Dashboard', href: PATH_ADMIN.root }, { name: 'Coupon Code List' }]}
           action={
             <Button
               variant="contained"

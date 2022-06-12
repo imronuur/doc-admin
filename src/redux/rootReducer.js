@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import mailReducer from './slices/mail';
 import chatReducer from './slices/chat';
 import blogReducer from './slices/blog';
+import blogsReducer from './slices/blogSlice';
 import calendarReducer from './slices/calendar';
 import kanbanReducer from './slices/kanban';
 import categoryReducer from './slices/categories';
@@ -30,18 +31,19 @@ const rootPersistConfig = {
   keyPrefix: 'redux-',
   whitelist: [
     'auth',
-    'bulkCategory',
-    'subCategory',
-    'product',
-    'bulkProduct',
-    'coupon',
-    'client',
-    'invoice',
-    'order',
-    'offer',
-    'brand',
+    // 'bulkCategory',
+    // 'subCategory',
+    // 'product',
+    // 'bulkProduct',
+    // 'coupon',
+    // 'client',
+    // 'invoice',
+    // 'order',
+    // 'offer',
+    // 'brand',
     'role',
-    'user'
+    'user',
+    'blogs'
   ]
 };
 
@@ -53,23 +55,24 @@ const categoryPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  mail: mailReducer,
-  chat: chatReducer,
+  // mail: mailReducer,
+  // chat: chatReducer,
   blog: blogReducer,
-  calendar: calendarReducer,
-  kanban: kanbanReducer,
-  category: persistReducer(categoryPersistConfig, categoryReducer),
-  bulkCategory: bulkCategoriesReducer,
-  bulkProduct: bulkProductsReducer,
-  subCategory: subCategoryReducer,
-  product: productReducer,
+  blogs: blogsReducer,
+  // calendar: calendarReducer,
+  // kanban: kanbanReducer,
+  // category: persistReducer(categoryPersistConfig, categoryReducer),
+  // bulkCategory: bulkCategoriesReducer,
+  // bulkProduct: bulkProductsReducer,
+  // subCategory: subCategoryReducer,
+  // product: productReducer,
   auth: authReducer,
-  coupon: couponReducer,
-  client: clientReducer,
-  invoice: invoiceReducer,
-  order: orderReducer,
-  offer: offerReducer,
-  brand: brandReducer,
+  // coupon: couponReducer,
+  // client: clientReducer,
+  // invoice: invoiceReducer,
+  // order: orderReducer,
+  // offer: offerReducer,
+  // brand: brandReducer,
   role: roleReducer,
   user: userReducer
 });

@@ -26,9 +26,9 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 const PERCENT = 0.15;
 const CHART_DATA = [{ data: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20] }];
 
-export default function AppTotalUsers({ totalUsers }) {
+export default function AppTotalUsers() {
   const theme = useTheme();
-  const TOTAL_USERS = totalUsers && totalUsers.length;
+  const TOTAL_USERS = 9000;
 
   const chartOptions = {
     colors: [theme.palette.chart.blue[0]],

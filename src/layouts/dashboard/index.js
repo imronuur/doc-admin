@@ -11,6 +11,8 @@ import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import { useFirebaseAuth } from '../../contexts/authContext';
 import { tokenCheck } from '../../redux/thunk/authThunk';
+
+import { getAllBlogs } from '../../redux/slices/blogSlice';
 import { getProducts } from '../../redux/slices/products';
 import { getCoupon } from '../../redux/slices/couponSlice';
 import { getClients } from '../../redux/slices/clients';
@@ -70,14 +72,15 @@ export default function DashboardLayout() {
       }
     };
 
-    const loadClients = (req) => dispatch(getClients(req));
-    const loadProducts = (req) => dispatch(getProducts(req));
-    const loadCoupon = (req) => dispatch(getCoupon(req));
+    const loadBlogs = () => dispatch(getAllBlogs());
+    // const loadProducts = (req) => dispatch(getProducts(req));
+    // const loadCoupon = (req) => dispatch(getCoupon(req));
 
     checkToken(token);
-    loadClients(reqObject);
-    loadProducts(reqObject);
-    loadCoupon(reqObject);
+    loadBlogs();
+    // loadClients(reqObject);
+    // loadProducts(reqObject);
+    // loadCoupon(reqObject);
   }, [dispatch, logout, navigate, token, page]);
 
   return (

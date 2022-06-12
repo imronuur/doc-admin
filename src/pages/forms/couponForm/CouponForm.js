@@ -78,7 +78,7 @@ export default function EcommerceCouponCreate() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new coupon' : 'Edit Coupon'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Coupons List',
               href: PATH_ADMIN.directories.couponCode

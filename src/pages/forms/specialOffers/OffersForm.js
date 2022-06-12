@@ -100,7 +100,7 @@ export default function ClientsForm() {
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new offer' : 'Edit offer'}
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: PATH_ADMIN.root },
             {
               name: 'Offers List',
               href: PATH_ADMIN.directories.offers
